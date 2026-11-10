@@ -92,6 +92,15 @@ npm run dev
 
 The Vite dev server forwards `/api/*` requests to the backend on port 4000.
 
+### URLs
+
+| URL | What |
+|-----|------|
+| `/` | Website (desktop). Phones are sent to the mobile app automatically. |
+| `/ur` | Urdu website |
+| `/m` | Mobile app (full screen on phones, shown as a phone frame on desktop) |
+| `/screens` | Index of every screen, for demos |
+
 ## Seeded / mocked data
 
 - **All screen content is static sample data** from the design: workers Ahmed, Bilal, Usman and Imran; customer Sana; booking RR-2417; Rs. 1,500 price; locations in G-10 / G-11, Islamabad.
@@ -113,7 +122,7 @@ React, React DOM, React Router, Vite, @vitejs/plugin-react, TypeScript, Express,
 
 ## Known limitations
 
-- Screens are rendered at fixed design sizes (1440×900 web, 390×844 mobile) and scaled down to fit. They are not yet re-laid-out responsively.
+- Pages keep the exact design layout and scale to the window width (web designed at 1440 px, mobile at 390 px). Under 768 px wide, visitors get the mobile app instead of the website.
 - Buttons only navigate between screens. Inputs, toggles and recordings do nothing yet.
 - The mobile designs end at the voice-confirm step (there is no mobile worker list yet). Some Urdu screens link to the closest available screen because the Urdu set is partial.
 - The backend has no database and no API beyond `/api/health`.

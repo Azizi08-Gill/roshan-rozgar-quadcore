@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html><head><script>window.__resources={"tile0": "assets/ed3cb8ca-2021-4e82-b70b-948a2b638353.png", "tile1": "assets/ac106a9e-d6ce-43a7-befe-ddd058e81f23.png", "tile2": "assets/6960d496-8b43-416e-b192-f30e12b0b408.png", "tile3": "assets/8c4dd372-03b1-4d5e-aecb-a8fb90b89fdc.png", "tile4": "assets/0f2fd89b-1875-4fb6-8a72-6905438977dc.png", "tile5": "assets/985e700d-323a-4657-82fb-cf153a79a0e4.png", "./Voice%20Assistant.dc.html": "assets/ef3967cd-1ee3-4bbc-8c2e-d3794dfba4c9.html"};</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="assets/5f49cae9-84d5-4401-b6f8-979b44cf802d.js"></script>
+
+
+
+
+
+
+</head>
+<body>
+<x-dc>
+<helmet><meta name="design_doc_mode" content="canvas"><link rel="preconnect" href="https://fonts.googleapis.com"><style>/* cyrillic-ext */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/8a7b225f-79b7-4f4f-89f4-926f882c1ec3.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/e0cb29be-25d5-4268-92bb-d277ca9c025d.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/9366b09c-b9ab-4bc3-81be-83a00b7d4713.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/1629a221-aaf3-436b-8735-35b30b6057e0.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/3541f67d-6903-4635-b940-5741642e3ff8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/8a7b225f-79b7-4f4f-89f4-926f882c1ec3.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/e0cb29be-25d5-4268-92bb-d277ca9c025d.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/9366b09c-b9ab-4bc3-81be-83a00b7d4713.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/1629a221-aaf3-436b-8735-35b30b6057e0.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/3541f67d-6903-4635-b940-5741642e3ff8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/8a7b225f-79b7-4f4f-89f4-926f882c1ec3.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/e0cb29be-25d5-4268-92bb-d277ca9c025d.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/9366b09c-b9ab-4bc3-81be-83a00b7d4713.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/1629a221-aaf3-436b-8735-35b30b6057e0.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/3541f67d-6903-4635-b940-5741642e3ff8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* arabic */
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("assets/a0d40f3e-0fe1-4a4b-af42-1c1ce5009026.woff2") format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC7, U+10EC9-10EEE, U+10EF0-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;
+}
+/* math */
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("assets/46ead664-16af-4bd9-868e-28b39983d10d.woff2") format('woff2');
+  unicode-range: U+0302-0303, U+0305, U+0307-0308, U+0310, U+0312, U+0315, U+031A, U+0326-0327, U+032C, U+032F-0330, U+0332-0333, U+0338, U+033A, U+0346, U+034D, U+0391-03A1, U+03A3-03A9, U+03B1-03C9, U+03D1, U+03D5-03D6, U+03F0-03F1, U+03F4-03F5, U+2016-2017, U+2034-2038, U+203C, U+2040, U+2043, U+2047, U+2050, U+2057, U+205F, U+2070-2071, U+2074-209F, U+20D0-20DC, U+20E1, U+20E5-20EF, U+2100-2112, U+2114-2115, U+2117-2121, U+2123-214F, U+2190, U+2192, U+2194-21AE, U+21B0-21E5, U+21F1-21F2, U+21F4-2211, U+2213-2214, U+2216-22FF, U+2308-230B, U+2310, U+2319, U+231C-2321, U+2336-237A, U+237C, U+2395, U+239B-23B7, U+23D0, U+23DC-23E1, U+2474-2475, U+25AF, U+25B3, U+25B7, U+25BD, U+25C1, U+25CA, U+25CC, U+25FB, U+266D-266F, U+27C0-27FF, U+2900-2AFF, U+2B0E-2B11, U+2B30-2B4C, U+2BFE, U+3030, U+FF5B, U+FF5D, U+1D400-1D7FF, U+1EE00-1EEFF;
+}
+/* symbols */
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("assets/0286a284-0514-40b2-af19-e37afe667010.woff2") format('woff2');
+  unicode-range: U+0001-000C, U+000E-001F, U+007F-009F, U+20DD-20E0, U+20E2-20E4, U+2150-218F, U+2190, U+2192, U+2194-2199, U+21AF, U+21E6-21F0, U+21F3, U+2218-2219, U+2299, U+22C4-22C6, U+2300-243F, U+2440-244A, U+2460-24FF, U+25A0-27BF, U+2800-28FF, U+2921-2922, U+2981, U+29BF, U+29EB, U+2B00-2BFF, U+4DC0-4DFF, U+FFF9-FFFB, U+10140-1018E, U+10190-1019C, U+101A0, U+101D0-101FD, U+102E0-102FB, U+10E60-10E7E, U+1D2C0-1D2D3, U+1D2E0-1D37F, U+1F000-1F0FF, U+1F100-1F1AE, U+1F1E6-1F1FF, U+1F30D-1F30F, U+1F315, U+1F31C, U+1F31E, U+1F320-1F32C, U+1F336, U+1F378, U+1F37D, U+1F382, U+1F393-1F39F, U+1F3A7-1F3A8, U+1F3AC-1F3AF, U+1F3C2, U+1F3C4-1F3C6, U+1F3CA-1F3CE, U+1F3D4-1F3E0, U+1F3ED, U+1F3F1-1F3F3, U+1F3F5-1F3F7, U+1F408, U+1F415, U+1F41F, U+1F426, U+1F43F, U+1F441-1F442, U+1F444, U+1F446-1F449, U+1F44C-1F44E, U+1F453, U+1F46A, U+1F47D, U+1F4A3, U+1F4B0, U+1F4B3, U+1F4B9, U+1F4BB, U+1F4BF, U+1F4C8-1F4CB, U+1F4D6, U+1F4DA, U+1F4DF, U+1F4E3-1F4E6, U+1F4EA-1F4ED, U+1F4F7, U+1F4F9-1F4FB, U+1F4FD-1F4FE, U+1F503, U+1F507-1F50B, U+1F50D, U+1F512-1F513, U+1F53E-1F54A, U+1F54F-1F5FA, U+1F610, U+1F650-1F67F, U+1F687, U+1F68D, U+1F691, U+1F694, U+1F698, U+1F6AD, U+1F6B2, U+1F6B9-1F6BA, U+1F6BC, U+1F6C6-1F6CF, U+1F6D3-1F6D7, U+1F6E0-1F6EA, U+1F6F0-1F6F3, U+1F6F7-1F6FC, U+1F700-1F80B, U+1F810-1F847, U+1F850-1F859, U+1F860-1F887, U+1F890-1F8AD, U+1F8B0-1F8BB, U+1F8C0-1F8C1, U+1F8D0-1F8D8, U+1F900-1F90B, U+1F93B, U+1F946, U+1F984, U+1F996, U+1F9E9, U+1FA00-1FA6F, U+1FA70-1FA7C, U+1FA80-1FAC6, U+1FAC8, U+1FACC-1FADD, U+1FADF-1FAEB, U+1FAEF-1FAFA, U+1FB00-1FBFF;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("assets/6d25a7e5-c168-49de-b315-bc9cec2de1d2.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("assets/f22143db-deea-47d3-b9d7-89b020038ebc.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* arabic */
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("assets/a0d40f3e-0fe1-4a4b-af42-1c1ce5009026.woff2") format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC7, U+10EC9-10EEE, U+10EF0-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;
+}
+/* math */
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("assets/46ead664-16af-4bd9-868e-28b39983d10d.woff2") format('woff2');
+  unicode-range: U+0302-0303, U+0305, U+0307-0308, U+0310, U+0312, U+0315, U+031A, U+0326-0327, U+032C, U+032F-0330, U+0332-0333, U+0338, U+033A, U+0346, U+034D, U+0391-03A1, U+03A3-03A9, U+03B1-03C9, U+03D1, U+03D5-03D6, U+03F0-03F1, U+03F4-03F5, U+2016-2017, U+2034-2038, U+203C, U+2040, U+2043, U+2047, U+2050, U+2057, U+205F, U+2070-2071, U+2074-209F, U+20D0-20DC, U+20E1, U+20E5-20EF, U+2100-2112, U+2114-2115, U+2117-2121, U+2123-214F, U+2190, U+2192, U+2194-21AE, U+21B0-21E5, U+21F1-21F2, U+21F4-2211, U+2213-2214, U+2216-22FF, U+2308-230B, U+2310, U+2319, U+231C-2321, U+2336-237A, U+237C, U+2395, U+239B-23B7, U+23D0, U+23DC-23E1, U+2474-2475, U+25AF, U+25B3, U+25B7, U+25BD, U+25C1, U+25CA, U+25CC, U+25FB, U+266D-266F, U+27C0-27FF, U+2900-2AFF, U+2B0E-2B11, U+2B30-2B4C, U+2BFE, U+3030, U+FF5B, U+FF5D, U+1D400-1D7FF, U+1EE00-1EEFF;
+}
+/* symbols */
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("assets/0286a284-0514-40b2-af19-e37afe667010.woff2") format('woff2');
+  unicode-range: U+0001-000C, U+000E-001F, U+007F-009F, U+20DD-20E0, U+20E2-20E4, U+2150-218F, U+2190, U+2192, U+2194-2199, U+21AF, U+21E6-21F0, U+21F3, U+2218-2219, U+2299, U+22C4-22C6, U+2300-243F, U+2440-244A, U+2460-24FF, U+25A0-27BF, U+2800-28FF, U+2921-2922, U+2981, U+29BF, U+29EB, U+2B00-2BFF, U+4DC0-4DFF, U+FFF9-FFFB, U+10140-1018E, U+10190-1019C, U+101A0, U+101D0-101FD, U+102E0-102FB, U+10E60-10E7E, U+1D2C0-1D2D3, U+1D2E0-1D37F, U+1F000-1F0FF, U+1F100-1F1AE, U+1F1E6-1F1FF, U+1F30D-1F30F, U+1F315, U+1F31C, U+1F31E, U+1F320-1F32C, U+1F336, U+1F378, U+1F37D, U+1F382, U+1F393-1F39F, U+1F3A7-1F3A8, U+1F3AC-1F3AF, U+1F3C2, U+1F3C4-1F3C6, U+1F3CA-1F3CE, U+1F3D4-1F3E0, U+1F3ED, U+1F3F1-1F3F3, U+1F3F5-1F3F7, U+1F408, U+1F415, U+1F41F, U+1F426, U+1F43F, U+1F441-1F442, U+1F444, U+1F446-1F449, U+1F44C-1F44E, U+1F453, U+1F46A, U+1F47D, U+1F4A3, U+1F4B0, U+1F4B3, U+1F4B9, U+1F4BB, U+1F4BF, U+1F4C8-1F4CB, U+1F4D6, U+1F4DA, U+1F4DF, U+1F4E3-1F4E6, U+1F4EA-1F4ED, U+1F4F7, U+1F4F9-1F4FB, U+1F4FD-1F4FE, U+1F503, U+1F507-1F50B, U+1F50D, U+1F512-1F513, U+1F53E-1F54A, U+1F54F-1F5FA, U+1F610, U+1F650-1F67F, U+1F687, U+1F68D, U+1F691, U+1F694, U+1F698, U+1F6AD, U+1F6B2, U+1F6B9-1F6BA, U+1F6BC, U+1F6C6-1F6CF, U+1F6D3-1F6D7, U+1F6E0-1F6EA, U+1F6F0-1F6F3, U+1F6F7-1F6FC, U+1F700-1F80B, U+1F810-1F847, U+1F850-1F859, U+1F860-1F887, U+1F890-1F8AD, U+1F8B0-1F8BB, U+1F8C0-1F8C1, U+1F8D0-1F8D8, U+1F900-1F90B, U+1F93B, U+1F946, U+1F984, U+1F996, U+1F9E9, U+1FA00-1FA6F, U+1FA70-1FA7C, U+1FA80-1FAC6, U+1FAC8, U+1FACC-1FADD, U+1FADF-1FAEB, U+1FAEF-1FAFA, U+1FB00-1FBFF;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("assets/6d25a7e5-c168-49de-b315-bc9cec2de1d2.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("assets/f22143db-deea-47d3-b9d7-89b020038ebc.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* arabic */
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("assets/a0d40f3e-0fe1-4a4b-af42-1c1ce5009026.woff2") format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC7, U+10EC9-10EEE, U+10EF0-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;
+}
+/* math */
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("assets/46ead664-16af-4bd9-868e-28b39983d10d.woff2") format('woff2');
+  unicode-range: U+0302-0303, U+0305, U+0307-0308, U+0310, U+0312, U+0315, U+031A, U+0326-0327, U+032C, U+032F-0330, U+0332-0333, U+0338, U+033A, U+0346, U+034D, U+0391-03A1, U+03A3-03A9, U+03B1-03C9, U+03D1, U+03D5-03D6, U+03F0-03F1, U+03F4-03F5, U+2016-2017, U+2034-2038, U+203C, U+2040, U+2043, U+2047, U+2050, U+2057, U+205F, U+2070-2071, U+2074-209F, U+20D0-20DC, U+20E1, U+20E5-20EF, U+2100-2112, U+2114-2115, U+2117-2121, U+2123-214F, U+2190, U+2192, U+2194-21AE, U+21B0-21E5, U+21F1-21F2, U+21F4-2211, U+2213-2214, U+2216-22FF, U+2308-230B, U+2310, U+2319, U+231C-2321, U+2336-237A, U+237C, U+2395, U+239B-23B7, U+23D0, U+23DC-23E1, U+2474-2475, U+25AF, U+25B3, U+25B7, U+25BD, U+25C1, U+25CA, U+25CC, U+25FB, U+266D-266F, U+27C0-27FF, U+2900-2AFF, U+2B0E-2B11, U+2B30-2B4C, U+2BFE, U+3030, U+FF5B, U+FF5D, U+1D400-1D7FF, U+1EE00-1EEFF;
+}
+/* symbols */
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("assets/0286a284-0514-40b2-af19-e37afe667010.woff2") format('woff2');
+  unicode-range: U+0001-000C, U+000E-001F, U+007F-009F, U+20DD-20E0, U+20E2-20E4, U+2150-218F, U+2190, U+2192, U+2194-2199, U+21AF, U+21E6-21F0, U+21F3, U+2218-2219, U+2299, U+22C4-22C6, U+2300-243F, U+2440-244A, U+2460-24FF, U+25A0-27BF, U+2800-28FF, U+2921-2922, U+2981, U+29BF, U+29EB, U+2B00-2BFF, U+4DC0-4DFF, U+FFF9-FFFB, U+10140-1018E, U+10190-1019C, U+101A0, U+101D0-101FD, U+102E0-102FB, U+10E60-10E7E, U+1D2C0-1D2D3, U+1D2E0-1D37F, U+1F000-1F0FF, U+1F100-1F1AE, U+1F1E6-1F1FF, U+1F30D-1F30F, U+1F315, U+1F31C, U+1F31E, U+1F320-1F32C, U+1F336, U+1F378, U+1F37D, U+1F382, U+1F393-1F39F, U+1F3A7-1F3A8, U+1F3AC-1F3AF, U+1F3C2, U+1F3C4-1F3C6, U+1F3CA-1F3CE, U+1F3D4-1F3E0, U+1F3ED, U+1F3F1-1F3F3, U+1F3F5-1F3F7, U+1F408, U+1F415, U+1F41F, U+1F426, U+1F43F, U+1F441-1F442, U+1F444, U+1F446-1F449, U+1F44C-1F44E, U+1F453, U+1F46A, U+1F47D, U+1F4A3, U+1F4B0, U+1F4B3, U+1F4B9, U+1F4BB, U+1F4BF, U+1F4C8-1F4CB, U+1F4D6, U+1F4DA, U+1F4DF, U+1F4E3-1F4E6, U+1F4EA-1F4ED, U+1F4F7, U+1F4F9-1F4FB, U+1F4FD-1F4FE, U+1F503, U+1F507-1F50B, U+1F50D, U+1F512-1F513, U+1F53E-1F54A, U+1F54F-1F5FA, U+1F610, U+1F650-1F67F, U+1F687, U+1F68D, U+1F691, U+1F694, U+1F698, U+1F6AD, U+1F6B2, U+1F6B9-1F6BA, U+1F6BC, U+1F6C6-1F6CF, U+1F6D3-1F6D7, U+1F6E0-1F6EA, U+1F6F0-1F6F3, U+1F6F7-1F6FC, U+1F700-1F80B, U+1F810-1F847, U+1F850-1F859, U+1F860-1F887, U+1F890-1F8AD, U+1F8B0-1F8BB, U+1F8C0-1F8C1, U+1F8D0-1F8D8, U+1F900-1F90B, U+1F93B, U+1F946, U+1F984, U+1F996, U+1F9E9, U+1FA00-1FA6F, U+1FA70-1FA7C, U+1FA80-1FAC6, U+1FAC8, U+1FACC-1FADD, U+1FADF-1FAEB, U+1FAEF-1FAFA, U+1FB00-1FBFF;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("assets/6d25a7e5-c168-49de-b315-bc9cec2de1d2.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("assets/f22143db-deea-47d3-b9d7-89b020038ebc.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* arabic */
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("assets/a0d40f3e-0fe1-4a4b-af42-1c1ce5009026.woff2") format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC7, U+10EC9-10EEE, U+10EF0-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;
+}
+/* math */
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("assets/46ead664-16af-4bd9-868e-28b39983d10d.woff2") format('woff2');
+  unicode-range: U+0302-0303, U+0305, U+0307-0308, U+0310, U+0312, U+0315, U+031A, U+0326-0327, U+032C, U+032F-0330, U+0332-0333, U+0338, U+033A, U+0346, U+034D, U+0391-03A1, U+03A3-03A9, U+03B1-03C9, U+03D1, U+03D5-03D6, U+03F0-03F1, U+03F4-03F5, U+2016-2017, U+2034-2038, U+203C, U+2040, U+2043, U+2047, U+2050, U+2057, U+205F, U+2070-2071, U+2074-209F, U+20D0-20DC, U+20E1, U+20E5-20EF, U+2100-2112, U+2114-2115, U+2117-2121, U+2123-214F, U+2190, U+2192, U+2194-21AE, U+21B0-21E5, U+21F1-21F2, U+21F4-2211, U+2213-2214, U+2216-22FF, U+2308-230B, U+2310, U+2319, U+231C-2321, U+2336-237A, U+237C, U+2395, U+239B-23B7, U+23D0, U+23DC-23E1, U+2474-2475, U+25AF, U+25B3, U+25B7, U+25BD, U+25C1, U+25CA, U+25CC, U+25FB, U+266D-266F, U+27C0-27FF, U+2900-2AFF, U+2B0E-2B11, U+2B30-2B4C, U+2BFE, U+3030, U+FF5B, U+FF5D, U+1D400-1D7FF, U+1EE00-1EEFF;
+}
+/* symbols */
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("assets/0286a284-0514-40b2-af19-e37afe667010.woff2") format('woff2');
+  unicode-range: U+0001-000C, U+000E-001F, U+007F-009F, U+20DD-20E0, U+20E2-20E4, U+2150-218F, U+2190, U+2192, U+2194-2199, U+21AF, U+21E6-21F0, U+21F3, U+2218-2219, U+2299, U+22C4-22C6, U+2300-243F, U+2440-244A, U+2460-24FF, U+25A0-27BF, U+2800-28FF, U+2921-2922, U+2981, U+29BF, U+29EB, U+2B00-2BFF, U+4DC0-4DFF, U+FFF9-FFFB, U+10140-1018E, U+10190-1019C, U+101A0, U+101D0-101FD, U+102E0-102FB, U+10E60-10E7E, U+1D2C0-1D2D3, U+1D2E0-1D37F, U+1F000-1F0FF, U+1F100-1F1AE, U+1F1E6-1F1FF, U+1F30D-1F30F, U+1F315, U+1F31C, U+1F31E, U+1F320-1F32C, U+1F336, U+1F378, U+1F37D, U+1F382, U+1F393-1F39F, U+1F3A7-1F3A8, U+1F3AC-1F3AF, U+1F3C2, U+1F3C4-1F3C6, U+1F3CA-1F3CE, U+1F3D4-1F3E0, U+1F3ED, U+1F3F1-1F3F3, U+1F3F5-1F3F7, U+1F408, U+1F415, U+1F41F, U+1F426, U+1F43F, U+1F441-1F442, U+1F444, U+1F446-1F449, U+1F44C-1F44E, U+1F453, U+1F46A, U+1F47D, U+1F4A3, U+1F4B0, U+1F4B3, U+1F4B9, U+1F4BB, U+1F4BF, U+1F4C8-1F4CB, U+1F4D6, U+1F4DA, U+1F4DF, U+1F4E3-1F4E6, U+1F4EA-1F4ED, U+1F4F7, U+1F4F9-1F4FB, U+1F4FD-1F4FE, U+1F503, U+1F507-1F50B, U+1F50D, U+1F512-1F513, U+1F53E-1F54A, U+1F54F-1F5FA, U+1F610, U+1F650-1F67F, U+1F687, U+1F68D, U+1F691, U+1F694, U+1F698, U+1F6AD, U+1F6B2, U+1F6B9-1F6BA, U+1F6BC, U+1F6C6-1F6CF, U+1F6D3-1F6D7, U+1F6E0-1F6EA, U+1F6F0-1F6F3, U+1F6F7-1F6FC, U+1F700-1F80B, U+1F810-1F847, U+1F850-1F859, U+1F860-1F887, U+1F890-1F8AD, U+1F8B0-1F8BB, U+1F8C0-1F8C1, U+1F8D0-1F8D8, U+1F900-1F90B, U+1F93B, U+1F946, U+1F984, U+1F996, U+1F9E9, U+1FA00-1FA6F, U+1FA70-1FA7C, U+1FA80-1FAC6, U+1FAC8, U+1FACC-1FADD, U+1FADF-1FAEB, U+1FAEF-1FAFA, U+1FB00-1FBFF;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("assets/6d25a7e5-c168-49de-b315-bc9cec2de1d2.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("assets/f22143db-deea-47d3-b9d7-89b020038ebc.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/4610adfd-941d-451c-b205-065f5117f07a.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/dc94de2e-706d-4a62-82d9-0d8b04fc1ce4.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/841b8015-9ba0-4974-812c-5d7f077fe043.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/dad496a7-4351-4e6d-b3d7-c61d53d927d8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/4610adfd-941d-451c-b205-065f5117f07a.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/dc94de2e-706d-4a62-82d9-0d8b04fc1ce4.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/841b8015-9ba0-4974-812c-5d7f077fe043.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/dad496a7-4351-4e6d-b3d7-c61d53d927d8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/4610adfd-941d-451c-b205-065f5117f07a.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/dc94de2e-706d-4a62-82d9-0d8b04fc1ce4.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/841b8015-9ba0-4974-812c-5d7f077fe043.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/dad496a7-4351-4e6d-b3d7-c61d53d927d8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style><style>body{margin:0;background:#EDEBE2;font-family:Montserrat,sans-serif;color:#17201B}a{color:#176B4D}a:hover{color:#104A38}.dv-turn{padding:48px 48px 40px;border-bottom:1px solid rgba(23,32,27,.1);scroll-margin-top:16px}.dv-thd{display:flex;align-items:baseline;gap:12px;margin:0 0 24px}.dv-tid{font:600 11px ui-monospace,Menlo,monospace;padding:4px 8px;background:#17201B;color:#FFFEFA;border-radius:5px;text-decoration:none}.dv-tname{font:700 22px/1.2 'Plus Jakarta Sans',sans-serif;color:#17201B}.dv-tsub{font:500 13px Montserrat;color:#536158}.dv-opts{display:flex;flex-wrap:wrap;gap:36px;align-items:flex-start}.dv-opt{flex:none;display:flex;flex-direction:column;gap:10px;scroll-margin-top:16px}.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(23,32,27,.08);color:#17201B;border-radius:5px;text-decoration:none}.dv-olabel{display:flex;align-items:baseline;gap:8px;font:500 12px/1.3 Montserrat;color:#536158}.dv-opt:target .dv-oid{background:#176B4D;color:#fff}.dv-next{margin:28px 0 0;font:13px/1.5 Montserrat;color:#536158}@keyframes rrSpin{to{transform:rotate(360deg)}}@keyframes rrBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}@keyframes rrRing{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.38);opacity:0}}@keyframes rrWave{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}@keyframes rrBlink{50%{opacity:.25}}@media (prefers-reduced-motion:reduce){.rr-anim{animation:none!important}}</style></helmet>
+
+<section class="dv-turn" id="t0" style="background:linear-gradient(135deg,#FCFAF3 0%,#F1F6ED 52%,#E4F0E8 100%)">
+  <div style="display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:56px;max-width:1500px;align-items:center">
+    <div style="display:flex;flex-direction:column;gap:22px">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,#278761 0%,#176B4D 60%,#104A38 100%);position:relative;overflow:hidden;box-shadow:0 10px 24px -10px rgba(16,74,56,.6)"><div style="position:absolute;left:12px;right:12px;bottom:14px;height:16px;border-radius:16px 16px 0 0;background:#F7F4E9"></div><div style="position:absolute;left:9px;right:9px;bottom:10px;height:3px;border-radius:2px;background:#D6EBDD"></div></div>
+        <div><div style="font:700 26px 'Plus Jakarta Sans',sans-serif;letter-spacing:-.01em">Roshan Rozgar</div><div dir="rtl" style="font:600 18px 'Noto Sans Arabic',sans-serif;color:#176B4D;text-align:left">روشن روزگار</div></div>
+      </div>
+      <div style="font:700 52px/1.08 'Plus Jakarta Sans',sans-serif;letter-spacing:-.02em;text-wrap:balance">Speak naturally. Find work locally. Build trust through real experience.</div>
+      <div style="font:500 17px/1.6 Montserrat;color:#536158;max-width:620px;text-wrap:pretty">A voice-first, hyperlocal marketplace connecting households in Islamabad &amp; Rawalpindi with nearby electricians, plumbers, AC technicians and other tradespeople. This board is the visual standard: foundations, three flagship screens, the voice state system, then the worker and customer journeys.</div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px">
+        <a href="#t1" style="height:44px;padding:0 18px;border-radius:999px;background:#17201B;color:#FFFEFA;font:600 14px Montserrat;display:flex;align-items:center;text-decoration:none">Foundations</a>
+        <a href="#t2" style="height:44px;padding:0 18px;border-radius:999px;background:#FFFEFA;border:1px solid #DCE6DB;color:#17201B;font:600 14px Montserrat;display:flex;align-items:center;text-decoration:none">Flagship screens</a>
+        <a href="#t3" style="height:44px;padding:0 18px;border-radius:999px;background:#FFFEFA;border:1px solid #DCE6DB;color:#17201B;font:600 14px Montserrat;display:flex;align-items:center;text-decoration:none">Voice states</a>
+        <a href="#t4" style="height:44px;padding:0 18px;border-radius:999px;background:#FFFEFA;border:1px solid #DCE6DB;color:#17201B;font:600 14px Montserrat;display:flex;align-items:center;text-decoration:none">Auth &amp; onboarding</a>
+        <a href="#t5" style="height:44px;padding:0 18px;border-radius:999px;background:#FFFEFA;border:1px solid #DCE6DB;color:#17201B;font:600 14px Montserrat;display:flex;align-items:center;text-decoration:none">Worker</a>
+        <a href="#t6" style="height:44px;padding:0 18px;border-radius:999px;background:#FFFEFA;border:1px solid #DCE6DB;color:#17201B;font:600 14px Montserrat;display:flex;align-items:center;text-decoration:none">Customer booking</a>
+        <a href="#t7" style="height:44px;padding:0 18px;border-radius:999px;background:#FFFEFA;border:1px solid #DCE6DB;color:#17201B;font:600 14px Montserrat;display:flex;align-items:center;text-decoration:none">Trust &amp; reviews</a>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div style="background:#FFFEFA;border:1px solid #DCE6DB;border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:6px"><div style="font:700 15px 'Plus Jakarta Sans',sans-serif">Voice first, not voice only</div><div style="font:500 14px/1.5 Montserrat;color:#536158">Tap-to-record everywhere. Every voice step has Retry, Type, and Select Manually.</div></div>
+      <div style="background:#FFFEFA;border:1px solid #DCE6DB;border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:6px"><div style="font:700 15px 'Plus Jakarta Sans',sans-serif">The orb is earned</div><div style="font:500 14px/1.5 Montserrat;color:#536158">Full orb only on Welcome &amp; Voice. Elsewhere a small static orb marks “voice lives here”.</div></div>
+      <div style="background:#FFFEFA;border:1px solid #DCE6DB;border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:6px"><div style="font:700 15px 'Plus Jakarta Sans',sans-serif">Honest trust labels</div><div style="font:500 14px/1.5 Montserrat;color:#536158">“Self-reported”, “Phone confirmed”, “From completed bookings”. No vague badges.</div></div>
+      <div style="background:#FFFEFA;border:1px solid #DCE6DB;border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:6px"><div style="font:700 15px 'Plus Jakarta Sans',sans-serif">One task per screen</div><div style="font:500 14px/1.5 Montserrat;color:#536158">Worker onboarding asks one question at a time with a replay speaker and visible progress.</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="dv-turn" id="t1">
+  <div class="dv-thd"><a class="dv-tid" href="#t1">01</a><span class="dv-tname">Foundations</span><span class="dv-tsub">Color · type · radius · elevation · core components</span></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;max-width:1500px">
+    <sc-for list="{{ palette }}" as="c" hint-placeholder-count="15">
+      <div style="background:#FFFEFA;border:1px solid #DCE6DB;border-radius:20px;overflow:hidden">
+        <div style="height:84px;background:{{ c.hex }}"></div>
+        <div style="padding:12px 14px;display:flex;flex-direction:column;gap:2px"><span style="font:600 14px 'Plus Jakarta Sans',sans-serif">{{ c.name }}</span><span style="font:500 12px ui-monospace,Menlo,monospace;color:#536158">{{ c.hex }}</span><span style="font:500 12px Montserrat;color:#536158">{{ c.use }}</span></div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) minmax(0,1fr);gap:20px;max-width:1500px;margin-top:24px">
+    <div style="background:#FFFEFA;border:1px solid #DCE6DB;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:14px">
+      <div style="font:600 12px Montserrat;color:#536158;letter-spacing:.06em;text-transform:uppercase">Typography</div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px"><span style="font:700 34px/1.15 'Plus Jakarta Sans',sans-serif;letter-spacing:-.02em">Kaam Ka Raasta</span><span style="font:500 12px Montserrat;color:#536158">Hero · Jakarta 700 · 34</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px"><span style="font:700 28px 'Plus Jakarta Sans',sans-serif">Nearby Workers</span><span style="font:500 12px Montserrat;color:#536158">Page · 700 · 28</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px"><span style="font:600 22px 'Plus Jakarta Sans',sans-serif">Your Active Booking</span><span style="font:500 12px Montserrat;color:#536158">Section · 600 · 22</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px"><span style="font:600 17px 'Plus Jakarta Sans',sans-serif">Ahmed · Electrician</span><span style="font:500 12px Montserrat;color:#536158">Card · 600 · 17</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px"><span style="font:400 16px/1.5 Montserrat">Kitchen pipe leakage, needs a visit today.</span><span style="font:500 12px Montserrat;color:#536158">Body · Montserrat 400 · 16</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px"><span style="font:600 16px Montserrat">Send Job Request</span><span style="font:500 12px Montserrat;color:#536158">Button · 600 · 16</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-top:1px solid #DCE6DB;padding-top:14px"><span dir="rtl" style="font:600 22px/1.8 'Noto Sans Arabic',sans-serif">اپنا ہنر بتائیں، کام پائیں</span><span style="font:500 12px Montserrat;color:#536158">Urdu · Noto Sans Arabic · RTL</span></div>
+    </div>
+    <div style="background:#FFFEFA;border:1px solid #DCE6DB;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:12px">
+      <div style="font:600 12px Montserrat;color:#536158;letter-spacing:.06em;text-transform:uppercase">Buttons</div>
+      <div style="height:58px;border-radius:999px;background:linear-gradient(135deg,#278761 0%,#176B4D 60%,#104A38 100%);color:#FFFEFA;font:600 16px Montserrat;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 24px -12px rgba(16,74,56,.7),inset 0 1px 0 rgba(255,255,255,.18)">Primary · Get Started</div>
+      <div style="height:54px;border-radius:18px;background:#FFFEFA;border:1.5px solid #DCE6DB;font:600 15px Montserrat;display:flex;align-items:center;justify-content:center">Secondary · Edit Details</div>
+      <div style="height:44px;font:600 15px Montserrat;color:#176B4D;display:flex;align-items:center;justify-content:center">Tertiary · Choose Language</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="height:54px;border-radius:18px;background:#FBEDEB;color:#B42318;font:600 15px Montserrat;display:flex;align-items:center;justify-content:center">Cancel Request</div>
+        <div style="height:54px;border-radius:18px;background:#E9EDE8;color:#7A857E;font:600 15px Montserrat;display:flex;align-items:center;justify-content:center">Disabled</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;justify-content:center;padding-top:6px">
+        <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#278761 0%,#176B4D 60%,#104A38 100%);color:#FFFEFA;display:flex;align-items:center;justify-content:center"><span style="width:28px;height:28px;display:flex">{{ ic.mic }}</span></div>
+        <div style="width:48px;height:48px;border-radius:50%;background:#E8F3E9;color:#176B4D;display:flex;align-items:center;justify-content:center"><span style="width:20px;height:20px;display:flex">{{ ic.play }}</span></div>
+        <div style="width:48px;height:48px;border-radius:50%;background:#FFFEFA;border:1px solid #DCE6DB;display:flex;align-items:center;justify-content:center"><span style="width:20px;height:20px;display:flex">{{ ic.vol }}</span></div>
+        <div style="width:48px;height:48px;border-radius:50%;background:#FFFEFA;border:2px solid #176B4D;box-shadow:0 0 0 4px #D6EBDD;display:flex;align-items:center;justify-content:center"><span style="width:20px;height:20px;display:flex">{{ ic.kbd }}</span></div>
+      </div>
+      <div style="font:500 12px Montserrat;color:#536158;text-align:center">Mic · Play · Replay · Focus ring</div>
+    </div>
+    <div style="background:#FFFEFA;border:1px solid #DCE6DB;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:12px">
+      <div style="font:600 12px Montserrat;color:#536158;letter-spacing:.06em;text-transform:uppercase">Status badges · never color alone</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <span style="height:30px;padding:0 12px;border-radius:999px;background:#E8F3E9;color:#104A38;font:600 13px Montserrat;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#176B4D"></span>Available</span>
+        <span style="height:30px;padding:0 12px;border-radius:999px;background:#F1EFE6;color:#536158;font:600 13px Montserrat;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;border:2px solid #536158;box-sizing:border-box"></span>Offline</span>
+        <span style="height:30px;padding:0 12px;border-radius:999px;background:#FBF3DE;color:#7A5200;font:600 13px Montserrat;display:flex;align-items:center;gap:6px"><span style="width:14px;height:14px;display:flex">{{ ic.clock }}</span>Pending</span>
+        <span style="height:30px;padding:0 12px;border-radius:999px;background:#FBEDEB;color:#B42318;font:600 13px Montserrat;display:flex;align-items:center;gap:6px"><span style="width:14px;height:14px;display:flex">{{ ic.x }}</span>Declined</span>
+        <span style="height:30px;padding:0 12px;border-radius:999px;background:#17201B;color:#FFFEFA;font:600 13px Montserrat;display:flex;align-items:center;gap:6px"><span style="width:14px;height:14px;display:flex">{{ ic.check }}</span>Confirmed</span>
+        <span style="height:30px;padding:0 12px;border-radius:999px;background:#FFFEFA;border:1px solid #DCE6DB;color:#27312B;font:600 13px Montserrat;display:flex;align-items:center;gap:6px">Self-reported</span>
+      </div>
+      <div style="font:600 12px Montserrat;color:#536158;letter-spacing:.06em;text-transform:uppercase;margin-top:8px">Booking progression</div>
+      <div style="display:flex;flex-direction:column;gap:0">
+        <sc-for list="{{ bookingSteps }}" as="s" hint-placeholder-count="7">
+          <div style="display:flex;gap:12px;align-items:center;height:32px"><span style="width:20px;height:20px;border-radius:50%;background:{{ s.bg }};color:#FFFEFA;border:2px solid {{ s.bd }};box-sizing:border-box;display:flex;align-items:center;justify-content:center;font:700 10px Montserrat">{{ s.mark }}</span><span style="font:600 14px Montserrat;color:{{ s.fg }}">{{ s.label }}</span></div>
+        </sc-for>
+      </div>
+      <div style="font:500 12px/1.5 Montserrat;color:#536158">Off-path: Declined · Expired · Cancelled · Disputed</div>
+    </div>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:20px;max-width:1500px;margin-top:20px">
+    <div style="flex:1;min-width:280px;background:#FFFEFA;border:1px solid #DCE6DB;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:12px">
+      <div style="font:600 12px Montserrat;color:#536158;letter-spacing:.06em;text-transform:uppercase">Voice orb · idle / listening / processing / static</div>
+      <div style="display:flex;gap:36px;align-items:center;padding:24px 10px 18px">{{ orbIdle }}{{ orbListen }}{{ orbProc }}{{ orbStatic }}</div>
+      <div style="font:500 13px/1.5 Montserrat;color:#536158">Liquid jade: cream highlight → mint → sage → forest rim. Listening = 2.4s breathe + rings. Reduced-motion = static gradient, status text carries the meaning.</div>
+    </div>
+    <div style="flex:1;min-width:280px;background:#FFFEFA;border:1px solid #DCE6DB;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:12px">
+      <div style="font:600 12px Montserrat;color:#536158;letter-spacing:.06em;text-transform:uppercase">Spacing · radius · elevation</div>
+      <div style="display:flex;gap:10px;align-items:flex-end"><span style="width:4px;height:4px;background:#176B4D"></span><span style="width:8px;height:8px;background:#176B4D"></span><span style="width:16px;height:16px;background:#176B4D"></span><span style="width:20px;height:20px;background:#278761"></span><span style="width:24px;height:24px;background:#278761"></span><span style="width:32px;height:32px;background:#8FBA9D"></span><span style="font:500 12px Montserrat;color:#536158">4 · 8 · 16 · 20 margin · 24 · 32 section</span></div>
+      <div style="display:flex;gap:12px;align-items:center;margin-top:6px"><span style="width:56px;height:56px;border-radius:16px;background:#E8F3E9"></span><span style="width:56px;height:56px;border-radius:24px;background:#E8F3E9"></span><span style="width:56px;height:56px;border-radius:30px;background:#E8F3E9;border:1px solid #DCE6DB"></span><span style="font:500 12px Montserrat;color:#536158">16 control · 24 card · 30 hero</span></div>
+      <div style="display:flex;gap:16px;margin-top:6px"><span style="width:90px;height:56px;border-radius:20px;background:#FFFEFA;border:1px solid #DCE6DB"></span><span style="width:90px;height:56px;border-radius:20px;background:#FFFEFA;border:1px solid #DCE6DB;box-shadow:0 14px 32px -16px rgba(23,107,77,.3)"></span><span style="width:90px;height:56px;border-radius:20px;background:#FFFEFA;box-shadow:0 24px 48px -20px rgba(16,74,56,.4)"></span></div>
+      <div style="font:500 12px Montserrat;color:#536158">e0 flat · e1 card · e2 sheet/hero — all green-tinted, never grey</div>
+    </div>
+  </div>
+</section>
+
+<section class="dv-turn" id="t2">
+  <div class="dv-thd"><a class="dv-tid" href="#t2">02</a><span class="dv-tname">Flagship screens</span><span class="dv-tsub">The quality benchmark — the voice screen is live: tap the mic</span></div>
+  <div class="dv-opts">
+    <div class="dv-opt" id="s02"><div class="dv-olabel"><a class="dv-oid" href="#s02">S02</a>Welcome / Get Started</div>
+      <div data-screen-label="S02 Welcome" style="width:390px;height:844px;border-radius:44px;overflow:hidden;position:relative;background:linear-gradient(170deg,#FCFAF3 0%,#F3F6EC 55%,#E4F0E8 100%);display:flex;flex-direction:column;box-shadow:0 30px 60px -30px rgba(16,74,56,.35),0 0 0 1px rgba(23,32,27,.06)">
+        <div style="height:50px;flex:none;display:flex;justify-content:space-between;align-items:center;padding:0 30px;font:600 15px 'Plus Jakarta Sans',sans-serif;position:relative;z-index:2"><span>9:41</span><span style="display:flex;gap:6px;align-items:center"><span style="width:17px;height:10px;border-radius:2px;background:#17201B"></span><span style="width:24px;height:11px;border:1.5px solid #17201B;border-radius:4px;box-sizing:border-box"></span></span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 24px;position:relative;z-index:2"><div style="display:flex;align-items:center;gap:10px"><div style="width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,#278761 0%,#176B4D 60%,#104A38 100%);position:relative;overflow:hidden"><div style="position:absolute;left:7px;right:7px;bottom:8px;height:10px;border-radius:10px 10px 0 0;background:#F7F4E9"></div></div><span style="font:700 16px 'Plus Jakarta Sans',sans-serif">Roshan Rozgar</span></div><span dir="rtl" style="font:600 15px 'Noto Sans Arabic',sans-serif;color:#176B4D">روشن روزگار</span></div>
+        <div style="position:absolute;top:96px;left:-40px;right:0;display:flex;justify-content:center">{{ orbHero }}</div>
+        <div style="flex:1"></div>
+        <div style="padding:0 24px 44px;display:flex;flex-direction:column;gap:14px;position:relative;z-index:2">
+          <div style="display:flex;gap:6px"><span style="width:22px;height:6px;border-radius:3px;background:#176B4D"></span><span style="width:6px;height:6px;border-radius:3px;background:#C9D8CB"></span><span style="width:6px;height:6px;border-radius:3px;background:#C9D8CB"></span></div>
+          <div style="font:700 36px/1.1 'Plus Jakarta Sans',sans-serif;letter-spacing:-.02em">Kaam Ka Raasta, <span style="color:#176B4D">Ab Aasaan.</span></div>
+          <div style="font:500 16px/1.5 Montserrat;color:#536158;text-wrap:pretty">Connect with skilled workers nearby, using your voice.</div>
+          <div style="height:60px;border-radius:999px;background:linear-gradient(135deg,#278761 0%,#176B4D 60%,#104A38 100%);color:#FFFEFA;font:600 16px Montserrat;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 14px 28px -12px rgba(16,74,56,.7),inset 0 1px 0 rgba(255,255,255,.2);margin-top:8px">Get Started<span style="width:20px;height:20px;display:flex">{{ ic.arrowR }}</span></div>
+          <div style="height:48px;display:flex;align-items:center;justify-content:center;gap:8px;font:600 15px Montserrat;color:#176B4D"><span style="width:18px;height:18px;display:flex">{{ ic.lang }}</span>Choose Language · <span style="font-family:'Noto Sans Arabic'">زبان</span></div>
+        </div>
+        <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:#17201B"></div>
+      </div>
+    </div>
+
+    <div class="dv-opt" id="s24"><div class="dv-olabel"><a class="dv-oid" href="#s24">S24</a>Customer Home</div>
+      <div data-screen-label="S24 Customer Home" style="width:390px;height:844px;border-radius:44px;overflow:hidden;position:relative;background:linear-gradient(170deg,#FCFAF3 0%,#F5F4EA 60%,#EDF3EA 100%);display:flex;flex-direction:column;box-shadow:0 30px 60px -30px rgba(16,74,56,.35),0 0 0 1px rgba(23,32,27,.06)">
+        <div style="height:50px;flex:none;display:flex;justify-content:space-between;align-items:center;padding:0 30px;font:600 15px 'Plus Jakarta Sans',sans-serif"><span>9:41</span><span style="display:flex;gap:6px;align-items:center"><span style="width:17px;height:10px;border-radius:2px;background:#17201B"></span><span style="width:24px;height:11px;border:1.5px solid #17201B;border-radius:4px;box-sizing:border-box"></span></span></div>
+        <div style="flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:20px;padding:6px 20px 0">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:48px;height:48px;border-radius:50%;background:#E8F3E9;color:#104A38;font:700 16px 'Plus Jakarta Sans',sans-serif;display:flex;align-items:center;justify-content:center;border:1px solid #DCE6DB">SA</div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:3px"><span style="font:500 13px Montserrat;color:#536158">Assalam-o-Alaikum, Sana</span><span style="font:700 16px 'Plus Jakarta Sans',sans-serif;display:flex;align-items:center;gap:4px"><span style="width:16px;height:16px;display:flex;color:#176B4D">{{ ic.pin }}</span>G-10/4, Islamabad<span style="width:16px;height:16px;display:flex">{{ ic.chevD }}</span></span></div>
+            <div aria-label="Notifications" style="width:48px;height:48px;border-radius:50%;background:#FFFEFA;border:1px solid #DCE6DB;display:flex;align-items:center;justify-content:center;position:relative"><span style="width:20px;height:20px;display:flex">{{ ic.bell }}</span><span style="position:absolute;top:11px;right:12px;width:9px;height:9px;border-radius:50%;background:#176B4D;border:2px solid #FFFEFA"></span></div>
+          </div>
+          <div style="position:relative;border-radius:30px;padding:22px 20px 20px;background:linear-gradient(140deg,#FFFEFA 0%,#EEF5EC 55%,#D6EBDD 100%);border:1px solid #DCE6DB;overflow:hidden;box-shadow:0 20px 40px -24px rgba(16,74,56,.4)">
+            <div style="position:absolute;right:-34px;top:-30px">{{ orbSmall }}</div>
+            <div style="position:relative;display:flex;flex-direction:column;gap:8px;max-width:220px">
+              <div style="font:700 26px/1.15 'Plus Jakarta Sans',sans-serif;letter-spacing:-.015em">Ghar Ka Kaam? Hum Hain Na.</div>
+              <div style="font:500 14px/1.45 Montserrat;color:#536158">Find trusted skilled workers near you.</div>
+            </div>
+            <div style="position:relative;margin-top:18px;height:64px;border-radius:999px;background:linear-gradient(135deg,#278761 0%,#176B4D 60%,#104A38 100%);color:#FFFEFA;display:flex;align-items:center;gap:12px;padding:0 8px 0 8px;box-shadow:0 14px 28px -12px rgba(16,74,56,.7)">
+              <span style="width:48px;height:48px;border-radius:50%;background:rgba(255,254,250,.16);display:flex;align-items:center;justify-content:center"><span style="width:24px;height:24px;display:flex">{{ ic.mic }}</span></span>
+              <span style="flex:1;font:600 16px Montserrat">Tell Us What You Need</span>
+              <span style="display:flex;gap:3px;align-items:center;padding-right:14px"><span style="width:3px;height:10px;border-radius:2px;background:#D6EBDD"></span><span style="width:3px;height:18px;border-radius:2px;background:#D6EBDD"></span><span style="width:3px;height:12px;border-radius:2px;background:#D6EBDD"></span><span style="width:3px;height:20px;border-radius:2px;background:#D6EBDD"></span></span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:700 19px 'Plus Jakarta Sans',sans-serif">Or Choose a Service</span><span style="font:600 14px Montserrat;color:#176B4D">See all</span></div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+              <sc-for list="{{ cats6 }}" as="c" hint-placeholder-count="6">
+                <div style="height:92px;border-radius:22px;background:#FFFEFA;border:1px solid #DCE6DB;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 20px -16px rgba(23,107,77,.4)">
+                  <span style="width:42px;height:42px;border-radius:14px;background:#E8F3E9;color:#176B4D;display:flex;align-items:center;justify-content:center"><span style="width:22px;height:22px;display:flex">{{ c.ic }}</span></span>
+                  <span style="font:600 13px Montserrat;text-align:center">{{ c.short }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="background:#17201B;color:#FFFEFA;border-radius:24px;padding:14px 16px;display:flex;align-items:center;gap:12px">
+            <span style="width:44px;height:44px;border-radius:14px;background:#27312B;color:#8FBA9D;display:flex;align-items:center;justify-content:center"><span style="width:22px;height:22px;display:flex">{{ ic.drop }}</span></span>
+            <div style="flex:1;display:flex;flex-direction:column;gap:3px"><span style="font:600 12px Montserrat;color:#B9CFC0">Your Active Booking</span><span style="font:600 15px 'Plus Jakarta Sans',sans-serif">Bilal · Plumber · Rs. 1,500</span></div>
+            <span style="height:28px;padding:0 10px;border-radius:999px;background:#D6EBDD;color:#104A38;font:600 12px Montserrat;display:flex;align-items:center">In Progress</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:700 19px 'Plus Jakarta Sans',sans-serif">Nearby Available</span><span style="font:600 11px Montserrat;color:#536158;padding:3px 8px;border:1px dashed #B9C8BC;border-radius:6px">DEMO DATA</span></div>
+          <div style="display:flex;gap:10px">
+            <div style="flex:1;background:#FFFEFA;border:1px solid #DCE6DB;border-radius:22px;padding:14px;display:flex;gap:10px;align-items:center"><span style="width:40px;height:40px;border-radius:50%;background:#D6EBDD;color:#104A38;font:700 14px 'Plus Jakarta Sans';display:flex;align-items:center;justify-content:center">AH</span><div style="display:flex;flex-direction:column;gap:2px"><span style="font:600 14px Montserrat">Ahmed</span><span style="font:500 12px Montserrat;color:#536158">Electrician · 1.8 km</span></div></div>
+            <div style="flex:1;background:#FFFEFA;border:1px solid #DCE6DB;border-radius:22px;padding:14px;display:flex;gap:10px;align-items:center"><span style="width:40px;height:40px;border-radius:50%;background:#F1EFE6;color:#27312B;font:700 14px 'Plus Jakarta Sans';display:flex;align-items:center;justify-content:center">UK</span><div style="display:flex;flex-direction:column;gap:2px"><span style="font:600 14px Montserrat">Usman</span><span style="font:500 12px Montserrat;color:#536158">Carpenter · 1.2 km</span></div></div>
+          </div>
+        </div>
+        <div style="flex:none;height:84px;background:rgba(255,254,250,.96);border-top:1px solid #DCE6DB;display:grid;grid-template-columns:repeat(5,1fr);padding:8px 8px 22px;box-sizing:border-box">
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#176B4D"><span style="width:44px;height:28px;border-radius:14px;background:#E8F3E9;display:flex;align-items:center;justify-content:center"><span style="width:22px;height:22px;display:flex">{{ ic.home }}</span></span><span style="font:600 11px Montserrat">Home</span></div>
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#536158"><span style="width:22px;height:28px;display:flex;align-items:center">{{ ic.search }}</span><span style="font:500 11px Montserrat">Find</span></div>
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#536158"><span style="width:22px;height:28px;display:flex;align-items:center">{{ ic.cal }}</span><span style="font:500 11px Montserrat">Bookings</span></div>
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#536158"><span style="width:22px;height:28px;display:flex;align-items:center">{{ ic.heart }}</span><span style="font:500 11px Montserrat">Saved</span></div>
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#536158"><span style="width:22px;height:28px;display:flex;align-items:center">{{ ic.user }}</span><span style="font:500 11px Montserrat">Profile</span></div>
+        </div>
+        <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:#17201B"></div>
+      </div>
+    </div>
+
+    <div class="dv-opt" id="s26"><div class="dv-olabel"><a class="dv-oid" href="#s26">S26</a>Voice Assistant · interactive (tap mic)</div>
+      <dc-import name="Voice Assistant" state="ready" motion="{{ motion }}" hint-size="390px,844px"></dc-import>
+    </div>
+  </div>
+</section>
+
+<section class="dv-turn" id="t3">
+  <div class="dv-thd"><a class="dv-tid" href="#t3">03</a><span class="dv-tname">Voice interaction system</span><span class="dv-tsub">Tap-to-record only. Same orb, controls, and colors in onboarding, job creation, messaging and reviews.</span></div>
+  <div class="dv-opts">
+    <div class="dv-opt" id="s26b"><div class="dv-olabel"><a class="dv-oid" href="#s26b">S26</a>Listening</div><dc-import name="Voice Assistant" state="listening" motion="{{ motion }}" hint-size="390px,844px"></dc-import></div>
+    <div class="dv-opt" id="s27"><div class="dv-olabel"><a class="dv-oid" href="#s27">S27</a>Processing</div><dc-import name="Voice Assistant" state="processing" motion="{{ motion }}" hint-size="390px,844px"></dc-import></div>
+    <div class="dv-opt" id="s28"><div class="dv-olabel"><a class="dv-oid" href="#s28">S28</a>Confirmation (AI summary)</div><dc-import name="Voice Assistant" state="confirm" motion="{{ motion }}" hint-size="390px,844px"></dc-import></div>
+    <div class="dv-opt" id="s29"><div class="dv-olabel"><a class="dv-oid" href="#s29">S29</a>Couldn’t understand</div><dc-import name="Voice Assistant" state="error" motion="{{ motion }}" hint-size="390px,844px"></dc-import></div>
+    <div class="dv-opt" id="s29b"><div class="dv-olabel"><a class="dv-oid" href="#s29b">S29b</a>Mic permission denied</div>
+      <div data-screen-label="S29b Mic denied" style="width:390px;height:844px;border-radius:44px;overflow:hidden;position:relative;background:linear-gradient(170deg,#FCFAF3 0%,#F3F6EC 55%,#E4F0E8 100%);display:flex;flex-direction:column;box-shadow:0 30px 60px -30px rgba(16,74,56,.35),0 0 0 1px rgba(23,32,27,.06)">
+        <div style="height:50px;flex:none;display:flex;justify-content:space-between;align-items:center;padding:0 30px;font:600 15px 'Plus Jakarta Sans',sans-serif"><span>9:41</span><span style="display:flex;gap:6px;align-items:center"><span style="width:17px;height:10px;border-radius:2px;background:#17201B"></span><span style="width:24px;height:11px;border:1.5px solid #17201B;border-radius:4px;box-sizing:border-box"></span></span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 20px"><div style="width:48px;height:48px;border-radius:50%;background:#FFFEFA;border:1px solid #DCE6DB;display:flex;align-items:center;justify-content:center"><span style="width:22px;height:22px;display:flex">{{ ic.chevL }}</span></div><div style="font:600 17px 'Plus Jakarta Sans',sans-serif">Voice Assistant</div><div style="width:48px"></div></div>
+        <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 22px;gap:18px">
+          <div style="align-self:center;width:120px;height:120px;border-radius:50%;background:#F1EFE6;border:1px solid #DCE6DB;display:flex;align-items:center;justify-content:center;color:#536158"><span style="width:48px;height:48px;display:flex">{{ ic.micOff }}</span></div>
+          <div style="text-align:center;display:flex;flex-direction:column;gap:8px"><div style="font:700 24px/1.25 'Plus Jakarta Sans',sans-serif">Microphone is off</div><div style="font:500 15px/1.5 Montserrat;color:#536158;text-wrap:pretty">Your browser blocked the mic. You can still continue — just choose the service yourself.</div></div>
+          <div style="background:#FFFEFA;border:1px solid #DCE6DB;border-radius:24px;padding:16px 18px;display:flex;flex-direction:column;gap:12px">
+            <div style="font:600 13px Montserrat;color:#536158">To turn it on</div>
+            <div style="display:flex;gap:12px;align-items:center"><span style="width:28px;height:28px;border-radius:50%;background:#E8F3E9;color:#104A38;font:700 13px 'Plus Jakarta Sans';display:flex;align-items:center;justify-content:center">1</span><span style="font:500 15px Montserrat">Tap the lock icon next to the address</span></div>
+            <div style="display:flex;gap:12px;align-items:center"><span style="width:28px;height:28px;border-radius:50%;background:#E8F3E9;color:#104A38;font:700 13px 'Plus Jakarta Sans';display:flex;align-items:center;justify-content:center">2</span><span style="font:500 15px Montserrat">Set Microphone to “Allow”</span></div>
+          </div>
+        </div>
+        <div style="padding:0 22px 40px;display:flex;flex-direction:column;gap:10px">
+          <div style="height:58px;border-radius:999px;background:linear-gradient(135deg,#278761 0%,#176B4D 60%,#104A38 100%);color:#FFFEFA;font:600 16px Montserrat;display:flex;align-items:center;justify-content:center;gap:10px"><span style="width:20px;height:20px;display:flex">{{ ic.grid }}</span>Choose Service Manually</div>
+          <div style="height:54px;border-radius:18px;background:#FFFEFA;border:1.5px solid #DCE6DB;font:600 15px Montserrat;display:flex;align-items:center;justify-content:center;gap:8px"><span style="width:18px;height:18px;display:flex">{{ ic.redo }}</span>I’ve Allowed It · Try Again</div>
+        </div>
+        <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:#17201B"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dv-turn" id="t4">
+  <div class="dv-thd"><a class="dv-tid" href="#t4">04</a><span class="dv-tname">Authentication &amp; onboarding</span><span class="dv-tsub">Phone + OTP only. No passwords.</span></div>
+  <div class="dv-opts">
+    <div class="dv-opt" id="s01"><div class="dv-olabel"><a class="dv-oid" href="#s01">S01</a>Splash</div>
+      <div data-screen-label="S01 Splash" style="width:390px;height:844px;border-radius:44px;overflow:hidden;position:relative;background:radial-gradient(circle at 50% 44%,#E4F0E8 0%,#F3F6EC 35%,#FCFAF3 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;box-shadow:0 30px 60px -30px rgba(16,74,56,.35),0 0 0 1px rgba(23,32,27,.06)">
+        <div style="width:96px;height:96px;border-radius:30px;background:linear-gradient(135deg,#278761 0%,#176B4D 60%,#104A38 100%);position:relative;overflow:hidden;box-shadow:0 24px 48px -16px rgba(16,74,56,.6),inset 0 1px 0 rgba(255,255,255,.2)"><div style="position:absolute;left:22px;right:22px;bottom:26px;height:26px;border-radius:26px 26px 0 0;background:#F7F4E9"></div><div style="position:absolute;left:16px;right:16px;bottom:18px;height:4px;border-radius:2px;background:#D6EBDD"></div></div>
+        <div style="text-align:center;display:flex;flex-direction:column;gap:4px"><div style="font:700 28px 'Plus Jakarta Sans',sans-serif;letter-spacing:-.01em">Roshan Rozgar</div><div dir="rtl" style="font:600 22px 'Noto Sans Arabic',sans-serif;color:#176B4D">روشن روزگار</div></div>
+        <div style="position:absolute;bottom:64px;font:500 13px Montserrat;color:#536158">Local work · Real trust</div>
+      </div>
+    </div>
+
+    <div class="dv-opt" id="s03"><div class="dv-olabel"><a class="dv-oid" href="#s03">S03</a>Language</div>
+      <div data-screen-label="S03 Language" style="width:390px;height:844px;border-radius:44px;overflow:hidden;position:relative;background:linear-gradient(170deg,#FCFAF3 0%,#F3F6EC 60%,#E9F2EA 100%);display:flex;flex-direction:column;box-shadow:0 30px 60px -30px rgba(16,74,56,.35),0 0 0 1px rgba(23,32,27,.06)">
+        <div style="height:50px;flex:none;display:flex;justify-content:space-between;align-items:center;padding:0 30px;font:600 15px 'Plus Jakarta Sans',sans-serif"><span>9:41</span><span style="display:flex;gap:6px;align-items:center"><span style="width:17px;height:10px;border-radius:2px;background:#17201B"></span><span style="width:24px;height:11px;border:1.5px solid #17201B;border-radius:4px;box-sizing:border-box"></span></span></div>
+        <div style="flex:1;padding:24px 20px 0;display:flex;flex-direction:column;gap:12px">
+          <div style="font:700 28px/1.2 'Plus Jakarta Sans',sans-serif">Choose your language</div>
+          <div dir="rtl" style="font:500 17px 'Noto Sans Arabic',sans-serif;color:#536158;text-align:left">اپنی زبان منتخب کریں</div>
+          <div style="display:flex;flex-direction:column;gap:12px;margin-top:14px">
+            <div dir="rtl" style="border-radius:24px;padding:18px;background:#FFFEFA;border:1.5px solid #DCE6DB;display:flex;align-items:center;gap:14px">
+              <span style="width:48px;height:48px;border-radius:16px;background:#F1EFE6;font:700 22px 'Noto Sans Arabic';display:flex;align-items:center;justify-content:center">ا</span>
+              <div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:700 19px 'Noto Sans Arabic',sans-serif">اردو</span><span style="font:500 14px 'Noto Sans Arabic';color:#536158">آئیے، کام ڈھونڈیں</span></div>
+              <span style="width:44px;height:44px;border-radius:50%;background:#E8F3E9;color:#176B4D;display:flex;align-items:center;justify-content:center;transform:scaleX(-1)"><span style="width:20px;height:20px;display:flex">{{ ic.vol }}</span></span>
+            </div>
+            <div style="border-radius:24px;padding:18px;background:#E8F3E9;border:2px solid #176B4D;display:flex;align-items:center;gap:14px;box-shadow:0 14px 28px -18px rgba(16,74,56,.5)">
+              <span style="width:48px;height:48px;border-radius:16px;background:#176B4D;color:#FFFEFA;font:700 18px 'Plus Jakarta Sans';display:flex;align-items:center;justify-content:center">Aa</span>
+              <div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:700 18px 'Plus Jakarta Sans',sans-serif">Roman Urdu</span><span style="font:500 14px Montserrat;color:#27312B">“Aaiye, kaam dhoondein”</span></div>
+              <span style="width:44px;height:44px;border-radius:50%;background:#176B4D;color:#FFFEFA;display:flex;align-items:center;justify-content:center"><span style="width:20px;height:20px;display:flex">{{ ic.vol }}</span></span>
+            </div>
+            <div style="border-radius:24px;padding:18px;background:#FFFEFA;border:1.5px solid #DCE6DB;display:flex;align-items:center;gap:14px">
+              <span style="width:48px;height:48px;border-radius:16px;background:#F1EFE6;font:700 18px 'Plus Jakarta Sans';display:flex;align-items:center;justify-content:center">En</span>
+              <div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:700 18px 'Plus Jakarta Sans',sans-serif">English</span><span style="font:500 14px Montserrat;color:#536158">“Let’s find work”</span></div>
+              <span style="width:44px;height:44px;border-radius:50%;background:#E8F3E9;color:#176B4D;display:flex;align-items:center;justify-content:center"><span style="width:20px;height:20px;display:flex">{{ ic.vol }}</span></span>
+            </div>
+          </div>
+          <div style="font:500 13px/1.5 Montserrat;color:#536158;display:flex;gap:8px;align-items:center;margin-top:4px"><span style="width:16px;height:16px;display:flex;color:#176B4D">{{ ic.vol }}</span>Tap the speaker to hear a sample.</div>
+        </div>
+        <div style="padding:0 20px 44px"><div style="height:58px;border-radius:999px;background:linear-gradient(135deg,#278761 0%,#176B4D 60%,#104A38 100%);color:#FFFEFA;font:600 16px Montserrat;display:flex;align-items:center;justify-content:center">Continue</div></div>
+        <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:#17201B"></div>
+      </div>
+    </div>
+
+    <div class="dv-opt" id="s04"><div class="dv-olabel"><a class="dv-oid" href="#s04">S04</a>Role selection</div>
+      <div data-screen-label="S04 Role" style="width:390px;height:844px;border-radius:44px;overflow:hidden;position:relative;background:linear-gradient(170deg,#FCFAF3 0%,#F3F6EC 60%,#E9F2EA 100%);display:flex;flex-direction:column;box-shadow:0 30px 60px -30px rgba(16,74,56,.35),0 0 0 1px rgba(23,32,27,.06)">
+        <div style="height:50px;flex:none;display:flex;justify-content:space-between;align-items:center;padding:0 30px;font:600 15px 'Plus Jakarta Sans',sans-serif"><span>9:41</span><span style="display:flex;gap:6px;align-items:center"><span style="width:17px;height:10px;border-radius:2px;background:#17201B"></span><span style="width:24px;height:11px;border:1.5px solid #17201B;border-radius:4px;box-sizing:border-box"></span></span></div>
+        <div style="flex:1;padding:24px 20px 0;display:flex;flex-direction:column;gap:20px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div style="font:700 27px/1.2 'Plus Jakarta Sans',sans-serif;text-wrap:balance">How would you like to use Roshan Rozgar?</div><span style="flex:none;width:48px;height:48px;border-radius:50%;background:#FFFEFA;border:1px solid #DCE6DB;display:flex;align-items:center;justify-content:center"><span style="width:20px;height:20px;display:flex">{{ ic.vol }}</span></span></div>
+          <div style="border-radius:30px;padding:22px;background:linear-gradient(140deg,#FFFEFA 0%,#EAF4EC 100%);border:2px solid #176B4D;display:flex;flex-direction:column;gap:14px;position:relative;box-shadow:0 18px 36px -22px rgba(16,74,56,.55)">
+            <span style="position:absolute;top:18px;right:18px;width:30px;height:30px;border-radius:50%;background:#176B4D;color:#FFFEFA;display:flex;align-items:center;justify-content:center"><span style="width:16px;height:16px;display:flex">{{ ic.check }}</span></span>
+            <div style="width:84px;height:84px;border-radius:26px;background:#D6EBDD;color:#104A38;display:flex;align-items:center;justify-content:center"><span style="width:42px;height:42px;display:flex">{{ ic.home }}</span></div>
+            <div style="font:700 22px 'Plus Jakarta Sans',sans-serif">I Need a Worker</div>
+            <div style="font:500 15px/1.5 Montserrat;color:#536158">Find nearby electricians, plumbers and more for your home.</div>
+          </div>
+          <div style="border-radius:30px;padding:22px;background:#FFFEFA;border:1.5px solid #DCE6DB;display:flex;flex-direction:column;gap:14px;position:relative">
+            <span style="position:absolute;top:18px;right:18px;width:30px;height:30px;border-radius:50%;border:2px solid #C9D8CB;box-sizing:border-box"></span>
+            <div style="width:84px;height:84px;border-radius:26px;background:#F1EFE6;color:#27312B;display:flex;align-items:center;justify-content:center"><span style="width:42px;height:42px;display:flex">{{ ic.wrench }}</span></div>
+            <div style="font:700 22px 'Plus Jakarta Sans',sans-serif">I Am a Worker</div>
+            <div style="font:500 15px/1.5 Montserrat;color:#536158">Find local jobs and manage requests with your voice.</div>
+          </div>
+        </div>
+        <div style="padding:0 20px 44px"><div style="height:58px;border-radius:999px;background:linear-gradient(135deg,#278761 0%,#176B4D 60%,#104A38 100%);color:#FFFEFA;font:600 16px Montserrat;display:flex;align-items:center;justify-content:center">Continue as Customer</div></div>
+        <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:#17201B"></div>
+      </div>
+    </div>
+
+    <div class="dv-opt" id="s05"><div class="dv-olabel"><a class="dv-oid" href="#s05">S05</a>Phone login</div>
+      <div data-screen-label="S05 Phone" style="width:390px;height:844px;border-radius:44px;overflow:hidden;position:relative;background:#FCFAF3;display:flex;flex-direction:column;box-shadow:0 30px 60px -30px rgba(16,74,56,.35),0 0 0 1px rgba(23,32,27,.06)">
+        <div style="height:50px;flex:none;display:flex;justify-content:space-between;align-items:center;padding:0 30px;font:600 15px 'Plus Jakarta Sans',sans-serif"><span>9:41</span><span style="display:flex;gap:6px;align-items:center"><span style="width:17px;height:10px;border-radius:2px;background:#17201B"></span><span style="width:24px;height:11px;border:1.5px solid #17201B;border-radius:4px;box-sizing:border-box"></span></span></div>
+        <div style="padding:6px 20px"><div style="width:48px;height:48px;border-radius:50%;background:#FFFEFA;border:1px solid #DCE6DB;display:flex;align-items:center;justify-content:center"><span style="width:22px;height:22px;display:flex">{{ ic.chevL }}</span></div></div>
+        <div style="padding:18px 20px 0;display:flex;flex-direction:column;gap:10px">
+          <div style="font:700 28px/1.2 'Plus Jakarta Sans',sans-serif">Your phone number</div>
+          <div style="font:500 15px/1.5 Montserrat;color:#536158">We’ll send a 6-digit code by SMS.</div>
+          <div style="margin-top:14px;height:64px;border-radius:20px;background:#FFFEFA;border:2px solid #176B4D;box-shadow:0 0 0 4px #E8F3E9;display:flex;align-items:center;overflow:hidden">
+            <span style="height:100%;padding:0 16px;display:flex;align-items:center;gap:8px;border-right:1px solid #DCE6DB;font:600 18px Montserrat;background:#F7F4E9">🇵🇰 +92</span>
+            <span style="padding:0 16px;font:600 22px Montserrat;letter-spacing:.04em">300 512 74<span style="display:inline-block;width:2px;height:24px;background:#176B4D;vertical-align:middle;margin-left:2px"></span></span>
+          </div>
+          <div style="font:500 13px Montserrat;color:#536158">Example: 300 1234567</div>
+        </div>
+        <div style="flex:1"></div>
+        <div style="padding:0 20px 14px"><div style="height:58px;border-radius:999px;background:linear-gradient(135deg,#278761 0%,#176B4D 60%,#104A38 100%);color:#FFFEFA;font:600 16px Montserrat;display:flex;align-items:center;justify-content:center">Send OTP</div></div>
+        <div style="background:#E9EDE4;padding:8px 6px 34px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+          <sc-for list="{{ keys }}" as="k" hint-placeholder-count="12"><div style="height:48px;border-radius:10px;background:#FFFEFA;box-shadow:0 1px 0 rgba(23,32,27,.15);display:flex;align-items:center;justify-content:center;font:500 22px 'Plus Jakarta Sans',sans-serif">{{ k }}</div></sc-for>
+        </div>
+        <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:#17201B"></div>
+      </div>
+    </div>
+
+    <div class="dv-opt" id="s06"><div class="dv-olabel"><a class="dv-oid" href="#s06">S06</a>OTP · invalid code state</div>
+      <div data-screen-label="S06 OTP" style="width:390px;height:844px;border-radius:44px;overflow:hidden;position:relative;background:#FCFAF3;display:flex;flex-direction:column;box-shadow:0 30px 60px -30px rgba(16,74,56,.35),0 0 0 1px rgba(23,32,27,.06)">
+        <div style="height:50px;flex:none;display:flex;justify-content:space-between;align-items:center;padding:0 30px;font:600 15px 'Plus Jakarta Sans',sans-serif"><span>9:41</span><span style="display:flex;gap:6px;align-items:center"><span style="width:17px;height:10px;border-radius:2px;background:#17201B"></span><span style="width:24px;height:11px;border:1.5px solid #17201B;border-radius:4px;box-sizing:border-box"></span></span></div>
+        <div style="padding:6px 20px"><div style="width:48px;height:48px;border-radius:50%;background:#FFFEFA;border:1px solid #DCE6DB;display:flex;align-items:center;justify-content:center"><span style="width:22px;height:22px;display:flex">{{ ic.chevL }}</span></div></div>
+        <div style="padding:18px 20px 0;display:flex;flex-direction:column;gap:10px">
+          <div style="font:700 28px/1.2 'Plus Jakarta Sans',sans-serif">Enter the code</div>
+          <div style="font:500 15px/1.5 Montserrat;color:#536158">Sent to +92 300 5127 400 · <span style="color:#176B4D;font-weight:600">Change</span></div>
+          <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:16px">
+            <sc-for list="{{ otp }}" as="d" hint-placeholder-count="6"><div style="height:62px;border-radius:16px;background:#FFFEFA;border:2px solid #B42318;display:flex;align-items:center;justify-content:center;font:700 24px 'Plus Jakarta Sans',sans-serif">{{ d }}</div></sc-for>
+          </div>
+          <div role="alert" style="display:flex;gap:8px;align-items:center;font:600 14px Montserrat;color:#B42318"><span style="width:18px;height:18px;display:flex">{{ ic.alert }}</span>That code is not correct. 2 tries left.</div>
+          <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center;background:#FFFEFA;border:1px solid #DCE6DB;border-radius:18px;padding:14px 16px"><span style="font:500 14px Montserrat;color:#536158;display:flex;gap:8px;align-items:center"><span style="width:16px;height:16px;display:flex">{{ ic.clock }}</span>Code expires in 0:42</span><span style="font:600 14px Montserrat;color:#9AA59E">Resend</span></div>
+        </div>
+        <div style="flex:1"></div>
+        <div style="padding:0 20px 44px;display:flex;flex-direction:column;gap:10px"><div style="height:58px;border-radius:999px;background:linear-gradient(135deg,#278761 0%,#176B4D 60%,#104A38 100%);color:#FFFEFA;font:600 16px Montserrat;display:flex;align-items:center;justify-content:center">Verify &amp; Continue</div></div>
+        <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:#17201B"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dv-turn" id="t5">
+  <div class="dv-thd"><a class="dv-tid" href="#t5">05</a><span class="dv-tname">Worker experience</span><span class="dv-tsub">One question per screen · replay speaker on every step · interactive: skills, availability</span></div>
+  <div class="dv-opts">
+    <div class="dv-opt" id="s07"><div class="dv-olabel"><a class="dv-oid" href="#s07">S07</a>Onboarding intro</div>
+      <div data-screen-label="S07 Worker intro" style="width:390px;height:844px;border-radius:44px;overflow:hidden;position:relative;background:linear-gradient(170deg,#FCFAF3 0%,#F3F6EC 55%,#E4F0E8 100%);display:flex;flex-direction:column;box-shadow:0 30px 60px -30px rgba(16,74,56,.35),0 0 0 1px rgba(23,32,27,.06)">
+        <div style="height:50px;flex:none;display:flex;justify-content:space-between;align-items:center;padding:0 30px;font:600 15px 'Plus Jakarta Sans',sans-serif"><span>9:41</span><span style="display:flex;gap:6px;align-items:center"><span style="width:17px;height:10px;border-radius:2px;background:#17201B"></span><span style="width:24px;height:11px;border:1.5px solid #17201B;border-radius:4px;box-sizing:border-box"></span></span></div>
+        <div style="padding:20px 20px 0;display:flex;justify-content:center"><div style="width:100%;height:300px;border-radius:32px;background:repeating-linear-gradient(135deg,#EEF4EC 0 10px,#E5EEE3 10px 20px);border:1px solid #DCE6DB;display:flex;align-items:center;justify-content:center;font:500 12px ui-monospace,Menlo,monospace;color:#536158;text-align:center">illustration · worker with toolbox<br>(commission, warm-local style)</div></div>
+        <div style="padding:28px 20px 0;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;justify-content:space-between;gap:12px"><div style="font:700 30px/1.15 'Plus Jakarta Sans',sans-serif;letter-spacing:-.015em">Apna Hunar Batayein, Kaam Paayein.</div><span style="flex:none;width:52px;height:52px;border-radius:50%;background:#176B4D;color:#FFFEFA;display:flex;align-items:center;justify-content:center"><span style="width:22px;height:22px;display:flex">{{ ic.vol }}</span></span></div>
+          <div style="font:500 16px/1.5 Montserrat;color:#536158">Create your worker profile with simple steps and voice instructions.</div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <span style="height:34px;padding:0 12px;border-radius:999px;background:#FFFEFA;border:1px solid #DCE6DB;font:600 13px Montserrat;display:flex;align-items:center;gap:6px"><span style="width:14px;height:14px;display:flex;color:#176B4D">{{ ic.wrench }}</span>Skill</span>
+            <span style="height:34px;padding:0 12px;border-radius:999px;background:#FFFEFA;border:1px solid #DCE6DB;font:600 13px Montserrat;display:flex;align-items:center;gap:6px"><span style="width:14px;height:14px;display:flex;color:#176B4D">{{ ic.brief }}</span>Experience</span>
+            <span style="height:34px;padding:0 12px;border-radius:999px;background:#FFFEFA;border:1px solid #DCE6DB;font:600 13px Montserrat;display:flex;align-items:center;gap:6px"><span style="width:14px;height:14px;display:flex;color:#176B4D">{{ ic.pin }}</span>Area</span>
+          </div>
+        </div>
+        <div style="flex:1"></div>
+        <div style="padding:0 20px 44px"><div style="height:60px;border-radius:999px;background:linear-gradient(135deg,#278761 0%,#176B4D 60%,#104A38 100%);color:#FFFEFA;font:600 16px Montserrat;display:flex;align-items:center;justify-content:center;gap:10px">Start Registration<span style="width:20px;height:20px;display:flex">{{ ic.arrowR }}</span></div></div>
+        <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:#17201B"></div>
+      </div>
+    </div>
+
+    <div class="dv-opt" id="s08"><div class="dv-olabel"><a class="dv-oid" href="#s08">S08</a>Trade selection · tap to select</div>
+      <div data-screen-label="S08 Trades" style="width:390px;height:844px;border-radius:44px;overflow:hidden;position:relative;background:#FCFAF3;display:flex;flex-direction:column;box-shadow:0 30px 60px -30px rgba(16,74,56,.35),0 0 0 1px rgba(23,32,27,.06)">
+        <div style="height:50px;flex:none;display:flex;justify-content:space-between;align-items:center;padding:0 30px;font:600 15px 'Plus Jakarta Sans',sans-serif"><span>9:41</span><span style="display:flex;gap:6px;align-items:center"><span style="width:17px;height:10px;border-radius:2px;background:#17201B"></span><span style="width:24px;height:11px;border:1.5px solid #17201B;border-radius:4px;box-sizing:border-box"></span></span></div>
+        <div style="display:flex;align-items:center;gap:14px;padding:6px 20px"><div style="width:48px;height:48px;border-radius:50%;background:#FFFEFA;border:1px solid #DCE6DB;display:flex;align-items:center;justify-content:center"><span style="width:22px;height:22px;display:flex">{{ ic.chevL }}</span></div><div style="flex:1;display:flex;flex-direction:column;gap:6px"><span style="font:600 12px Montserrat;color:#536158">Step 1 of 4</span><div style="height:6px;border-radius:3px;background:#E3EAE1"><div style="width:25%;height:100%;border-radius:3px;background:#176B4D"></div></div></div></div>
+        <div style="padding:14px 20px 0;display:flex;justify-content:space-between;gap:12px"><div style="font:700 25px/1.2 'Plus Jakarta Sans',sans-serif">What kind of work do you do?</div><span style="flex:none;width:48px;height:48px;border-radius:50%;background:#E8F3E9;color:#176B4D;display:flex;align-items:center;justify-content:center"><span style="width:20px;height:20px;display:flex">{{ ic.vol }}</span></span></div>
+        <div style="padding:6px 20px 0;font:500 14px Montserrat;color:#536158">Choose one or more.</div>
+        <div style="padding:16px 20px 0;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <sc-for list="{{ skillCards }}" as="c" hint-placeholder-count="8">
+            <sc-if value="{{ c.sel }}" hint-placeholder-val="{{ false }}">
+              <div sc-camel-on-click="{{ c.toggle }}" style="height:84px;border-radius:22px;background:#E8F3E9;border:2px solid #176B4D;display:flex;align-items:center;gap:12px;padding:0 14px;cursor:pointer;position:relative"><span style="width:46px;height:46px;border-radius:15px;background:#176B4D;color:#FFFEFA;display:flex;align-items:center;justify-content:center"><span style="width:24px;height:24px;display:flex">{{ c.ic }}</span></span><span style="font:600 14px/1.25 Montserrat;flex:1">{{ c.name }}</span><span style="position:absolute;top:8px;right:8px;width:20px;height:20px;border-radius:50%;background:#176B4D;color:#FFFEFA;display:flex;align-items:center;justify-content:center"><span style="width:12px;height:12px;display:flex">{{ ic.check }}</span></span></div>
+            </sc-if>
+            <sc-if value="{{ c.unsel }}" hint-placeholder-val="{{ true }}">
+              <div sc-camel-on-click="{{ c.toggle }}" style="height:84px;border-radius:22px;background:#FFFEFA;border:1.5px solid #DCE6DB;display:flex;align-items:center;gap:12px;padding:0 14px;cursor:pointer"><span style="width:46px;height:46px;border-radius:15px;background:#F1EFE6;color:#27312B;display:flex;align-items:center;justify-content:center"><span style="width:24px;height:24px;display:flex">{{ c.ic }}</span></span><span style="font:600 14px/1.25 Montserrat;flex:1">{{ c.name }}</span></div>
+            </sc-if>
+          </sc-for>
+        </div>
+        <div style="flex:1"></div>
+        <div style="padding:0 20px 44px;display:flex;flex-direction:column;gap:10px">
+          <div style="height:56px;border-radius:18px;background:#FFFEFA;border:1.5px solid #DCE6DB;font:600 15px Montserrat;display:flex;align-items:center;justify-content:center;gap:10px"><span style="width:20px;height:20px;display:flex;color:#176B4D">{{ ic.mic }}</span>Tell us what kind of work you do</div>
+          <div style="height:58px;border-radius:999px;background:linear-gradient(135deg,#278761 0%,#176B4D 60%,#104A38 100%);color:#FFFEFA;font:600 16px Montserrat;display:flex;align-items:center;justify-content:center">Continue · {{ skillCount }} selected</div>
+        </div>
+        <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:#17201B"></div>
+      </div>
+    </div>
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;motion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Voice orb&quot;},&quot;demoLabels&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Content&quot;}}">
+const P = {
+  chevL:['m15 18-6-6 6-6'], chevR:['m9 18 6-6-6-6'], chevD:['m6 9 6 6 6-6'], arrowR:['M5 12h14','m12 5 7 7-7 7'],
+  mic:['M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z','M19 10v2a7 7 0 0 1-14 0v-2','M12 19v3'],
+  micOff:['M2 2l20 20','M18.89 13.23A7 7 0 0 0 19 12v-2','M5 10v2a7 7 0 0 0 12 5','M15 9.34V5a3 3 0 0 0-5.68-1.33','M9 9v3a3 3 0 0 0 5.12 2.12','M12 19v3'],
+  vol:['M11 5 6 9H2v6h4l5 4V5z','M15.54 8.46a5 5 0 0 1 0 7.07','M19.07 4.93a10 10 0 0 1 0 14.14'],
+  bell:['M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9','M10.3 21a1.94 1.94 0 0 0 3.4 0'],
+  pin:['M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z','M12 7a3 3 0 1 0 0 6a3 3 0 1 0 0-6'],
+  star:['M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z'],
+  check:['M20 6 9 17l-5-5'], x:['M18 6 6 18','m6 6 12 12'],
+  home:['m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z','M9 22V12h6v10'],
+  search:['M11 3a8 8 0 1 0 0 16a8 8 0 1 0 0-16','m21 21-4.3-4.3'],
+  cal:['M8 2v4','M16 2v4','M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z','M3 10h18'],
+  heart:['M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z'],
+  user:['M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2','M12 3a4 4 0 1 0 0 8a4 4 0 1 0 0-8'],
+  zap:['M13 2 3 14h9l-1 8 10-12h-9l1-8z'],
+  wrench:['M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z'],
+  drop:['M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z'],
+  snow:['M2 12h20','M12 2v20','m20 16-4-4 4-4','m4 8 4 4-4 4','m16 4-4 4-4-4','m8 20 4-4 4 4'],
+  hammer:['m15 12-8.37 8.37a1 1 0 1 1-3-3L12 9','m18 15 4-4','m21.5 11.5-1.91-1.91A2 2 0 0 1 19 8.17V7l-2.26-2.26a6 6 0 0 0-4.2-1.76L9 2.96l.92.82A6.18 6.18 0 0 1 12 8.4V10l2 2h1.17a2 2 0 0 1 1.42.59L18.5 14.5'],
+  roller:['M4 2h12a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z','M10 16v-2a2 2 0 0 1 2-2h8a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2','M9 16h2a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1z'],
+  car:['M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2','M7 15a2 2 0 1 0 0 4a2 2 0 1 0 0-4','M17 15a2 2 0 1 0 0 4a2 2 0 1 0 0-4','M9 17h6'],
+  brick:['M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z','M12 9v6','M16 15v6','M16 3v6','M3 15h18','M3 9h18','M8 15v6','M8 3v6'],
+  more:['M12 11a1 1 0 1 0 0 2a1 1 0 1 0 0-2','M19 11a1 1 0 1 0 0 2a1 1 0 1 0 0-2','M5 11a1 1 0 1 0 0 2a1 1 0 1 0 0-2'],
+  play:['M6 3l14 9-14 9V3z'], pause:['M8 4v16','M16 4v16'],
+  kbd:['M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z','M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10'],
+  redo:['M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8','M3 3v5h5'],
+  edit:['M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7','M18.4 2.6a1 1 0 0 1 3 3l-9 9-4 1 1-4z'],
+  shield:['M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z','m9 12 2 2 4-4'],
+  clock:['M12 2a10 10 0 1 0 0 20a10 10 0 1 0 0-20','M12 6v6l4 2'],
+  msg:['M7.9 20A9 9 0 1 0 4 16.1L2 22Z'], alert:['M12 2a10 10 0 1 0 0 20a10 10 0 1 0 0-20','M12 8v4','M12 16h.01'],
+  lang:['m5 8 6 6','m4 14 6-6 2-3','M2 5h12','M7 2h1','m22 22-5-10-5 10','M14 18h6'],
+  grid:['M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z'],
+  locate:['M12 2a10 10 0 1 0 0 20a10 10 0 1 0 0-20','M22 12h-4','M6 12H2','M12 6V2','M12 22v-4'],
+  list:['M8 6h13','M8 12h13','M8 18h13','M3 6h.01','M3 12h.01','M3 18h.01'],
+  map:['M14.1 5.9 9 3 3 6v15l6-3 6 3 6-3V3z','M9 3v15','M15 6v15'],
+  brief:['M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16','M4 6h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z'],
+  phone:['M5 2h14a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z','M11 18h2'],
+  flag:['M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.33 2q2 0 3.67-1.2a1 1 0 0 1 1.6.8v9.2a1 1 0 0 1-.4.8A6 6 0 0 1 16.67 15c-2.33 0-4.33-2-7.33-2a6 6 0 0 0-4.94 2.6'],
+  smile:['M12 2a10 10 0 1 0 0 20a10 10 0 1 0 0-20','M8 14s1.5 2 4 2 4-2 4-2','M9 9h.01','M15 9h.01'],
+  meh:['M12 2a10 10 0 1 0 0 20a10 10 0 1 0 0-20','M8 15h8','M9 9h.01','M15 9h.01'],
+  frown:['M12 2a10 10 0 1 0 0 20a10 10 0 1 0 0-20','M16 16s-1.5-2-4-2-4 2-4 2','M9 9h.01','M15 9h.01'],
+  send:['m22 2-7 20-4-9-9-4z','M22 2 11 13']
+};
+const mkIc = (k) => React.createElement('svg',{viewBox:'0 0 24 24',width:'100%',height:'100%',fill:'none',stroke:'currentColor',strokeWidth:2,strokeLinecap:'round',strokeLinejoin:'round','aria-hidden':true},P[k].map((d,i)=>React.createElement('path',{key:i,d})));
+const starF = React.createElement('svg',{viewBox:'0 0 24 24',width:'100%',height:'100%',fill:'currentColor','aria-hidden':true},React.createElement('path',{d:P.star[0]}));
+function orb(size, mode, motion){
+  const e = React.createElement, A = (v)=> motion && mode!=='static' ? v : 'none';
+  const sw = mode==='listening'?7:mode==='processing'?24:16;
+  const kids = [
+    e('div',{key:'g',style:{position:'absolute',inset:-size*0.2,borderRadius:'50%',background:'radial-gradient(closest-side, rgba(214,235,221,.95), rgba(214,235,221,0))'}}),
+    e('div',{key:'s',style:{position:'absolute',left:'14%',right:'14%',bottom:-size*0.13,height:size*0.14,borderRadius:'50%',background:'radial-gradient(closest-side, rgba(16,74,56,.32), rgba(16,74,56,0))',filter:'blur(5px)'}})
+  ];
+  if(mode==='listening') [0,1].forEach(i=>kids.push(e('div',{key:'r'+i,className:'rr-anim',style:{position:'absolute',inset:0,borderRadius:'50%',border:'2px solid rgba(39,135,97,.45)',animation:A(`rrRing 2.4s ease-out ${i*1.2}s infinite`)}})));
+  kids.push(e('div',{key:'b',className:'rr-anim',style:{position:'absolute',inset:0,borderRadius:'50%',overflow:'hidden',opacity:mode==='processing'?.88:1,animation:A(mode==='listening'?'rrBreathe 2.4s ease-in-out infinite':'rrBreathe 7s ease-in-out infinite'),background:'radial-gradient(circle at 32% 28%, #FFFEFA 0%, #E6F3E8 15%, #B4D8BE 38%, #62AA87 63%, #1F7A57 84%, #104A38 100%)',boxShadow:`0 ${size*.16}px ${size*.3}px -${size*.12}px rgba(16,74,56,.5)`}},
+    e('div',{className:'rr-anim',style:{position:'absolute',inset:'-25%',background:'conic-gradient(from 20deg at 45% 55%, rgba(255,254,250,0) 0deg, rgba(255,254,250,.8) 60deg, rgba(143,186,157,.1) 130deg, rgba(16,74,56,.5) 200deg, rgba(214,235,221,.75) 280deg, rgba(255,254,250,0) 360deg)',filter:`blur(${size*.05}px)`,mixBlendMode:'soft-light',animation:A(`rrSpin ${sw}s linear infinite`)}}),
+    e('div',{className:'rr-anim',style:{position:'absolute',inset:'-12%',background:'radial-gradient(ellipse 42% 20% at 62% 68%, rgba(255,254,250,.6), transparent 70%), radial-gradient(ellipse 26% 44% at 28% 62%, rgba(16,74,56,.4), transparent 70%), radial-gradient(ellipse 30% 16% at 50% 40%, rgba(214,235,221,.7), transparent 70%)',filter:`blur(${size*.025}px)`,animation:A(`rrSpin ${sw*1.7}s linear infinite reverse`)}}),
+    e('div',{style:{position:'absolute',left:'17%',top:'11%',width:'36%',height:'22%',borderRadius:'50%',background:'radial-gradient(closest-side, rgba(255,255,255,.95), rgba(255,255,255,0))',transform:'rotate(-25deg)'}}),
+    e('div',{style:{position:'absolute',inset:0,borderRadius:'50%',boxShadow:`inset -${size*.07}px -${size*.1}px ${size*.18}px rgba(16,74,56,.45), inset ${size*.05}px ${size*.06}px ${size*.12}px rgba(255,254,250,.75)`}})
+  ));
+  if(mode==='processing') kids.push(e('div',{key:'p',className:'rr-anim',style:{position:'absolute',inset:-12,borderRadius:'50%',border:'2.5px solid transparent',borderTopColor:'#176B4D',borderRightColor:'rgba(23,107,77,.25)',animation:A('rrSpin 1.3s linear infinite')}}));
+  return e('div',{style:{position:'relative',width:size,height:size,flex:'none'}},kids);
+}
+class Component extends DCLogic {
+  state = { avail: true, skills: { Electrician: true }, face: 'happy', area: 3 };
+  renderVals(){
+    const motion = this.props.motion ?? true;
+    const ic = Object.fromEntries(Object.keys(P).map(k=>[k,mkIc(k)])); ic.starF = starF;
+    const catsAll = [
+      ['Electrician','Electrician','zap'],['Plumber','Plumber','drop'],['AC Technician','AC Tech','snow'],['Carpenter','Carpenter','hammer'],
+      ['Mechanic','Mechanic','car'],['Painter','Painter','roller'],['Mason','Mason','brick'],['Other Skilled Work','Other','more']
+    ].map(([name,short,k])=>({name,short,ic:ic[k]}));
+    const sk = this.state.skills;
+    const done='#176B4D', cur='#17201B';
+    const steps = ['Requested','Temporarily Reserved','Quote Agreed','Confirmed','In Progress','Awaiting Customer Confirmation','Completed'];
+    return {
+      motion, ic,
+      palette: [
+        ['Brand Green','#176B4D','Primary, selected'],['Dark Forest','#104A38','Pressed, emphasis'],['Medium Green','#278761','Support accents'],['Sage Green','#8FBA9D','Illustration'],
+        ['Pale Sage','#E8F3E9','Selected cards'],['Soft Mint','#D6EBDD','Voice glow'],['Warm Cream','#F7F4E9','App background'],['Light Cream','#FCFAF3','Alt sections'],
+        ['Ivory','#FFFEFA','Cards, panels'],['Charcoal','#17201B','Headings, text'],['Soft Black','#27312B','Dark UI'],['Muted Text','#536158','Supporting text'],
+        ['Border','#DCE6DB','Dividers'],['Error','#B42318','Destructive'],['Warning','#946200','Pending']
+      ].map(([name,hex,use])=>({name,hex,use})),
+      bookingSteps: steps.map((label,i)=>({label, mark: i<3?'✓':i===3?'':'', bg: i<3?done:i===3?'#FFFEFA':'#FFFEFA', bd: i<3?done:i===3?cur:'#C9D8CB', fg: i<=3?'#17201B':'#536158'})),
+      orbIdle: orb(120,'idle',motion), orbListen: orb(120,'listening',motion), orbProc: orb(120,'processing',motion), orbStatic: orb(120,'static',motion),
+      orbHero: orb(330,'idle',motion), orbSmall: orb(150,'static',motion), orbMid: orb(180,'idle',motion), orbTiny: orb(64,'static',motion),
+      cats6: catsAll.slice(0,6), catsAll,
+      skillCards: catsAll.map(c=>({...c, sel: !!sk[c.name], unsel: !sk[c.name], toggle: ()=>this.setState(s=>({skills:{...s.skills,[c.name]:!s.skills[c.name]}}))})),
+      skillCount: Object.values(sk).filter(Boolean).length,
+      avail: this.state.avail, offline: !this.state.avail,
+      toggleAvail: ()=>this.setState(s=>({avail:!s.avail})),
+      face: this.state.face, isHappy: this.state.face==='happy', isOk: this.state.face==='ok', isSad: this.state.face==='sad',
+      setHappy: ()=>this.setState({face:'happy'}), setOk: ()=>this.setState({face:'ok'}), setSad: ()=>this.setState({face:'sad'}),
+      demo: this.props.demoLabels ?? true,
+      keys: ['1','2','3','4','5','6','7','8','9','','0','⌫'], otp: ['4','8','2','7','1','9'],
+      workers: [
+        {i:'AH',name:'Ahmed',trade:'Electrician',dist:'1.8 km',avail:true,busy:false,rated:true,rating:'4.8',reviews:'18 reviews',jobs:'22 jobs',exp:'8 yrs',area:'G-10, G-11',bg:'#D6EBDD'},
+        {i:'BR',name:'Bilal',trade:'Plumber',dist:'2.4 km',avail:true,busy:false,rated:true,rating:'4.6',reviews:'11 reviews',jobs:'14 jobs',exp:'6 yrs',area:'G-9, G-10',bg:'#E8F3E9'},
+        {i:'UK',name:'Usman',trade:'Carpenter',dist:'1.2 km',avail:true,busy:false,rated:false,rating:'',reviews:'',jobs:'0 jobs',exp:'5 yrs',area:'G-10, F-10',bg:'#F1EFE6'},
+        {i:'IS',name:'Imran',trade:'AC Technician',dist:'3.1 km',avail:false,busy:true,rated:true,rating:'4.9',reviews:'27 reviews',jobs:'31 jobs',exp:'10 yrs',area:'F-8, G-8',bg:'#E8F3E9'}
+      ],
+      tiles: [6563,6564].flatMap(y=>[11514,11515,11516].map(x=>`https://a.basemaps.cartocdn.com/rastertiles/voyager/14/${x}/${y}@2x.png`)).map((u,i)=>(window.__resources&&window.__resources['tile'+i])||u)
+    };
+  }
+}
+</script>
+
+
+</body></html>

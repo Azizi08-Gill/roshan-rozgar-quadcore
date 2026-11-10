@@ -13,7 +13,7 @@ export type Account = {
 export type Worker = {
   id: string; name: string; initials: string; trades: ServiceId[]; service: ServiceId; skills: string[]; skillsRoman: string[];
   years: number; areas: string[]; areasRoman: string[]; intro: string; introRoman: string; available: boolean; busy: boolean;
-  phoneVerified: boolean; verificationMode: 'sms' | 'demo' | null; location: LatLng | null; distanceKm: number | null;
+  phoneVerified: boolean; verificationMode: 'sms' | 'demo' | null; idVerified: boolean; idCheckedAt: string | null; location: LatLng | null; distanceKm: number | null;
   jobs: number; rating: number; ratingCount: number; isNew: boolean; createdAt: string; phone?: string | null;
 };
 export type Review = { id: string; by: string; at: string; rating: 'good' | 'okay' | 'bad'; text: string; service: ServiceId; bookingCode: string };
@@ -31,7 +31,7 @@ export type Booking = {
   review: { rating: 'good' | 'okay' | 'bad'; text: string; at: string } | null; bhaai: Bhaai | null; sos: boolean;
   expiresAt: string | null; history: { status: string; at: string; by: string }[]; createdAt: string; updatedAt: string;
 };
-export type Message = { id: string; from: 'customer' | 'worker' | 'system'; kind: 'text' | 'voice' | 'request' | 'quote' | 'status'; text: string; transcript: string; audioId: string | null; createdAt: string };
+export type Message = { id: string; from: 'customer' | 'worker' | 'system'; actor?: 'customer' | 'worker' | null; kind: 'text' | 'voice' | 'request' | 'quote' | 'status'; text: string; transcript: string; audioId: string | null; createdAt: string };
 
 /* ---------------- Session token ---------------- */
 const TOKEN_KEY = 'rr-auth-token';
@@ -66,7 +66,7 @@ export async function voiceNoteBlobUrl(id: string) {
 type Handler = (data: any) => void; // eslint-disable-line @typescript-eslint/no-explicit-any
 const handlers = new Map<string, Set<Handler>>();
 let source: EventSource | null = null, sourceToken: string | null = null;
-export const LIVE_EVENTS = ['booking', 'message', 'request', 'review', 'bhaai', 'bhaai-request', 'sos'] as const;
+export const LIVE_EVENTS = ['booking', 'message', 'request', 'review', 'bhaai', 'bhaai-request', 'sos', 'worker-location'] as const;
 export function connectLive(token: string | null) {
   if (token === sourceToken && source) return;
   source?.close(); source = null; sourceToken = token;
@@ -125,6 +125,13 @@ export function getBrowserLocation(timeout = 8000): Promise<LatLng | null> {
       { enableHighAccuracy: true, timeout, maximumAge: 60000 },
     );
   });
+}
+
+/** Straight-line distance in km, one decimal. */
+export function kmBetween(a: LatLng, b: LatLng) {
+  const r = (x: number) => (x * Math.PI) / 180, dLat = r(b.lat - a.lat), dLng = r(b.lng - a.lng);
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(r(a.lat)) * Math.cos(r(b.lat)) * Math.sin(dLng / 2) ** 2;
+  return Math.round(6371 * 2 * Math.asin(Math.sqrt(h)) * 10) / 10;
 }
 
 export const formatPhone = (p: string) => (p.startsWith('+92') ? `0${p.slice(3, 6)} ${p.slice(6)}` : p);

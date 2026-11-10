@@ -92,3 +92,45 @@ test('MongoDB: OTP fallback, attempts, phone change, revision conflicts and idem
   const db=await repo.ready();await db.collection('workers').deleteMany({onboardingSessionId:{$in:ids}});await db.collection('onboarding_sessions').deleteMany({_id:{$in:ids}});await db.collection('otp_limits').deleteMany({_id:{$in:limitIds}});await repo.close();
  }
 });
+
+import { decide, nameMatches, maskCnic, FACE_MATCH_THRESHOLD } from '../src/platform/identity.js';
+const good = () => ({
+ front: { isPakistaniCnicFront: true, cnicNumber: '37405-1234567-1', name: 'Imran Khalid', dateOfBirth: '1990-03-02', dateOfExpiry: '2031-05-01', hasFacePhoto: true },
+ back: { isPakistaniCnicBack: true, cnicNumber: '3740512345671' },
+ quality: { blurryOrUnreadable: false, cropped: false, glare: false, photoOfScreenOrPhotocopy: false, signsOfEditing: false },
+ selfie: { exactlyOneFace: true, looksLikeLivePhoto: true, faceSimilarityToCardPhoto: 62 },
+});
+const now = new Date('2026-11-10');
+test('CNIC check: clean card + selfie at or above 55% similarity is verified', () => {
+ const d = decide(good(), { profileName: 'Imran Khalid', now });
+ assert.equal(d.status, 'verified'); assert.equal(d.faceMatched, true); assert.equal(d.cnicDigits, '3740512345671'); assert.equal(FACE_MATCH_THRESHOLD, 55);
+ const edge = good(); edge.selfie.faceSimilarityToCardPhoto = 55; assert.equal(decide(edge, { profileName: 'Imran Khalid', now }).status, 'verified');
+ assert.equal(maskCnic('3740512345671'), '•••••-•••••67-1');
+});
+test('CNIC check: face below 55%, expired card, name mismatch, duplicates and edits are rejected', () => {
+ const low = good(); low.selfie.faceSimilarityToCardPhoto = 54; assert.equal(decide(low, { profileName: 'Imran Khalid', now }).status, 'rejected');
+ const exp = good(); exp.front.dateOfExpiry = '2024-01-01'; assert.match(decide(exp, { profileName: 'Imran Khalid', now }).reasons.join(), /expired/);
+ assert.equal(decide(good(), { profileName: 'Asif Raza', now }).status, 'rejected');
+ assert.equal(decide(good(), { profileName: 'Imran Khalid', now, duplicate: true }).status, 'rejected');
+ const ed = good(); ed.quality.signsOfEditing = true; assert.equal(decide(ed, { profileName: 'Imran Khalid', now }).status, 'rejected');
+ const mismatch = good(); mismatch.back.cnicNumber = '37405-7654321-1'; assert.equal(decide(mismatch, { profileName: 'Imran Khalid', now }).status, 'rejected');
+ const notCard = good(); notCard.front.isPakistaniCnicFront = false; assert.equal(decide(notCard, { profileName: 'Imran Khalid', now }).status, 'rejected');
+});
+test('CNIC check: blurry photo or no face in selfie asks for a retake; lifetime cards are fine', () => {
+ const blur = good(); blur.quality.blurryOrUnreadable = true; assert.equal(decide(blur, { profileName: 'Imran Khalid', now }).status, 'needs_retake');
+ const noFace = good(); noFace.selfie.exactlyOneFace = false; assert.equal(decide(noFace, { profileName: 'Imran Khalid', now }).status, 'needs_retake');
+ const life = good(); life.front.dateOfExpiry = 'Lifetime'; assert.equal(decide(life, { profileName: 'Imran Khalid', now }).status, 'verified');
+ assert.ok(nameMatches('Muhammad Shahid Mahmood', 'Shahid Mehmood')); assert.ok(!nameMatches('Kamran Abbasi', 'Shahid Mehmood'));
+});
+
+import { fairPrice } from '../src/platform/bookings.js';
+test('Bhaai-Rate fair price always lands between the offer and the worker price', () => {
+ assert.equal(fairPrice(700, 900, 50).price, 800);
+ assert.equal(fairPrice(700, 900, 100).price, 900);
+ assert.equal(fairPrice(700, 900, 0).price, 700);
+ assert.equal(fairPrice(700, 900, 250).price, 900);   // model says "way above": still capped at the worker's price
+ assert.equal(fairPrice(700, 900, -40).price, 700);   // never below the customer's offer
+ assert.equal(fairPrice(700, 900, 'nonsense').price, 800); // unusable answer: meet in the middle
+ assert.equal(fairPrice(1000, 1020, 50).price, 1000); // rounding to 50 stays inside the range
+ for (let l = 0; l <= 100; l += 7) { const p = fairPrice(1500, 4000, l).price; assert.ok(p >= 1500 && p <= 4000 && p % 50 === 0); }
+});

@@ -14,6 +14,7 @@ import { Dashboard, Jobs, Profile, Reviews, Setup } from './pages/worker';
 import DesignGallery from './design/DesignGallery';
 import Onboarding from './pages/worker/Onboarding';
 import VoiceNavigation from './ui/VoiceNavigation';
+import VoiceDictation from './ui/VoiceDictation';
 import { Translator } from './i18n';
 
 function Routed() {
@@ -69,6 +70,7 @@ export default function App() {
         <Translator />
         <Routed />
         <VoiceNavigation />
+        <VoiceDictation />
       </ToastProvider>
     </StoreProvider>
   );

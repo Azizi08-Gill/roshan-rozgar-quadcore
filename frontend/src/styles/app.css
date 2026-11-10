@@ -402,6 +402,21 @@ textarea.input { height: auto; min-height: 120px; padding: 16px 18px; line-heigh
 .pin.busy .pin-chip { background: var(--paper); color: var(--muted); }
 .pin.busy .pin-av { background: var(--amber-bg); color: var(--amber); }
 .pin.busy .pin-area { background: rgba(168, 107, 18, .06); border-color: rgba(168, 107, 18, .25); }
+/* Voice typing mic shown inside the focused field (ui/VoiceDictation.tsx). */
+.dictate-btn { display: grid; place-items: center; border-radius: 50%; border: 0; box-shadow: 0 4px 12px -4px rgba(16, 74, 56, .45); cursor: pointer; transition: background .2s, transform .15s; }
+.dictate-btn:hover { transform: scale(1.06); }
+.dictate-btn[aria-label^='Stop'] { animation: rr-dictate 1.2s infinite; }
+@keyframes rr-dictate { 70% { box-shadow: 0 0 0 10px rgba(194, 65, 45, 0); } 0% { box-shadow: 0 0 0 0 rgba(194, 65, 45, .55); } }
+input:not([type=checkbox]):not([type=radio]):not([type=file]):not([maxlength='1']):focus, textarea:focus { padding-inline-end: 52px; }
+.otp input:focus { padding-inline-end: 0; }
+.rr-pin { background: none; border: 0; }
+.map.track-map { height: 300px; min-height: 0; }
+.rr-pin .pin, .rr-pin .me { cursor: pointer; }
+.pin.live .pin-av { box-shadow: 0 0 0 0 rgba(125, 211, 166, .8); animation: rr-live 1.6s infinite; }
+@keyframes rr-live { 70% { box-shadow: 0 0 0 10px rgba(125, 211, 166, 0); } }
+.pin.home .pin-chip { background: #2F6FED; }
+.pin.home .pin-av { background: #fff; color: #2F6FED; font-size: 15px; }
+.map .leaflet-container { font: inherit; background: #EEF0EA; }
 .map-note { position: absolute; left: 16px; bottom: 16px; display: inline-flex; align-items: center; gap: 6px; background: var(--paper); padding: 8px 12px; border-radius: 999px; box-shadow: var(--shadow-sm); color: var(--muted); font-weight: 600; }
 @media (max-width: 1023px) {
   .discover { grid-template-columns: minmax(0, 1fr); }
@@ -563,6 +578,12 @@ footer .brand-logo-image { width: 192px; }
 .lang-opt.on { background: var(--mint); }
 .lang-flag { width: 38px; height: 38px; border-radius: 13px; display: grid; place-items: center; background: linear-gradient(150deg, var(--mint), var(--mint-2)); color: var(--green-deep); font: 700 13px var(--display); flex: none; }
 .lang-flag.ur { font-size: 18px; }
+/* The sign-in panel turns its spans white; keep the language button and menu in their normal colours. */
+.auth-art .lang { color: var(--ink); }
+.auth-art .lang span { color: inherit; }
+.auth-art .lang .muted { color: var(--muted); }
+.auth-art .lang .lang-flag { color: var(--green-deep); }
+.auth-art .lang .check { color: #fff; }
 
 /* ---------- Urdu / right-to-left ---------- */
 html[lang="ur"] body { line-height: 1.95; }

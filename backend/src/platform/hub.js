@@ -17,6 +17,14 @@ export function createHub() {
       const payload = `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
       for (const id of new Set(accountIds.filter(Boolean).map(String))) for (const res of clients.get(id) || []) res.write(payload);
     },
+    /** Send to every connected tab (used for public map updates such as a worker's live position). */
+    broadcast(event, data) {
+      const payload = `event: ${event}
+data: ${JSON.stringify(data)}
+
+`;
+      for (const set of clients.values()) for (const res of set) res.write(payload);
+    },
     online(accountId) { return clients.has(String(accountId)); },
   };
 }

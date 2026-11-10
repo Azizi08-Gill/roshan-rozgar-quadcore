@@ -6,6 +6,7 @@ import { Logo } from '../ui/kit';
 import { LangMenu } from '../i18n';
 import { ease } from '../ui/motion';
 import { formatPhone, timeAgo } from './api';
+import { useLiveSharing, useWorkerLiveLocation } from './liveLocation';
 import { homeFor, useStore, type Role } from './store';
 
 /* ---------------- Public site ---------------- */
@@ -229,6 +230,9 @@ export function CustomerLayout() {
 export function WorkerLayout() {
   const { user } = useStore();
   const { pathname } = useLocation();
+  const [liveOn] = useLiveSharing();
+  // Live GPS runs on every worker page while signed in as a worker with a profile.
+  useWorkerLiveLocation(Boolean(liveOn && user?.role === 'worker' && user.workerId));
   if (pathname === '/work/setup') return <Navigate to="/join" replace />;
   if (!user || user.role !== 'worker') return <RequireRole role="worker" />;
   // A worker account without a published profile finishes voice onboarding first.

@@ -254,7 +254,7 @@ function OtpStep({ phone, onBack, onDone, demoEnabled, onDemo }: { phone: string
         <h1 className="h1">Enter the code</h1>
         <p className="muted" style={{ margin: 0 }}>Sent by SMS to <b style={{ color: 'var(--ink)' }}>{phone.slice(0, 4)} {phone.slice(4)}</b> · <button className="link" onClick={onBack}>Change</button></p>
       </div>
-      <div className={`otp ${state === 'wrong' ? 'shake' : ''}`} key={state === 'wrong' ? 'w' : 'n'}>
+      <div className={`otp ${state === 'wrong' ? 'shake' : ''}`} key={state === 'wrong' ? 'w' : 'n'} data-novoice>
         {code.map((c, i) => (
           <input
             key={i} ref={(el) => { refs.current[i] = el; }} inputMode="numeric" autoComplete={i === 0 ? 'one-time-code' : 'off'} aria-label={`Digit ${i + 1}`}

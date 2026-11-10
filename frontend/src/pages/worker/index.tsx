@@ -8,9 +8,11 @@ import { Icon } from '../../ui/Icon';
 import { Empty, Orb, useToast } from '../../ui/kit';
 import { CountUp, Page, Stagger, staggerItem, Words } from '../../ui/motion';
 import { useUrduSpeaker } from '../../ui/voice';
+import { useLiveSharing, useLiveStatus } from '../../app/liveLocation';
 import { Countdown } from '../customer/Booking';
 import { STATUS_LABEL, STATUS_TONE } from '../customer/Home';
 import { EmergencyContacts } from '../customer/Settings';
+import { IdVerification } from './IdVerification';
 
 export { default as Setup } from './Onboarding';
 type Me = { worker: Worker & { phone: string }; reviews: Review[] };
@@ -32,6 +34,8 @@ export function Dashboard() {
   const me = useApi<Me>('/workers/me', ['booking', 'review']);
   const bookings = useApi<{ bookings: Booking[] }>('/bookings', ['booking', 'request', 'review']);
   const [busy, setBusy] = useState(false);
+  const [liveOn, setLiveOn] = useLiveSharing();
+  const live = useLiveStatus();
   useLive('request', (d) => { chime(); toast(`New request from ${d.customerName}`, 'bell'); void speaker.speak('نئی درخواست آئی ہے۔'); });
 
   const w = me.data?.worker;
@@ -70,11 +74,20 @@ export function Dashboard() {
             </div>
             <button className={`toggle ${available ? 'on' : ''}`} aria-label="Availability" disabled={busy || !w} onClick={() => void patch({ available: !available }, available ? 'You are offline' : 'You are online')}><i /></button>
           </div>
-          {w && !w.location && (
-            <div className="card row g16 wrapflex" style={{ background: 'var(--amber-bg)', boxShadow: 'none' }}>
-              <Icon name="locate" size={22} style={{ color: 'var(--amber)' }} />
-              <span className="grow small"><b>Share your location</b> so customers near you see you first, with the real distance.</span>
-              <button className="btn btn-sm btn-primary" disabled={busy} onClick={() => void shareLocation()}>Share location</button>
+          {w && (
+            <div className="card row g16 wrapflex" style={live.state === 'denied' || (!liveOn && !w.location) ? { background: 'var(--amber-bg)', boxShadow: 'none' } : undefined}>
+              <Icon name="locate" size={22} style={{ color: live.state === 'live' && available ? 'var(--green)' : 'var(--amber)' }} />
+              <span className="grow stack g4 small">
+                <b>Live location {liveOn ? (available ? 'on' : 'paused while offline') : 'off'}</b>
+                <span className="muted">{
+                  !liveOn ? (w.location ? 'Customers see your last shared spot. Turn on to update it as you move.' : 'Turn on so nearby customers see you on the map with the real distance.')
+                  : live.state === 'denied' ? 'Location permission is blocked. Allow it in the browser to share your position.'
+                  : live.state === 'unsupported' ? 'This browser cannot share location.'
+                  : live.state === 'live' && live.sentAt ? `Updated ${timeAgo(new Date(live.sentAt).toISOString())} · customers see you move on the map`
+                  : 'Getting your GPS position…'}</span>
+              </span>
+              <button className={`toggle ${liveOn ? 'on' : ''}`} aria-label="Live location" onClick={() => setLiveOn(!liveOn)}><i /></button>
+              {!liveOn && <button className="btn btn-sm btn-ghost" disabled={busy} onClick={() => void shareLocation()}>Share once</button>}
             </div>
           )}
 
@@ -251,6 +264,7 @@ export function Profile() {
             <button className="btn btn-ghost" onClick={() => void signOut().then(() => nav('/'))}><Icon name="redo" size={16} />Sign out</button>
           </div>
         </div>
+        <IdVerification />
         {user && <EmergencyContacts />}
       </div>
     </Page>

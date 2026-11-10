@@ -1,7 +1,8 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { getBrowserLocation, timeAgo, useApi, type LatLng, type Review, type Worker } from '../../app/api';
+import { getBrowserLocation, kmBetween, timeAgo, useApi, useLive, type LatLng, type Review, type Worker } from '../../app/api';
+import { StreetMap, type MapPin } from '../../ui/StreetMap';
 import { useStore } from '../../app/store';
 import { SERVICES, serviceById, type ServiceId } from '../../data/seed';
 import { Icon } from '../../ui/Icon';
@@ -103,51 +104,18 @@ export default function Workers() {
   );
 }
 
-/**
- * Map of real positions: the customer's location and each worker's shared GPS location, scaled to fit.
- * (Relative positions are true; the street pattern behind is decorative.)
- */
+/** Real street map: the customer's location and each worker's GPS location, updated live as workers move. */
 function LiveMap({ workers, me, hover }: { workers: Worker[]; me: LatLng | null; hover: string | null }) {
   const nav = useNavigate();
-  const placed = workers.filter((w) => w.location);
-  const pts = [...placed.map((w) => w.location!), ...(me ? [me] : [])];
-  const box = pts.length ? {
-    minLat: Math.min(...pts.map((p) => p.lat)), maxLat: Math.max(...pts.map((p) => p.lat)),
-    minLng: Math.min(...pts.map((p) => p.lng)), maxLng: Math.max(...pts.map((p) => p.lng)),
-  } : null;
-  const span = box ? Math.max(box.maxLat - box.minLat, (box.maxLng - box.minLng) * 0.84, 0.01) : 0.01;
-  const cLat = box ? (box.minLat + box.maxLat) / 2 : 0, cLng = box ? (box.minLng + box.maxLng) / 2 : 0;
-  const pos = (p: LatLng) => ({ left: `${50 + ((p.lng - cLng) * 0.84 / span) * 76}%`, top: `${50 - ((p.lat - cLat) / span) * 76}%` });
-  const widthKm = Math.round(span / 0.76 * 111 * 10) / 10;
-  return (
-    <div className="map">
-      <svg className="map-roads" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
-        <path d="M0 40 L100 34" /><path d="M0 72 L100 66" /><path d="M28 0 L34 100" /><path d="M66 0 L60 100" />
-        <path d="M0 12 L100 8" className="thin" /><path d="M0 92 L100 88" className="thin" /><path d="M10 0 L14 100" className="thin" /><path d="M86 0 L82 100" className="thin" />
-      </svg>
-      {me && <motion.span className="me" style={pos(me)} initial={{ scale: 0 }} animate={{ scale: 1 }} title="You"><i /></motion.span>}
-      <AnimatePresence>
-        {placed.map((w, i) => (
-          <motion.button
-            key={w.id}
-            className={`pin ${w.busy || !w.available ? 'busy' : ''} ${hover === w.id ? 'hot' : ''}`}
-            style={pos(w.location!)}
-            initial={{ opacity: 0, y: -20, scale: 0.6 }}
-            animate={{ opacity: 1, y: 0, scale: hover === w.id ? 1.12 : 1 }}
-            exit={{ opacity: 0, scale: 0.6 }}
-            transition={{ delay: i * 0.05, type: 'spring', stiffness: 380, damping: 22 }}
-            onClick={() => nav(`/app/workers/${w.id}`)}
-          >
-            <span className="pin-chip"><span className="pin-av">{w.initials}</span>{w.name.split(' ')[0]}{w.distanceKm !== null ? ` · ${w.distanceKm} km` : ''}</span>
-          </motion.button>
-        ))}
-      </AnimatePresence>
-      <span className="map-note tiny"><Icon name="locate" size={14} />
-        {placed.length ? `Real GPS positions · about ${widthKm} km across` : 'Workers appear here once they share their location'}
-        {workers.length > placed.length ? ` · ${workers.length - placed.length} not on map` : ''}
-      </span>
-    </div>
-  );
+  const [moved, setMoved] = useState<Record<string, LatLng>>({});
+  useLive('worker-location', (d: { workerId: string; location: LatLng | null }) => d.location && setMoved((m) => ({ ...m, [d.workerId]: d.location! })));
+  const placed = workers.map((w) => ({ w, at: moved[w.id] ?? w.location })).filter((x): x is { w: Worker; at: LatLng } => Boolean(x.at));
+  const pins: MapPin[] = placed.map(({ w, at }) => ({
+    id: w.id, at, initials: w.initials, tone: w.busy || !w.available ? 'busy' : moved[w.id] ? 'live' : 'free', onClick: () => nav(`/app/workers/${w.id}`),
+    label: `${w.name.split(' ')[0]}${me ? ` · ${kmBetween(me, at)} km` : ''}`,
+  }));
+  const missing = workers.length - placed.length;
+  return <StreetMap pins={pins} me={me} hover={hover} note={placed.length ? `${placed.length} on map${missing ? ` · ${missing} without location` : ''} · live` : 'Workers appear here once they share their location'} />;
 }
 
 export function WorkerProfile() {
@@ -182,7 +150,7 @@ export function WorkerProfile() {
                   {!w.available ? <span className="badge" style={{ background: 'var(--sand)', color: 'var(--muted)' }}>Offline</span> : busy ? <span className="badge warn"><span className="dot" />On a job</span> : <span className="badge ok"><span className="dot live" />Available now</span>}
                 </div>
                 <span className="muted">{w.trades.map((t) => serviceById(t).name).join(', ')} · serves {w.areas.join(', ') || '—'}{w.distanceKm !== null ? ` · ${w.distanceKm} km away` : ''}</span>
-                <span className="row g8 small" style={{ color: w.phoneVerified ? 'var(--green)' : 'var(--amber)', fontWeight: 600 }}><Icon name="shield" size={16} />{w.phoneVerified ? 'Phone verified by SMS' : 'Phone not SMS-verified (demo sign-up)'} · experience self-reported</span>
+                <span className="row g8 small" style={{ color: w.phoneVerified ? 'var(--green)' : 'var(--amber)', fontWeight: 600 }}><Icon name="shield" size={16} />{w.phoneVerified ? 'Phone verified by SMS' : 'Phone not SMS-verified (demo sign-up)'} · {w.idVerified ? 'ID checked (CNIC + selfie)' : 'ID not verified'} · experience self-reported</span>
               </div>
             </div>
           </Reveal>

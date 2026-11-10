@@ -86,6 +86,7 @@ export function WorkerCard({ w, compact = false }: { w: Worker; compact?: boolea
         <span className="stack g4 grow">
           <span className="row g8 wrapflex">
             <span className="h3">{w.name}</span>
+            {w.idVerified && <span className="badge ok" title="CNIC and selfie checked automatically"><Icon name="shield" size={12} />ID checked</span>}
             {!w.available ? <span className="badge" style={{ background: 'var(--sand)', color: 'var(--muted)' }}>Offline</span> : busy ? <span className="badge warn"><span className="dot" />On a job</span> : <span className="badge ok"><span className="dot live" />Available</span>}
           </span>
           <span className="small muted">{svc.name}{where ? ` · ${where}` : ''}</span>

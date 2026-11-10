@@ -2,19 +2,22 @@ import { Router } from 'express';
 import { createAuth, wrap } from './auth.js';
 import { createBookings } from './bookings.js';
 import { createHub } from './hub.js';
+import { createIdentity } from './identity.js';
 import { createSos } from './sos.js';
 import { createWorkers } from './workers.js';
 
 /** The marketplace API: accounts, workers, bookings, chat, reviews, Bhaai-Rate, SOS and live events. */
-export function createPlatform({ db, voice, sendSms, demoEnabled }) {
+export function createPlatform({ db, voice, sendSms, demoEnabled, idSecret }) {
   const hub = createHub();
   const auth = createAuth({ db, sendSms, demoEnabled });
-  const workers = createWorkers({ db, auth, voice });
+  const workers = createWorkers({ db, auth, voice, hub });
   const bookings = createBookings({ db, auth, hub, voice, workers });
   const sos = createSos({ db, auth, hub, sendSms });
+  const identity = createIdentity({ db, auth, voice, workers, secret: idSecret });
 
   const router = Router();
   router.use('/auth', auth.router);
+  router.use(identity.router);
   router.use(workers.router);
   router.use(bookings.router);
   router.use(sos.router);

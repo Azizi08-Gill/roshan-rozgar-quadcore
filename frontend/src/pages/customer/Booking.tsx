@@ -1,7 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { api, formatPhone, timeAgo, useApi, voiceNoteBlobUrl, type Booking as B, type Message, type Worker } from '../../app/api';
+import { api, formatPhone, kmBetween, timeAgo, useApi, useLive, voiceNoteBlobUrl, type Booking as B, type LatLng, type Message, type Worker } from '../../app/api';
+import { StreetMap, type MapPin } from '../../ui/StreetMap';
 import { useStore } from '../../app/store';
 import { serviceById } from '../../data/seed';
 import { Icon, type IconName } from '../../ui/Icon';
@@ -27,8 +28,12 @@ export function JobRequest() {
   if (loading) return <Page className="wrap page"><div className="skeleton" style={{ height: 200, borderRadius: 26 }} /></Page>;
   const w = data?.worker;
   if (!w) return <Page className="wrap page"><Empty icon="user" title="Worker not found" text="Pick someone from the list." cta="Find workers" to="/app/workers" /></Page>;
-  const ok = problem.trim().length >= 6 && address.trim().length >= 6;
   const first = w.name.split(' ')[0];
+  // Explain why Send is disabled instead of leaving the button silently greyed out.
+  const blocker = problem.trim().length < 6 ? 'Describe the problem in a few words (at least 6 characters).'
+    : address.trim().length < 3 ? 'Add your address (at least the sector, e.g. F-10).'
+    : !w.available ? `${first} is offline right now.` : w.busy ? `${first} is on another job right now.` : '';
+  const ok = !blocker;
 
   const send = async () => {
     setSending(true); setError('');
@@ -82,9 +87,10 @@ export function JobRequest() {
             <Icon name="clock" size={16} style={{ color: 'var(--amber)', flex: 'none' }} />{first} has 10 minutes to respond. You can cancel any time before the work starts.
           </div>
           {error && <p className="small" role="alert" style={{ margin: 0, color: 'var(--red)', fontWeight: 600 }}>{error}</p>}
-          <button className="btn btn-primary btn-lg btn-block" disabled={!ok || sending || !w.available || w.busy} onClick={() => void send()}>
+          <button className="btn btn-primary btn-lg btn-block" disabled={!ok || sending} onClick={() => void send()}>
             {sending ? <><span className="spinner" />Sending…</> : <><Icon name="send" size={18} />Send request</>}
           </button>
+          {blocker && <span className="small muted" style={{ textAlign: 'center' }}>{blocker}</span>}
         </aside>
       </div>
     </Page>
@@ -162,6 +168,7 @@ export function Booking() {
             </div>
           </div>
 
+          {['confirmed', 'in_progress'].includes(b.status) && <TrackMap booking={b} />}
           {b.bhaai && b.status === 'quoted' && <BhaaiPanel booking={b} onChange={(nb) => { setData((d) => (d ? { ...d, booking: nb } : d)); void reload(); }} />}
           <Conversation booking={b} messages={data!.messages} onSent={() => void reload()} />
 
@@ -198,7 +205,7 @@ export function Booking() {
 
           <div className="card stack g8">
             {isCustomer
-              ? <div className="row g12"><span className="avatar sm">{b.worker.initials}</span><div className="stack grow"><b>{b.worker.name}</b><span className="tiny muted">{serviceById(b.worker.service).name} · {b.worker.phoneVerified ? 'SMS-verified phone' : 'demo sign-up'}</span></div><Link to={`/app/workers/${b.worker.id}`} className="small link">Profile</Link></div>
+              ? <div className="row g12"><span className="avatar sm">{b.worker.initials}</span><div className="stack grow"><b>{b.worker.name}</b><span className="tiny muted">{serviceById(b.worker.service).name} · {b.worker.phoneVerified ? 'SMS-verified phone' : 'demo sign-up'} · {b.worker.idVerified ? 'ID checked' : 'ID not verified'}</span></div><Link to={`/app/workers/${b.worker.id}`} className="small link">Profile</Link></div>
               : <div className="row g12"><span className="avatar sm">{b.customer.name.split(' ').map((p) => p[0]).join('').slice(0, 2)}</span><div className="stack grow"><b>{b.customer.name}</b><span className="tiny muted">Customer · {b.area || 'area not given'}</span></div></div>}
             <div className="row between small"><span className="muted">When</span><b>{b.when}</b></div>
             <div className="row between small"><span className="muted">{b.address ? 'Address' : 'Area'}</span><b style={{ textAlign: 'right' }}>{b.address || b.area || '—'}</b></div>
@@ -312,6 +319,29 @@ function WorkerActions({ b, busy, act, first }: ActProps) {
   );
 }
 
+/** Live tracking once a booking is confirmed: the worker's moving position and the job location. */
+function TrackMap({ booking: b }: { booking: B }) {
+  const [workerAt, setWorkerAt] = useState<LatLng | null>(b.worker.location);
+  const [updatedAt, setUpdatedAt] = useState<number | null>(null);
+  useLive('worker-location', (d: { workerId: string; location: LatLng | null }) => { if (d.workerId === b.worker.id && d.location) { setWorkerAt(d.location); setUpdatedAt(Date.now()); } });
+  const home = b.location;
+  const pins: MapPin[] = [
+    ...(workerAt ? [{ id: 'worker', at: workerAt, initials: b.worker.initials, label: b.side === 'worker' ? 'You' : b.worker.name.split(' ')[0], tone: 'live' as const }] : []),
+    ...(home ? [{ id: 'home', at: home, label: b.side === 'customer' ? 'Your place' : b.customer.name.split(' ')[0], tone: 'home' as const }] : []),
+  ];
+  const dist = workerAt && home ? kmBetween(workerAt, home) : null;
+  const who = b.side === 'customer' ? b.worker.name.split(' ')[0] : 'You';
+  return (
+    <div className="card stack g12">
+      <div className="row between g12 wrapflex">
+        <h2 className="h3">Live location</h2>
+        <span className="small muted">{dist !== null ? `${who} ${b.side === 'customer' ? 'is' : 'are'} ${dist < 0.15 ? 'at the location' : `${dist} km away`}` : !home ? 'Job location was not shared' : `${who} ${b.side === 'customer' ? "hasn't" : "haven't"} shared a location yet`}{updatedAt ? ` · updated ${timeAgo(new Date(updatedAt).toISOString())}` : ''}</span>
+      </div>
+      {pins.length ? <StreetMap className="map track-map" pins={pins} fitKey={`${b.id}-${pins.length}`} /> : <p className="small muted" style={{ margin: 0 }}>No locations to show yet.</p>}
+    </div>
+  );
+}
+
 export function Countdown({ until, label, compact }: { until: string | null; label: string; compact?: boolean }) {
   const [now, setNow] = useState(Date.now());
   useEffect(() => { const id = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(id); }, []);
@@ -346,7 +376,7 @@ function Conversation({ booking: b, messages, onSent }: { booking: B; messages: 
     <div className="card stack g12">
       <h2 className="h3">Conversation</h2>
       {messages.map((m) => m.from === 'system' ? (
-        <div key={m.id} className="tiny muted" style={{ textAlign: 'center', padding: '4px 12px' }}>{m.text} · {timeAgo(m.createdAt)}</div>
+        <div key={m.id} className="tiny muted" style={{ textAlign: 'center', padding: '4px 12px' }}>{m.actor === b.side ? m.text.replace(/^The (customer|worker)/, 'You') : m.text} · {timeAgo(m.createdAt)}</div>
       ) : (
         <motion.div key={m.id} className={`bubble ${m.from === b.side ? 'mine' : ''}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
           {m.kind === 'voice' && m.audioId && <VoiceNote id={m.audioId} />}

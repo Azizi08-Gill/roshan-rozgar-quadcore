@@ -1,13 +1,18 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { SERVICES, WORKERS } from '../../data/seed';
+import { useApi } from '../../app/api';
+import { SERVICES } from '../../data/seed';
+import { useUrduSpeaker } from '../../ui/voice';
 import { Icon, type IconName } from '../../ui/Icon';
 import { Logo, Orb, Wave } from '../../ui/kit';
 import { CountUp, ease, Page, Reveal, Rotator, Stagger, staggerItem, Words } from '../../ui/motion';
 
 /* ======================= Landing ======================= */
+type Stats = { workers: number; completedJobs: number; reviews: number; byTrade: Record<string, number> };
+
 export function Landing() {
+  const stats = useApi<Stats>('/stats').data;
   return (
     <Page>
       <section className="wrap hero">
@@ -95,10 +100,10 @@ export function Landing() {
       <section className="wrap" style={{ padding: '56px 24px' }}>
         <div className="card dark stats">
           {[
-            { v: WORKERS.length, s: '', l: 'Workers on the demo map' },
-            { v: 90, s: ' sec', l: 'From voice note to a shortlist' },
+            { v: stats?.workers ?? 0, s: '', l: 'Workers registered' },
+            { v: stats?.completedJobs ?? 0, s: '', l: 'Jobs completed' },
+            { v: stats?.reviews ?? 0, s: '', l: 'Reviews from real bookings' },
             { v: 0, s: '', l: 'Forms a worker has to type' },
-            { v: 100, s: '%', l: 'Prices agreed before the visit' },
           ].map((x) => (
             <div key={x.l} className="stack g4">
               <span style={{ font: '700 clamp(34px,4vw,48px) var(--display)', letterSpacing: '-.03em' }}><CountUp to={x.v} suffix={x.s} /></span>
@@ -197,16 +202,17 @@ export function HowItWorks() {
 
 /* ======================= Services ======================= */
 export function Services() {
+  const stats = useApi<Stats>('/stats').data;
   return (
     <Page className="wrap page">
       <div className="stack g12" style={{ margin: '24px 0 32px', maxWidth: 640 }}>
         <span className="eyebrow">Services</span>
         <h1 className="h1"><Words text="Every trade a home needs." /></h1>
-        <p className="lead">Starting prices are typical for Islamabad and Rawalpindi. The final price is always agreed with the worker first.</p>
+        <p className="lead">The price is always agreed with the worker before the visit. Not sure? Bhaai-Rate suggests a fair one.</p>
       </div>
       <Stagger className="grid cols-4">
         {SERVICES.map((s) => {
-          const count = WORKERS.filter((w) => w.service === s.id).length;
+          const count = stats?.byTrade[s.id] ?? 0;
           return (
             <motion.div key={s.id} id={s.id} variants={staggerItem}>
               <Link to={`/app/workers?service=${s.id}`} className="card lift stack g12 service-card">
@@ -217,8 +223,8 @@ export function Services() {
                 </div>
                 <p className="small muted" style={{ margin: 0 }}>{s.blurb}</p>
                 <div className="row between" style={{ marginTop: 'auto' }}>
-                  <span className="small">From <b className="num">Rs. {s.from.toLocaleString()}</b></span>
-                  <span className="badge ok">{count || 'New'}{count ? ' nearby' : ''}</span>
+                  <span className="small muted">Price agreed first</span>
+                  <span className="badge ok">{count ? `${count} registered` : 'No one yet'}</span>
                 </div>
               </Link>
             </motion.div>
@@ -283,11 +289,14 @@ const FAQ = [
   { q: 'How do I know a worker is trustworthy?', a: 'Every worker\'s phone number is confirmed by OTP, and reviews only come from customers who completed a booking.' },
   { q: 'I can\'t read well. Can I still use it?', a: 'Yes. Workers can join and take jobs by tapping pictures and speaking. Help is available as Urdu audio.' },
   { q: 'Which cities are covered?', a: 'Islamabad and Rawalpindi during the pilot.' },
-  { q: 'Is this the real service?', a: 'This is a hackathon demo. Workers, bookings and reviews are seeded sample data.' },
+  { q: 'What happens if I press SOS?', a: 'During a booking, SOS texts your saved emergency contacts with your location and the booking details, and opens the dialer for Helpline 15. Add contacts in Settings.' },
 ];
+
+const GUIDE = 'روشن روزگار میں خوش آمدید۔ گاہک مائیک دبا کر اپنا مسئلہ بتائیں، قریبی کاریگر چنیں اور درخواست بھیجیں۔ کاریگر قیمت بھیجتا ہے، آپ قبول کریں تو بکنگ پکی ہو جاتی ہے۔ کاریگر بھائی جوائن کے صفحے پر جا کر صرف بول کر اپنی پروفائل بنائیں۔ نئی درخواست آنے پر فون پر گھنٹی بجے گی۔ قیمت پر اتفاق نہ ہو تو بھائی ریٹ کا بٹن دبائیں۔ کسی خطرے میں ایس او ایس کا بٹن دبائیں۔';
 
 export function Help() {
   const [open, setOpen] = useState<number | null>(0);
+  const speaker = useUrduSpeaker();
   return (
     <Page className="wrap page">
       <div className="split">
@@ -314,13 +323,16 @@ export function Help() {
           <div className="card green stack g12">
             <span className="tile-icon" style={{ background: 'rgba(255,255,255,.16)', color: '#fff' }}><Icon name="vol" size={22} /></span>
             <h3 className="h3">Listen in Urdu</h3>
-            <p className="muted small" style={{ margin: 0 }}>A two-minute audio guide for workers and customers.</p>
-            <Wave bars={34} idle />
+            <p className="muted small" style={{ margin: 0 }}>A short spoken guide for workers and customers.</p>
+            <button className="row g12" style={{ textAlign: 'left' }} aria-label={speaker.speaking ? 'Stop the guide' : 'Play the Urdu guide'} onClick={() => (speaker.speaking ? speaker.stop() : void speaker.speak(GUIDE))}>
+              <span className="icon-btn" style={{ background: 'rgba(255,255,255,.18)', color: '#fff', flex: 'none' }}><Icon name={speaker.speaking ? 'pause' : 'play'} size={18} /></span>
+              <Wave bars={30} idle={!speaker.speaking} />
+            </button>
           </div>
           <div className="card stack g12">
             <h3 className="h3">Talk to us</h3>
-            <span className="row g12 small"><Icon name="phone" size={18} style={{ color: 'var(--green)' }} />0300 0000000 (demo)</span>
-            <span className="row g12 small"><Icon name="clock" size={18} style={{ color: 'var(--green)' }} />9 am – 9 pm, every day</span>
+            <span className="row g12 small"><Icon name="msg" size={18} style={{ color: 'var(--green)' }} />Message your worker or customer inside the booking</span>
+            <span className="row g12 small"><Icon name="shield" size={18} style={{ color: 'var(--green)' }} />Emergency: SOS button during a booking, or call 15</span>
           </div>
         </div>
       </div>

@@ -1,179 +1,158 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
-import { serviceById, type ServiceId } from '../data/seed';
+import { useState } from 'react';
+import { api, type Booking } from '../app/api';
+import { serviceById } from '../data/seed';
 import { Icon } from '../ui/Icon';
-import { Orb, Wave } from '../ui/kit';
+import { Orb, Wave, useToast } from '../ui/kit';
 import { ease, Typewriter } from '../ui/motion';
+import { useUrduSpeaker, useVoiceRecorder } from '../ui/voice';
 
 /**
- * Bhaai-Rate (موزوں نرخ): fair-price mediator.
- * Both sides leave a 5-second voice note; the mediator extracts job parameters (keywords in the notes),
- * looks up the sector median for that trade and suggests a polite middle-ground price.
- *
- * MARKET DATA IS SEEDED for the demo (typical Islamabad/Rawalpindi labour rates, Rs).
+ * Bhaai-Rate (موزوں نرخ): fair-price mediator, run by both people from their own phones.
+ *  1. The customer sets an offer and records a short voice note about the job.
+ *  2. The worker gets it live and records their own note.
+ *  3. The backend transcribes both notes and asks Gemini for a fair labour price, using prices of
+ *     real completed jobs of the same trade on the platform when there are any.
+ *  4. Both must tap "Agree". Then the fair price becomes the booking price and the booking is confirmed.
  */
-const MARKET: Record<ServiceId, { low: number; median: number; high: number }> = {
-  electrician: { low: 900, median: 1400, high: 2200 },
-  plumber: { low: 800, median: 1200, high: 1900 },
-  ac: { low: 1500, median: 2400, high: 3500 },
-  carpenter: { low: 1000, median: 1500, high: 2400 },
-  mechanic: { low: 1200, median: 1800, high: 2800 },
-  painter: { low: 2500, median: 4000, high: 6500 },
-  mason: { low: 1800, median: 2800, high: 4200 },
-  other: { low: 700, median: 1100, high: 1800 },
-};
-/** Premium sectors pay a little more; outskirts a little less. */
-const SECTOR_FACTOR: Record<string, number> = { 'F-7': 1.15, 'F-8': 1.12, 'E-11': 1.1, 'F-10': 1.08, 'F-11': 1.08, 'Bahria Town': 1.1, 'G-13': 0.95, 'Satellite Town': 0.95, 'Saddar, Rawalpindi': 0.92 };
+export function BhaaiPanel({ booking: b, starting = false, onCancel, onChange }: { booking: Booking; starting?: boolean; onCancel?: () => void; onChange: (b: Booking) => void }) {
+  const toast = useToast();
+  const speaker = useUrduSpeaker();
+  const quote = b.price?.labour ?? 0;
+  const [offer, setOffer] = useState(Math.max(100, Math.round((quote * 0.8) / 50) * 50));
+  const [sending, setSending] = useState(false);
+  const bh = b.bhaai;
+  const me = b.side;
+  const otherName = (me === 'customer' ? b.worker.name : b.customer.name).split(' ')[0];
 
-const NOTES = {
-  customer: 'Sirf ek DB box ka breaker check karna hai, zyada kaam nahi hai.',
-  worker: 'Breaker ke saath do taar bhi badalni parengi, aadha ghanta lagega.',
-};
-
-function complexity(text: string) {
-  const t = text.toLowerCase();
-  let f = 1;
-  if (/(badal|replace|naya|nayi)/.test(t)) f += 0.08;
-  if (/(sirf|chhota|chota|zyada kaam nahi)/.test(t)) f -= 0.06;
-  if (/(ghanta|ghante|poora|sara)/.test(t)) f += 0.05;
-  return f;
-}
-
-export function suggestFairPrice(service: ServiceId, area: string, quote: number, offer: number, notes: string[]) {
-  const m = MARKET[service];
-  const sector = SECTOR_FACTOR[area] ?? 1;
-  const cx = notes.reduce((f, n) => f * complexity(n), 1);
-  const median = Math.round((m.median * sector * cx) / 50) * 50;
-  // Middle ground between both parties, pulled toward the market median, kept inside the market band.
-  const mid = (quote + offer) / 2;
-  const raw = mid * 0.4 + median * 0.6;
-  const price = Math.round(Math.min(Math.max(raw, m.low * sector), m.high * sector) / 50) * 50;
-  return { price, low: Math.round(m.low * sector), median, high: Math.round(m.high * sector), sector };
-}
-
-type Rec = 'idle' | 'rec' | 'done';
-
-export function BhaaiRateModal({ service, area, quote, workerName, onLock, onClose }: {
-  service: ServiceId; area: string; quote: number; workerName: string; onLock: (labour: number) => void; onClose: () => void;
-}) {
-  const [offer, setOffer] = useState(Math.round((quote * 0.7) / 50) * 50);
-  const [me, setMe] = useState<Rec>('idle');
-  const [them, setThem] = useState<Rec>('idle');
-  const [phase, setPhase] = useState<'record' | 'thinking' | 'result'>('record');
-  const result = suggestFairPrice(service, area, quote, offer, [NOTES.customer, NOTES.worker]);
-  const message = `Ustad ji aur bhai, ${area} mein ${serviceById(service).name.toLowerCase()} ke is kaam ka munasib market rate Rs. ${result.price.toLocaleString()} banta hai.`;
-
-  // 5-second voice notes (simulated capture in the demo); the worker replies asynchronously.
-  useEffect(() => {
-    if (me !== 'rec') return;
-    const t = setTimeout(() => { setMe('done'); setThem('rec'); }, 5000);
-    return () => clearTimeout(t);
-  }, [me]);
-  useEffect(() => {
-    if (them !== 'rec') return;
-    const t = setTimeout(() => setThem('done'), 3000);
-    return () => clearTimeout(t);
-  }, [them]);
-  useEffect(() => {
-    if (me === 'done' && them === 'done' && phase === 'record') setPhase('thinking');
-  }, [me, them, phase]);
-  useEffect(() => {
-    if (phase !== 'thinking') return;
-    const t = setTimeout(() => setPhase('result'), 2400);
-    return () => clearTimeout(t);
-  }, [phase]);
-
-  const speak = () => {
-    if (!('speechSynthesis' in window)) return;
-    const u = new SpeechSynthesisUtterance(message);
-    u.lang = 'ur-PK';
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(u);
+  const sendNote = async (audio: Blob) => {
+    setSending(true);
+    try {
+      const form = new FormData();
+      form.append('audio', audio, audio.type.includes('mp4') ? 'note.m4a' : audio.type.includes('ogg') ? 'note.ogg' : 'note.webm');
+      if (me === 'customer') form.append('offer', String(offer));
+      const r = await api<{ booking: Booking }>(`/bookings/${b.id}/bhaai/note`, { method: 'POST', body: form });
+      onChange(r.booking);
+    } catch (e) { toast((e as Error).message, 'alert'); }
+    finally { setSending(false); }
+  };
+  const recorder = useVoiceRecorder((audio) => void sendNote(audio));
+  const respond = async (agree: boolean) => {
+    setSending(true);
+    try { const r = await api<{ booking: Booking }>(`/bookings/${b.id}/bhaai/respond`, { method: 'POST', body: { agree } }); onChange(r.booking); if (r.booking.status === 'confirmed') toast('Both agreed · booking confirmed', 'check'); }
+    catch (e) { toast((e as Error).message, 'alert'); }
+    finally { setSending(false); }
   };
 
-  const pct = (v: number) => `${Math.min(100, Math.max(0, ((v - result.low) / (result.high - result.low)) * 100))}%`;
+  const RecordButton = ({ label }: { label: string }) => (
+    <div className="voice-slot">
+      <button className="icon-btn" disabled={sending} onClick={() => (recorder.recording ? recorder.stop() : void recorder.start())} aria-label={recorder.recording ? 'Stop and send' : label}
+        style={{ background: recorder.recording ? '#C2412D' : 'var(--green)', color: '#fff' }}>
+        {sending ? <span className="spinner" style={{ width: 16, height: 16 }} /> : <Icon name={recorder.recording ? 'check' : 'mic'} size={18} />}
+      </button>
+      <div className="stack grow g4">
+        <b style={{ fontSize: 14 }}>{sending ? 'Sending and transcribing…' : recorder.recording ? `Recording ${recorder.seconds}s · tap ✓ when done` : label}</b>
+        {recorder.recording ? <Wave bars={22} /> : <span className="tiny muted">About 5–10 seconds: what the job involves, in your own words.</span>}
+        {recorder.error && <span className="tiny ur" dir="rtl" style={{ color: 'var(--red)' }}>{recorder.error}</span>}
+      </div>
+    </div>
+  );
+  const Header = () => (
+    <div className="row between" style={{ marginBottom: 6 }}>
+      <div className="row g12">
+        <Orb size={46} listening />
+        <div className="stack"><b style={{ fontSize: 18 }}>Bhaai-Rate</b><span className="ur small muted" dir="rtl">موزوں نرخ</span></div>
+      </div>
+      {onCancel && <button className="icon-btn" aria-label="Close" onClick={onCancel}><Icon name="x" size={18} /></button>}
+    </div>
+  );
+
+  // Customer starting a new round.
+  if (starting || !bh || (bh.status === 'rejected' && me === 'customer' && starting)) {
+    return (
+      <motion.div className="bhaai card stack g16" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ ease }}>
+        <Header />
+        <p className="muted small" style={{ margin: 0 }}>No haggling at the door. You and {otherName} each leave a short voice note about the job; we suggest a fair price both of you can accept.</p>
+        <div className="field">
+          <span className="label">Your offer for labour</span>
+          <div className="row g12">
+            <button className="icon-btn" aria-label="Lower offer" onClick={() => setOffer((v) => Math.max(100, v - 50))}><b style={{ fontSize: 20 }}>−</b></button>
+            <span className="grow num" style={{ textAlign: 'center', font: '700 26px var(--display)' }}>Rs. {offer.toLocaleString()}</span>
+            <button className="icon-btn" aria-label="Raise offer" onClick={() => setOffer((v) => v + 50)}><b style={{ fontSize: 20 }}>+</b></button>
+          </div>
+          <span className="tiny muted" style={{ textAlign: 'center' }}>{otherName} asked Rs. {quote.toLocaleString()} for labour</span>
+        </div>
+        <RecordButton label="Record your voice note" />
+      </motion.div>
+    );
+  }
 
   return (
-    <motion.div className="modal-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}>
-      <motion.div className="bhaai card" role="dialog" aria-modal="true" aria-label="Bhaai-Rate fair price" onClick={(e) => e.stopPropagation()}
-        initial={{ y: 40, opacity: 0, scale: 0.97 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: 30, opacity: 0 }} transition={{ ease, duration: 0.45 }}>
-        <div className="row between" style={{ marginBottom: 6 }}>
-          <div className="row g12">
-            <Orb size={46} listening />
-            <div className="stack"><b style={{ fontSize: 18 }}>Bhaai-Rate</b><span className="ur small muted" dir="rtl">موزوں نرخ</span></div>
-          </div>
-          <button className="icon-btn" aria-label="Close" onClick={onClose}><Icon name="x" size={18} /></button>
-        </div>
+    <motion.div className="bhaai card stack g16" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ ease }}>
+      <Header />
+      <AnimatePresence mode="wait">
+        {bh.status === 'waiting_worker' && (
+          <motion.div key="wait" className="stack g12" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <div className="row between small"><span className="muted">Customer's offer</span><b className="num">Rs. {bh.offer.toLocaleString()}</b></div>
+            <div className="row between small"><span className="muted">Worker's price</span><b className="num">Rs. {bh.quote.toLocaleString()}</b></div>
+            {bh.customerNote && <div className="bubble"><span>“{bh.customerNote.transcript}”</span><span className="tiny muted" style={{ display: 'block', marginTop: 6 }}>{b.customer.name.split(' ')[0]} · voice note</span></div>}
+            {me === 'worker'
+              ? <RecordButton label={`Reply to ${otherName} with your voice note`} />
+              : <div className="row g12" style={{ alignItems: 'center' }}><span className="typing"><i /><i /><i /></span><span className="small muted">Waiting for {otherName} to record their note…</span></div>}
+          </motion.div>
+        )}
 
-        <AnimatePresence mode="wait">
-          {phase === 'record' && (
-            <motion.div key="rec" className="stack g16" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <p className="muted small" style={{ margin: 0 }}>No haggling at the door. Both of you leave a 5-second voice note about the job; we suggest a fair market price.</p>
-              <div className="field">
-                <span className="label">Your offer</span>
-                <div className="row g12">
-                  <button className="icon-btn" aria-label="Lower offer" onClick={() => setOffer((v) => Math.max(200, v - 50))}><b style={{ fontSize: 20 }}>−</b></button>
-                  <span className="grow num" style={{ textAlign: 'center', font: '700 26px var(--display)' }}>Rs. {offer.toLocaleString()}</span>
-                  <button className="icon-btn" aria-label="Raise offer" onClick={() => setOffer((v) => v + 50)}><b style={{ fontSize: 20 }}>+</b></button>
-                </div>
-                <span className="tiny muted" style={{ textAlign: 'center' }}>{workerName} quoted Rs. {quote.toLocaleString()} for labour</span>
-              </div>
-              {([['You', me, NOTES.customer], [workerName, them, NOTES.worker]] as const).map(([who, st, note], i) => (
-                <div key={who} className="voice-slot">
-                  <button className="icon-btn" disabled={i === 1 || st !== 'idle'} onClick={() => i === 0 && setMe('rec')} aria-label={`Record ${who}`}
-                    style={{ background: st === 'rec' ? '#C2412D' : st === 'done' ? 'var(--green)' : 'var(--paper)', color: st === 'idle' ? 'var(--green)' : '#fff' }}>
-                    <Icon name={st === 'done' ? 'check' : 'mic'} size={18} />
-                  </button>
-                  <div className="stack grow g4">
-                    <b style={{ fontSize: 14 }}>{who}</b>
-                    {st === 'idle' && <span className="tiny muted">{i === 0 ? 'Tap to record 5 sec' : 'Will be asked after you'}</span>}
-                    {st === 'rec' && <Wave bars={22} />}
-                    {st === 'done' && <span className="small">“{note}”</span>}
-                  </div>
-                </div>
-              ))}
-            </motion.div>
-          )}
-
-          {phase === 'thinking' && (
-            <motion.div key="th" className="stack g12" style={{ alignItems: 'center', padding: '24px 0', textAlign: 'center' }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <Orb size={110} listening rings />
-              <b style={{ marginTop: 14 }}>Checking {area} market rates…</b>
-              <span className="small muted">Reading both voice notes · comparing {serviceById(service).name.toLowerCase()} jobs nearby</span>
-            </motion.div>
-          )}
-
-          {phase === 'result' && (
+        {bh.status === 'suggested' && bh.suggestion && (() => {
+          const s = bh.suggestion;
+          const lo = Math.min(s.low, bh.offer, bh.quote), hi = Math.max(s.high, bh.offer, bh.quote, lo + 1);
+          const pct = (v: number) => `${Math.min(100, Math.max(0, ((v - lo) / (hi - lo)) * 100))}%`;
+          const iAgreed = me === 'customer' ? bh.customerAgreed : bh.workerAgreed;
+          const theyAgreed = me === 'customer' ? bh.workerAgreed : bh.customerAgreed;
+          return (
             <motion.div key="res" className="stack g16" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
               <div className="bhaai-quote">
-                <p style={{ margin: 0, fontSize: 16 }}>“<Typewriter text={message} speed={16} />”</p>
-                <button className="btn btn-soft btn-sm" style={{ alignSelf: 'flex-start' }} onClick={speak}><Icon name="vol" size={16} />Listen</button>
+                <p style={{ margin: 0, fontSize: 16 }}>“<Typewriter text={s.reasoningRoman} speed={14} />”</p>
+                <span className="small muted">{s.reasoning}</span>
+                <button className="btn btn-soft btn-sm" style={{ alignSelf: 'flex-start' }} onClick={() => (speaker.speaking ? speaker.stop() : void speaker.speak(s.reasoningRoman))}><Icon name={speaker.speaking ? 'pause' : 'vol'} size={16} />Listen</button>
               </div>
               <div className="stack g8">
-                <div className="row between small"><span className="muted">Local market range</span><b>Rs. {result.low.toLocaleString()} – {result.high.toLocaleString()}</b></div>
+                <div className="row between small"><span className="muted">Typical {serviceById(b.service).name.toLowerCase()} labour</span><b>Rs. {s.low.toLocaleString()} – {s.high.toLocaleString()}</b></div>
                 <div className="range">
                   <span className="range-fill" />
-                  <motion.span className="range-mark median" style={{ left: pct(result.median) }} initial={{ scale: 0 }} animate={{ scale: 1 }} />
-                  <motion.span className="range-mark offer" style={{ left: pct(offer) }} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.1 }} />
-                  <motion.span className="range-mark quote" style={{ left: pct(quote) }} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2 }} />
-                  <motion.span className="range-mark fair" style={{ left: pct(result.price) }} initial={{ scale: 0, y: -6 }} animate={{ scale: 1, y: 0 }} transition={{ delay: 0.5, type: 'spring' }} />
+                  <motion.span className="range-mark median" style={{ left: pct(s.median) }} initial={{ scale: 0 }} animate={{ scale: 1 }} />
+                  <motion.span className="range-mark offer" style={{ left: pct(bh.offer) }} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.1 }} />
+                  <motion.span className="range-mark quote" style={{ left: pct(bh.quote) }} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2 }} />
+                  <motion.span className="range-mark fair" style={{ left: pct(s.price) }} initial={{ scale: 0, y: -6 }} animate={{ scale: 1, y: 0 }} transition={{ delay: 0.5, type: 'spring' }} />
                 </div>
                 <div className="row g12 wrapflex tiny muted">
-                  <span className="row g4"><i className="lg offer" />Your offer {offer.toLocaleString()}</span>
-                  <span className="row g4"><i className="lg quote" />Quote {quote.toLocaleString()}</span>
-                  <span className="row g4"><i className="lg median" />Median {result.median.toLocaleString()}</span>
+                  <span className="row g4"><i className="lg offer" />Offer {bh.offer.toLocaleString()}</span>
+                  <span className="row g4"><i className="lg quote" />Asked {bh.quote.toLocaleString()}</span>
+                  <span className="row g4"><i className="lg median" />Typical {s.median.toLocaleString()}</span>
                 </div>
               </div>
               <div className="row between card" style={{ background: 'var(--mint)', boxShadow: 'none', padding: 16 }}>
                 <span className="small" style={{ color: 'var(--green-deep)', fontWeight: 600 }}>Fair price (labour)</span>
-                <span className="num" style={{ font: '700 30px var(--display)', color: 'var(--green-deep)' }}>Rs. {result.price.toLocaleString()}</span>
+                <span className="num" style={{ font: '700 30px var(--display)', color: 'var(--green-deep)' }}>Rs. {s.price.toLocaleString()}</span>
               </div>
-              <button className="btn btn-primary btn-lg btn-block" onClick={() => onLock(result.price)}><Icon name="check" size={18} />Both agree · lock Rs. {result.price.toLocaleString()}</button>
-              <span className="tiny muted" style={{ textAlign: 'center' }}>Rates are seeded demo benchmarks for {area}. {workerName} accepts in the demo automatically.</span>
+              {iAgreed
+                ? <div className="row g12 small" style={{ alignItems: 'center' }}><span className="typing"><i /><i /><i /></span>You agreed. Waiting for {otherName}…</div>
+                : <div className="grid cols-2 keep">
+                    <button className="btn btn-ghost" disabled={sending} onClick={() => void respond(false)}>Don't agree</button>
+                    <button className="btn btn-primary" disabled={sending} onClick={() => void respond(true)}><Icon name="check" size={18} />Agree Rs. {s.price.toLocaleString()}</button>
+                  </div>}
+              {theyAgreed && !iAgreed && <span className="small" style={{ color: 'var(--green)', fontWeight: 600 }}>{otherName} already agreed.</span>}
+              <span className="tiny muted" style={{ textAlign: 'center' }}>{s.basedOnJobs ? `Based on both voice notes and ${s.basedOnJobs} completed ${serviceById(b.service).name.toLowerCase()} job${s.basedOnJobs > 1 ? 's' : ''} on Roshan Rozgar.` : 'Based on both voice notes and typical local rates (no completed jobs of this kind on the platform yet).'} Visit fee and materials stay separate.</span>
             </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
+          );
+        })()}
+
+        {bh.status === 'rejected' && (
+          <motion.div key="rej" className="stack g8" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <b>No agreement on the fair price.</b>
+            <span className="small muted">The price stays at Rs. {bh.quote.toLocaleString()} for labour. {me === 'customer' ? 'You can accept it, ask for a new price, or try Bhaai-Rate again.' : `${otherName} can accept it or ask you for a new price.`}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

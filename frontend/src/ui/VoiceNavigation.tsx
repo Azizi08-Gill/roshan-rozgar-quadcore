@@ -32,7 +32,7 @@ export default function VoiceNavigation() {
       <button className="btn btn-soft" disabled={recorder.recording} onClick={() => void speaker.speak('مائیک دبائیں اور کہیں میری پروفائل کھولیں، کام کا صفحہ، ہوم یا مدد۔')}><Icon name="vol" />سنیں</button>
       {(error || recorder.error) && <p className="ur small" dir="rtl" role="alert">{error || recorder.error}</p>}
       <button className={`btn ${recorder.recording ? 'btn-dark' : 'btn-primary'}`} disabled={busy} onClick={() => { speaker.stop(); if (recorder.recording) recorder.stop(); else void recorder.start(); }}>{busy ? 'سمجھ رہے ہیں…' : recorder.recording ? `بس، مکمل · ${recorder.seconds}s` : 'بولیں'}<Icon name={recorder.recording ? 'check' : 'mic'} /></button>
-      <span className="tiny muted">Voice is processed by Groq.</span>
+      <span className="tiny muted">Voice is processed by Google Gemini.</span>
     </div>}
     <button className="voice-nav-trigger" aria-label="Open voice navigation" aria-expanded={open} onClick={() => setOpen(v => !v)}><Icon name="mic" size={24} /><span className="ur">بولیں</span></button>
   </div>;

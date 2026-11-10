@@ -417,7 +417,7 @@ textarea.input { height: auto; min-height: 120px; padding: 16px 18px; line-heigh
 .confirm-card { width: 100%; max-width: 640px; padding: 30px; box-shadow: var(--shadow-lg); }
 .status-icon { width: 64px; height: 64px; border-radius: 22px; display: grid; place-items: center; color: #fff; flex: none; background: linear-gradient(140deg, var(--green-2), var(--green) 55%, var(--green-deep)); box-shadow: 0 14px 28px -12px rgba(16, 74, 56, .8); }
 .bubble { max-width: 86%; padding: 14px 16px; border-radius: 20px 20px 20px 6px; background: var(--mint); align-self: flex-start; }
-.bubble.me { align-self: flex-end; border-radius: 20px 20px 6px 20px; background: var(--sand); }
+.bubble.mine { align-self: flex-end; border-radius: 20px 20px 6px 20px; background: var(--sand); }
 .tl-row { position: relative; padding: 8px 0; }
 .tl-row:not(:last-of-type)::after { content: ''; position: absolute; left: 11px; top: 34px; height: 16px; width: 2px; background: var(--line); }
 .tl-node { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--line); display: grid; place-items: center; flex: none; background: var(--paper); }

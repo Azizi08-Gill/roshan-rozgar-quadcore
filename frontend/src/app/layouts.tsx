@@ -5,7 +5,8 @@ import { Icon, type IconName } from '../ui/Icon';
 import { Logo } from '../ui/kit';
 import { LangMenu } from '../i18n';
 import { ease } from '../ui/motion';
-import { useStore, type Role } from './store';
+import { formatPhone, timeAgo } from './api';
+import { homeFor, useStore, type Role } from './store';
 
 /* ---------------- Public site ---------------- */
 const urLabels: Record<string, string> = { 'How it works': 'یہ کیسے کام کرتا ہے', Services: 'خدمات', 'For workers': 'کاریگروں کے لیے', Help: 'مدد', Home: 'ہوم', 'Find workers': 'کاریگر تلاش کریں', Bookings: 'بکنگز', Saved: 'محفوظ', Jobs: 'کام', Reviews: 'ریویوز', Profile: 'پروفائل' };
@@ -21,7 +22,7 @@ export function PublicLayout() {
   const { pathname } = useLocation();
   const { user, lang } = useStore();
   useEffect(() => setOpen(false), [pathname]);
-  const home = user ? (user.role === 'worker' ? '/work' : '/app') : null;
+  const home = user ? (user.role ? homeFor(user.role) : '/sign-in') : null;
   return (
     <>
       <header className="topbar">
@@ -78,7 +79,7 @@ function Footer() {
         <div className="row g20 small muted wrapflex">
           {PUBLIC_LINKS.map((l) => <Link key={l.to} to={l.to}>{l.label}</Link>)}
         </div>
-        <span className="tiny faint">Islamabad &amp; Rawalpindi · Demo build</span>
+        <span className="tiny faint">Islamabad &amp; Rawalpindi</span>
       </div>
     </footer>
   );
@@ -103,11 +104,43 @@ const WORKER_TABS: Tab[] = [
 ];
 
 function RequireRole({ role }: { role: Role }) {
-  const { user } = useStore();
+  const { user, ready } = useStore();
   const { pathname } = useLocation();
+  if (!ready) return <div className="wrap page row" style={{ justifyContent: 'center', paddingTop: 120 }}><span className="spinner dark" /></div>;
   if (!user) return <Navigate to={`/sign-in?role=${role}&next=${encodeURIComponent(pathname)}`} replace />;
-  if (user.role !== role) return <Navigate to={user.role === 'worker' ? '/work' : '/app'} replace />;
+  // Signed in but the profile step (name + role) was never finished.
+  if (!user.role) return <Navigate to={`/sign-in?role=${role}&next=${encodeURIComponent(pathname)}`} replace />;
+  if (user.role !== role) return <Navigate to={homeFor(user.role)} replace />;
   return null;
+}
+
+/** Bell menu: real notifications from live events (new requests, prices, messages, status changes). */
+function Notifications() {
+  const { notices, markNoticesRead } = useStore();
+  const [open, setOpen] = useState(false);
+  const nav = useNavigate();
+  const unread = notices.filter((n) => !n.read).length;
+  return (
+    <div style={{ position: 'relative' }}>
+      <button className="icon-btn" aria-label={`Notifications${unread ? ` (${unread} new)` : ''}`} style={{ position: 'relative' }} onClick={() => { setOpen((v) => !v); if (!open) markNoticesRead(); }}>
+        <Icon name="bell" size={19} />
+        {unread > 0 && <span style={{ position: 'absolute', top: 6, right: 6, minWidth: 16, height: 16, padding: '0 4px', borderRadius: 8, background: '#E0593F', color: '#fff', fontSize: 10, fontWeight: 700, display: 'grid', placeItems: 'center', border: '2px solid var(--paper)' }}>{unread}</span>}
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div className="card" style={{ position: 'absolute', right: 0, top: 54, width: 300, maxHeight: 380, overflowY: 'auto', padding: 8, zIndex: 40, boxShadow: 'var(--shadow-lg)' }}
+            initial={{ opacity: 0, y: -6, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6, scale: 0.96 }} transition={{ ease, duration: 0.25 }}>
+            {notices.length === 0 && <p className="small muted" style={{ margin: 12 }}>No notifications yet. New requests, prices and messages show up here live.</p>}
+            {notices.map((n) => (
+              <button key={n.id} className="menu-item" style={{ alignItems: 'flex-start', textAlign: 'left' }} onClick={() => { setOpen(false); nav(n.to); }}>
+                <span className="stack g4"><b style={{ fontSize: 13 }}>{n.title}</b><span className="small muted">{n.text}</span><span className="tiny faint">{timeAgo(new Date(n.at).toISOString())}</span></span>
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 }
 
 function AppChrome({ tabs, sub, mic }: { tabs: Tab[]; sub: string; mic?: boolean }) {
@@ -134,10 +167,7 @@ function AppChrome({ tabs, sub, mic }: { tabs: Tab[]; sub: string; mic?: boolean
           </nav>
           <div className="row g8" style={{ position: 'relative' }}>
             <LangMenu compact />
-            <button className="icon-btn" aria-label="Notifications" style={{ position: 'relative' }}>
-              <Icon name="bell" size={19} />
-              <span style={{ position: 'absolute', top: 10, right: 11, width: 8, height: 8, borderRadius: 4, background: '#E0593F', border: '2px solid var(--paper)' }} />
-            </button>
+            <Notifications />
             <button className="avatar sm" aria-label="Account" onClick={() => setMenu((v) => !v)}>{initials}</button>
             <AnimatePresence>
               {menu && (
@@ -145,11 +175,13 @@ function AppChrome({ tabs, sub, mic }: { tabs: Tab[]; sub: string; mic?: boolean
                   initial={{ opacity: 0, y: -6, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6, scale: 0.96 }} transition={{ ease, duration: 0.25 }}>
                   <div style={{ padding: '10px 12px' }}>
                     <div style={{ fontWeight: 700 }}>{user?.name}</div>
-                    <div className="tiny muted">+92 {user?.phone} · {user?.area}</div>
+                    <div className="tiny muted">{user ? formatPhone(user.phone) : ''}{user?.area ? ` · ${user.area}` : ''}</div>
+                    {user && user.verificationMode !== 'sms' && <div className="tiny" style={{ color: 'var(--amber)' }}>Signed in with demo bypass</div>}
                   </div>
                   <hr className="hr" />
+                  <button className="menu-item" onClick={() => { setMenu(false); nav(user?.role === 'worker' ? '/work/profile' : '/app/settings'); }}><Icon name="user" size={16} />{user?.role === 'worker' ? 'My profile' : 'Settings & SOS contacts'}</button>
                   <button className="menu-item" onClick={() => { setMenu(false); nav('/'); }}><Icon name="home" size={16} />Public site</button>
-                  <button className="menu-item" onClick={() => { signOut(); nav('/'); }}><Icon name="redo" size={16} />Sign out</button>
+                  <button className="menu-item" onClick={() => { void signOut().then(() => nav('/')); }}><Icon name="redo" size={16} />Sign out</button>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -195,11 +227,12 @@ export function CustomerLayout() {
 }
 
 export function WorkerLayout() {
-  const { user, workerProfile } = useStore();
+  const { user } = useStore();
   const { pathname } = useLocation();
-  if (pathname === '/work/setup') return <Outlet />;
+  if (pathname === '/work/setup') return <Navigate to="/join" replace />;
   if (!user || user.role !== 'worker') return <RequireRole role="worker" />;
-  if (!workerProfile && pathname !== '/work/setup') return <Navigate to="/work/setup" replace />;
+  // A worker account without a published profile finishes voice onboarding first.
+  if (!user.workerId) return <Navigate to="/join" replace />;
   return (
     <>
       <AppChrome tabs={WORKER_TABS} sub="Worker" />

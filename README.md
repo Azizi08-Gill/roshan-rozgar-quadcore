@@ -1,11 +1,36 @@
+## Two-sided marketplace (real data, live updates)
+
+Everything runs through MongoDB. There is no seed data: the only workers, customers, bookings and reviews are the ones people create.
+
+- **Accounts & login** (`/sign-in`): phone number + 6-digit SMS code (Veevo). One account per phone, as customer or worker. While `DEMO_OTP_ENABLED=true` a small **"SMS not arriving? Use demo sign-in"** button lets the backend bypass verification (for when SMS credit runs out). Every bypass is logged in `auth_bypasses`, and the account is marked `verificationMode: demo` (shown as "not SMS-verified").
+- **Workers** register by voice at `/join`. Publishing the profile creates or links their account and signs them in. They can share GPS location, go online or offline, and edit their profile.
+- **Search** (`/app/workers`): nearest first by real GPS distance (MongoDB `2dsphere`), filters by trade, and shows busy or offline status from live bookings. The map plots real positions.
+- **Bookings**: request → worker sends a price → customer accepts (or asks for a new price, or cancels) → worker starts → worker marks it done → customer reviews.
+  - Requests expire after 10 minutes without a reply.
+  - The worker sees only the customer's area until a price is accepted. After that, both sides see the address and phone numbers.
+- **Live updates**: Server-Sent Events (`GET /api/events`). A request appears instantly on the worker's dashboard (with a chime and Urdu announcement). Prices, status changes and messages appear instantly on the other side. The bell shows notifications.
+- **Chat**: text and recorded voice notes per booking. Voice notes are stored in GridFS (`voice_notes`), transcribed to Roman Urdu by Gemini, and playable only by the two participants.
+- **Reviews**: only for completed bookings, once. Worker rating and job count are computed from them.
+- **Bhaai-Rate**:
+  - The customer sets an offer and records a voice note.
+  - The worker records theirs.
+  - Gemini suggests a fair labour price from both notes, using real completed jobs of that trade on the platform when there are any.
+  - Both must agree, and then the booking is confirmed at that price.
+- **SOS**: texts the emergency contacts saved in Settings with the location and booking details, saves the alert (`sos_alerts`), and opens the dialer for 15. Test mode records the alert without SMS or a call.
+- **Voice search** (`/app/voice`): Gemini transcribes the customer's request and picks the trade.
+
+To try both sides on one machine, use two different browsers (or a normal and a private window), one signed in as a customer and one as a worker.
+
 ## Integrated feature: worker onboarding
 
 Open `/join` (or choose **I'm a worker**) to register without a conventional sign-up form. The worker hears Urdu instructions, speaks their name, Pakistani mobile number, trade, specific skills, experience and work areas, hears the profile read back, confirms an OTP and explicitly publishes it. There are large icon selections and number keypads as alternatives. New-worker registration bypasses the existing customer/demo sign-in form.
 
-- Real transcription: Groq `whisper-large-v3-turbo` (`ur`), followed by Groq `openai/gpt-oss-120b` for validated field extraction and allowlisted voice commands. The requested Llama 3.3 model was replaced with the user's approval because Groq lists it as retired for standard accounts. Override using `GROQ_CHAT_MODEL`.
+- Real transcription (Google Gemini): recorded voice messages (Urdu, English or mixed) go to `gemini-3.5-transcribe`, which returns Roman Urdu text. Gemini Flash text models (`gemini-3.5-flash-lite`, then `gemini-3.8-flash`, `gemini-3.6-flash`, `gemini-flash-lite-latest`) turn it into validated profile fields and allowlisted voice commands. Each step falls through to the next model when one is busy, rate-limited or unavailable; override the lists with `GEMINI_TRANSCRIBE_MODELS`, `GEMINI_TEXT_MODELS` and `GEMINI_TTS_MODELS`.
+- Profile language: skills, areas and intro are saved in English (`skills`, `areas`, `intro`) and in Roman Urdu (`skillsRoman`, `areasRoman`, `introRoman`). The Roman Urdu transcript is shown to the worker after each recording.
 - Urdu/English controls are preserved in the public, sign-in, worker and onboarding headers. Urdu text uses the self-hosted Jameel Noori Nastaleeq font (source: https://github.com/mrafsarnoori/Urdu-Nastaleeq-Font; source license is included with the font).
-- Real voice output: Python `edge-tts` 7.3.1, fixed voice `ur-PK-AsadNeural`. Microsoft Edge TTS requires internet. No synthetic/sample transcripts are substituted when a provider fails. Unsupported Urdu speech phrases are subdivided and synthesized using the same Asad voice.
-- Real persistence: MongoDB `onboarding_sessions`, `workers`, and `otp_limits`; server validation, expiring hashed session tokens, optimistic revisions and transactional, idempotent profile publication. Raw microphone audio is forwarded for transcription and is not stored. Profile data is sent to Groq; spoken output is sent to Microsoft's TTS service.
+- Real voice output: Gemini TTS (`gemini-3.8-flash-tts`, falling back to `gemini-3.8-flash-lite-tts` and `gemini-3.1-flash-tts-preview`), language `ur-PK`, male voice `Charon` (`GEMINI_TTS_VOICE`). Returns WAV. No synthetic/sample transcripts are substituted when a provider fails.
+- The previous Groq + Edge TTS pipeline is kept, unused, in `backend/legacy/groq-edge-tts` (see its README to restore it).
+- Real persistence: MongoDB `onboarding_sessions`, `workers`, and `otp_limits`; server validation, expiring hashed session tokens, optimistic revisions and transactional, idempotent profile publication. Raw microphone audio is forwarded for transcription and is not stored. Audio, profile data and spoken text are sent to Google Gemini.
 - SMS: Veevo `https://api.veevotech.com/v3/sendsms`. OTPs expire in five minutes, have five attempts, and are stored hashed. Changing the phone invalidates verification. No SMS codes appear in API responses or logs.
 - **Disclosed demo fallback:** with `DEMO_OTP_ENABLED=true`, the small **SMS failed? Use demo OTP** button switches this session to code **482719**. Demo profiles explicitly retain `phoneVerified: false` and `verificationMode: demo`; they never claim SMS verification. Disable the flag outside the hackathon.
 - Voice navigation: **آگے / پیچھے / دوبارہ سنائیں / پروفائل محفوظ کریں** within onboarding; the floating **بولیں** button opens home, signup, worker dashboard, worker profile or help using validated fixed actions. Navigation does not implement booking/discovery backends.
@@ -16,10 +41,8 @@ Open `/join` (or choose **I'm a worker**) to register without a conventional sig
 ```sh
 cd backend
 npm install
-python3 -m venv .venv
-.venv/bin/python3 -m pip install -r requirements.txt
 cp .env.example .env
-# Configure MONGODB_URI, GROQ_API_KEY and VEEVO_API_HASH in .env.
+# Configure MONGODB_URI, GEMINI_API_KEY and VEEVO_API_HASH in .env. No Python is needed.
 npm run dev
 ```
 

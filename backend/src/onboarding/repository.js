@@ -53,6 +53,18 @@ export function createRepository({uri,database='roshan_rozgar',demoEnabled=false
    try {if(mode==='sms')await sendSms(s.draft.phone,code);}catch(e){await d.collection('onboarding_sessions').updateOne({_id:s._id,'otp.hash':otp.hash},{$set:{otp:null}});throw e;}
    return{mode,expiresIn:300,resendAfter:60,...(mode==='demo'?{demoCode:code}:{})};
   },
+  /** Demo bypass (SMS provider down / out of credit): mark the phone as demo-verified. Callers must check the demo flag and log it. */
+  async bypassVerification(s) {
+   if(s.status!=='draft')throw new ApiError(409,'ALREADY_COMPLETED','پروفائل پہلے ہی محفوظ ہے۔');
+   if(!s.draft.phone)throw new ApiError(422,'PHONE_REQUIRED','پہلے موبائل نمبر بتائیں۔');
+   return(await db()).collection('onboarding_sessions').findOneAndUpdate({_id:s._id,status:'draft','draft.phone':s.draft.phone},{$set:{verification:{phone:s.draft.phone,mode:'demo',verifiedAt:new Date()},otp:null,otpMode:'demo'}},{returnDocument:'after'});
+  },
+  /** A signed-in account already proved this phone at login: reuse that verification. */
+  async adoptVerification(s,phone,mode) {
+   if(s.status!=='draft')return s;
+   const draft=mergeDraft(s.draft,{phone});
+   return(await db()).collection('onboarding_sessions').findOneAndUpdate({_id:s._id,status:'draft'},{$set:{draft,verification:{phone:draft.phone,mode,verifiedAt:new Date()},otp:null},$inc:{revision:draft.phone!==s.draft.phone?1:0}},{returnDocument:'after'});
+  },
   async verifyOtp(s,code) {
    const d=await db();
    const previous=await d.collection('onboarding_sessions').findOneAndUpdate({_id:s._id,status:'draft','otp.phone':s.draft.phone,'otp.expiresAt':{$gt:new Date()},'otp.attempts':{$lt:5}},{$inc:{'otp.attempts':1}},{returnDocument:'before'});
@@ -71,7 +83,7 @@ export function createRepository({uri,database='roshan_rozgar',demoEnabled=false
     if(current.revision!==revision)throw new ApiError(409,'DRAFT_CHANGED','نئی معلومات دوبارہ سنیں۔');
     const missing=missingFields(current.draft);if(missing.length)throw new ApiError(422,'INCOMPLETE_PROFILE','کچھ معلومات ابھی باقی ہیں۔',{missing});
     if(current.verification?.phone!==current.draft.phone)throw new ApiError(422,'PHONE_NOT_VERIFIED','پہلے موبائل نمبر کا کوڈ درج کریں۔');
-    const now=new Date();profile={_id:new ObjectId(),onboardingSessionId:current._id,...current.draft,intro:current.draft.intro||`${current.draft.skills.join('، ')}۔ ${current.draft.years} سال کا تجربہ۔ ${current.draft.areas.join('، ')} میں دستیاب۔`,available:true,phoneVerified:current.verification.mode==='sms',verificationMode:current.verification.mode,experienceVerified:false,status:'active',createdAt:now,updatedAt:now};
+    const now=new Date();profile={_id:new ObjectId(),onboardingSessionId:current._id,...current.draft,intro:current.draft.intro||`${current.draft.skills.join(', ')}. ${current.draft.years} years of experience. Available in ${current.draft.areas.join(', ')}.`,introRoman:current.draft.introRoman||`${(current.draft.skillsRoman?.length?current.draft.skillsRoman:current.draft.skills).join(', ')}. ${current.draft.years} saal ka tajurba. ${(current.draft.areasRoman?.length?current.draft.areasRoman:current.draft.areas).join(', ')} mein dastiyab.`,available:true,phoneVerified:current.verification.mode==='sms',verificationMode:current.verification.mode,experienceVerified:false,status:'active',createdAt:now,updatedAt:now};
     await d.collection('workers').insertOne(profile,{session:transaction});
     await d.collection('onboarding_sessions').updateOne({_id:current._id,revision},{$set:{status:'completed',profileId:profile._id,updatedAt:now}},{session:transaction});
    });});return publicProfile(profile);

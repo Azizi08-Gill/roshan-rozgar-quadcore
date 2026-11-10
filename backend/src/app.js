@@ -4,13 +4,13 @@ import multer from 'multer';
 import { ZodError } from 'zod';
 import { ApiError } from './onboarding/domain.js';
 import { onboardingRouter } from './onboarding/router.js';
-export function createApp({repository,voice,sendSms,demoEnabled=false,origins=['http://localhost:5173','http://127.0.0.1:5173']}){
+export function createApp({repository,voice,sendSms,demoEnabled=false,origins=['http://localhost:5173','http://127.0.0.1:5173'],platform=null}){
  const app=express();app.disable('x-powered-by');
  app.use(cors({origin:(origin,cb)=>cb(!origin||origins.includes(origin)?null:new ApiError(403,'ORIGIN_NOT_ALLOWED','Request origin not allowed'),true)}));
  app.use(express.json({limit:'32kb'}));app.use((_req,res,next)=>{res.set('X-Content-Type-Options','nosniff');next();});
  app.get('/api/health',(_req,res)=>res.json({ok:true,service:'roshan-rozgar-backend'}));
- app.use('/api/onboarding',onboardingRouter({repository,voice,sendSms,demoEnabled}));
- app.post('/api/sos',(req,res)=>{const{to=[],message='',bookingId=null,location=null}=req.body??{};if(!Array.isArray(to)||!to.length||!message)return res.status(400).json({ok:false,error:'to[] and message are required'});res.json({ok:true,at:new Date().toISOString(),bookingId,location,results:to.map(n=>({to:n,status:'queued (mock)'}))});});
+ app.use('/api/onboarding',onboardingRouter({repository,voice,sendSms,demoEnabled,auth:platform?.auth}));
+ if(platform)app.use('/api',platform.router);
  app.use('/api',(_req,res)=>res.status(404).json({ok:false,code:'NOT_FOUND',error:'Endpoint not found'}));
  app.use((e,_req,res,_next)=>{
   if(e instanceof ZodError)return res.status(400).json({ok:false,code:'INVALID_INPUT',error:'معلومات درست نہیں۔ دوبارہ کوشش کریں۔',fields:e.issues.map(i=>i.path.join('.'))});

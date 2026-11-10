@@ -1,6 +1,7 @@
 import { API_BASE } from './apiBase';
 import type { ServiceId } from '../data/seed';
-export type Draft = { name: string; phone: string; trades: ServiceId[]; skills: string[]; years: number | null; areas: string[]; intro: string };
+/** Free-text fields come in English (shown to customers) and Roman Urdu (the worker's own words). Older drafts may lack the Roman fields. */
+export type Draft = { name: string; phone: string; trades: ServiceId[]; skills: string[]; skillsRoman?: string[]; years: number | null; areas: string[]; areasRoman?: string[]; intro: string; introRoman?: string };
 export type SavedWorker = Omit<Draft, 'years'> & { id: string; years: number; available: boolean; phoneVerified: boolean; verificationMode: 'sms' | 'demo' };
 export type Session = { draft: Draft; revision: number; status: 'draft' | 'completed'; missing: string[]; summaryUrdu: string; otpMode: 'sms' | 'demo'; phoneConfirmed: boolean; verificationMode: 'sms' | 'demo' | null; profile?: SavedWorker | null; token?: string; transcript?: string; action?: string };
 const key = 'rr-onboarding-token';

@@ -1,33 +1,42 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { timeAgo, useApi, type Booking, type Worker } from '../../app/api';
 import { useStore } from '../../app/store';
-import { SERVICES, WORKERS, serviceById, workerById } from '../../data/seed';
+import { SERVICES, serviceById } from '../../data/seed';
 import { Icon } from '../../ui/Icon';
 import { Empty, Orb, SectionHead, WorkerCard } from '../../ui/kit';
 import { ease, Page, Reveal, Stagger, staggerItem, Words } from '../../ui/motion';
 import { SosButton } from '../../features/Sos';
 
 export const STATUS_LABEL: Record<string, string> = {
-  requested: 'Waiting for quote',
-  quoted: 'Quote received',
+  requested: 'Waiting for price',
+  quoted: 'Price received',
   confirmed: 'Confirmed',
   in_progress: 'In progress',
   completed: 'Completed',
   cancelled: 'Cancelled',
+  declined: 'Declined',
+  expired: 'No reply',
 };
 export const STATUS_TONE: Record<string, string> = {
-  requested: 'warn', quoted: 'warn', confirmed: 'ok', in_progress: 'ok', completed: 'ok', cancelled: 'bad',
+  requested: 'warn', quoted: 'warn', confirmed: 'ok', in_progress: 'ok', completed: 'ok', cancelled: 'bad', declined: 'bad', expired: 'bad',
 };
+export const OPEN_STATUSES = ['requested', 'quoted', 'confirmed', 'in_progress'];
 
 function greeting() {
   const h = new Date().getHours();
   return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
 }
+/** Query string with the customer's saved location, for nearest-first results. */
+export const nearQuery = (loc: { lat: number; lng: number } | null | undefined) => (loc ? `lat=${loc.lat}&lng=${loc.lng}` : '');
 
 export default function Home() {
-  const { user, bookings, isBusy } = useStore();
-  const active = bookings.find((b) => ['requested', 'quoted', 'confirmed', 'in_progress'].includes(b.status));
-  const nearby = [...WORKERS].filter((w) => !isBusy(w.id)).sort((a, b) => a.km - b.km).slice(0, 3);
+  const { user } = useStore();
+  const bookings = useApi<{ bookings: Booking[] }>('/bookings', ['booking', 'review']);
+  const workers = useApi<{ workers: Worker[] }>(`/workers?${nearQuery(user?.location)}`, ['booking']);
+  const list = bookings.data?.bookings ?? [];
+  const active = list.find((b) => OPEN_STATUSES.includes(b.status));
+  const nearby = (workers.data?.workers ?? []).filter((w) => w.available && !w.busy).slice(0, 3);
   const first = user?.name.split(' ')[0] ?? '';
 
   return (
@@ -62,10 +71,10 @@ export default function Home() {
           </section>
 
           <section>
-            <SectionHead title="Available near you" action="See map" to="/app/workers" />
-            <Stagger className="stack g12">
-              {nearby.map((w) => <WorkerCard key={w.id} w={w} />)}
-            </Stagger>
+            <SectionHead title={user?.location ? 'Available near you' : 'Available now'} action="See map" to="/app/workers" />
+            {workers.loading ? <div className="stack g12">{[0, 1].map((i) => <div key={i} className="skeleton" style={{ height: 110, borderRadius: 26 }} />)}</div>
+              : nearby.length ? <Stagger className="stack g12">{nearby.map((w) => <WorkerCard key={w.id} w={w} />)}</Stagger>
+              : <Empty icon="user" title="No one is free right now" text="Workers appear here as soon as they register and go online." cta="Browse all workers" to="/app/workers" />}
           </section>
         </div>
 
@@ -80,12 +89,12 @@ export default function Home() {
                 <div className="row g12">
                   <span className="tile-icon" style={{ background: 'rgba(255,255,255,.1)', color: '#7DD3A6' }}><Icon name={serviceById(active.service).icon} size={22} /></span>
                   <div className="stack">
-                    <b style={{ fontSize: 17 }}>{workerById(active.workerId)?.name}</b>
+                    <b style={{ fontSize: 17 }}>{active.worker.name}</b>
                     <span className="small muted">{active.problem}</span>
                   </div>
                 </div>
                 <div className="row between">
-                  <span className="num" style={{ fontSize: 22, fontWeight: 700 }}>{active.price ? `Rs. ${(active.price.labour + active.price.visit).toLocaleString()}` : 'Quote pending'}</span>
+                  <span className="num" style={{ fontSize: 22, fontWeight: 700 }}>{active.total ? `Rs. ${active.total.toLocaleString()}` : 'Price pending'}</span>
                   <span className="btn btn-sm" style={{ background: 'var(--paper)', color: 'var(--ink)' }}>Open<Icon name="arrowR" size={16} /></span>
                 </div>
               </Link>
@@ -94,7 +103,7 @@ export default function Home() {
             <Reveal>
               <div className="card green stack g12">
                 <span className="tile-icon" style={{ background: 'rgba(255,255,255,.16)', color: '#fff' }}><Icon name="shield" size={22} /></span>
-                <h3 className="h3">Every worker is OTP-verified</h3>
+                <h3 className="h3">Every worker's phone is checked</h3>
                 <p className="muted small" style={{ margin: 0 }}>Reviews come only from completed bookings, so the ratings you see are earned.</p>
               </div>
             </Reveal>
@@ -102,33 +111,34 @@ export default function Home() {
           <Reveal delay={0.1}>
             <div className="card stack g12">
               <div className="row between"><h3 className="h3">Recent bookings</h3><Link to="/app/bookings" className="small link">All</Link></div>
-              {bookings.slice(0, 3).map((b) => (
+              {list.slice(0, 3).map((b) => (
                 <Link key={b.id} to={`/app/bookings/${b.id}`} className="row g12 list-row">
                   <span className="tile-icon" style={{ width: 40, height: 40, borderRadius: 13 }}><Icon name={serviceById(b.service).icon} size={18} /></span>
-                  <span className="stack grow"><b style={{ fontSize: 14 }}>{workerById(b.workerId)?.name.split(' ')[0]} · {b.problem}</b><span className="tiny muted">{b.when}</span></span>
+                  <span className="stack grow"><b style={{ fontSize: 14 }}>{b.worker.name.split(' ')[0]} · {b.problem}</b><span className="tiny muted">{b.when} · {timeAgo(b.createdAt)}</span></span>
                   <span className={`badge ${STATUS_TONE[b.status]}`}>{STATUS_LABEL[b.status]}</span>
                 </Link>
               ))}
-              {bookings.length === 0 && <p className="small muted" style={{ margin: 0 }}>No bookings yet.</p>}
+              {!bookings.loading && list.length === 0 && <p className="small muted" style={{ margin: 0 }}>No bookings yet.</p>}
             </div>
           </Reveal>
         </aside>
       </div>
-      {active && <SosButton booking={active} />}
+      {active && ['confirmed', 'in_progress'].includes(active.status) && <SosButton booking={active} />}
     </Page>
   );
 }
 
 export function Saved() {
-  const { saved } = useStore();
-  const list = WORKERS.filter((w) => saved.includes(w.id));
+  const saved = useApi<{ workers: Worker[] }>('/saved', ['booking']);
+  const { user } = useStore();
+  const list = (saved.data?.workers ?? []).filter((w) => user?.saved.includes(w.id));
   return (
     <Page className="wrap page">
       <div className="stack g8" style={{ marginBottom: 24 }}>
         <h1 className="h1"><Words text="Saved workers" /></h1>
         <p className="muted" style={{ margin: 0 }}>People you trust, one tap away.</p>
       </div>
-      {list.length ? (
+      {saved.loading ? <div className="skeleton" style={{ height: 118, borderRadius: 26 }} /> : list.length ? (
         <Stagger className="grid cols-2">{list.map((w) => <WorkerCard key={w.id} w={w} />)}</Stagger>
       ) : (
         <Empty icon="heart" title="Nothing saved yet" text="Tap the heart on any worker to keep them here." cta="Find workers" to="/app/workers" />
@@ -138,32 +148,30 @@ export function Saved() {
 }
 
 export function Bookings() {
-  const { bookings } = useStore();
+  const bookings = useApi<{ bookings: Booking[] }>('/bookings', ['booking', 'review']);
+  const list = bookings.data?.bookings ?? [];
   return (
     <Page className="wrap page">
       <div className="stack g8" style={{ marginBottom: 24 }}>
         <h1 className="h1"><Words text="Your bookings" /></h1>
       </div>
-      {bookings.length ? (
+      {bookings.loading ? <div className="skeleton" style={{ height: 90, borderRadius: 26 }} /> : list.length ? (
         <Stagger className="stack g12">
-          {bookings.map((b) => {
-            const w = workerById(b.workerId);
-            return (
-              <motion.div key={b.id} variants={staggerItem}>
-                <Link to={`/app/bookings/${b.id}`} className="card lift row g16">
-                  <span className="avatar">{w?.initials}</span>
-                  <span className="stack grow g4">
-                    <b>{w?.name} · {serviceById(b.service).name}</b>
-                    <span className="small muted">{b.problem} · {b.when} · {b.id}</span>
-                  </span>
-                  <span className="stack g4" style={{ alignItems: 'flex-end' }}>
-                    <span className={`badge ${STATUS_TONE[b.status]}`}>{STATUS_LABEL[b.status]}</span>
-                    {b.price && <span className="num small" style={{ fontWeight: 700 }}>Rs. {(b.price.labour + b.price.visit).toLocaleString()}</span>}
-                  </span>
-                </Link>
-              </motion.div>
-            );
-          })}
+          {list.map((b) => (
+            <motion.div key={b.id} variants={staggerItem}>
+              <Link to={`/app/bookings/${b.id}`} className="card lift row g16">
+                <span className="avatar">{b.worker.initials}</span>
+                <span className="stack grow g4">
+                  <b>{b.worker.name} · {serviceById(b.service).name}</b>
+                  <span className="small muted">{b.problem} · {b.when} · {b.code}</span>
+                </span>
+                <span className="stack g4" style={{ alignItems: 'flex-end' }}>
+                  <span className={`badge ${STATUS_TONE[b.status]}`}>{STATUS_LABEL[b.status]}</span>
+                  {b.total !== null && <span className="num small" style={{ fontWeight: 700 }}>Rs. {b.total.toLocaleString()}</span>}
+                </span>
+              </Link>
+            </motion.div>
+          ))}
         </Stagger>
       ) : (
         <Empty icon="cal" title="No bookings yet" text="When you book a worker, you'll track it here." cta="Find a worker" to="/app/voice" />

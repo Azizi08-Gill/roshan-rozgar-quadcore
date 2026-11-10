@@ -8,7 +8,8 @@ import SignIn from './pages/public/SignIn';
 import Home, { Bookings, Saved } from './pages/customer/Home';
 import Voice from './pages/customer/Voice';
 import Workers, { WorkerProfile } from './pages/customer/Workers';
-import { Booking, DemoShortcut, JobRequest, Review } from './pages/customer/Booking';
+import { Booking, JobRequest, Review } from './pages/customer/Booking';
+import Settings from './pages/customer/Settings';
 import { Dashboard, Jobs, Profile, Reviews, Setup } from './pages/worker';
 import DesignGallery from './design/DesignGallery';
 import Onboarding from './pages/worker/Onboarding';
@@ -42,14 +43,14 @@ function Routed() {
           <Route path="bookings/:id" element={<Booking />} />
           <Route path="bookings/:id/review" element={<Review />} />
           <Route path="saved" element={<Saved />} />
-          <Route path="demo/bhaai-rate" element={<DemoShortcut feature="bhaai-rate" />} />
-          <Route path="demo/sos" element={<DemoShortcut feature="sos" />} />
+          <Route path="settings" element={<Settings />} />
           <Route path="help" element={<Help />} />
         </Route>
         <Route path="/work" element={<WorkerLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="setup" element={<Setup />} />
           <Route path="jobs" element={<Jobs />} />
+          <Route path="jobs/:id" element={<Booking />} />
           <Route path="reviews" element={<Reviews />} />
           <Route path="profile" element={<Profile />} />
         </Route>

@@ -10,12 +10,12 @@ const upload=multer({storage:multer.memoryStorage(),limits:{fileSize:8*1024*1024
 export function looksLikeAudio(b){return b.length>=12&&(b.subarray(0,4).toString()==='RIFF'||b.subarray(0,4).toString()==='OggS'||b.subarray(0,4).toString()==='fLaC'||b.subarray(0,3).toString()==='ID3'||b.subarray(4,8).toString()==='ftyp'||b.readUInt32BE(0)===0x1a45dfa3||(b[0]===255&&(b[1]&224)===224));}
 const view=s=>({draft:s.draft,revision:s.revision,status:s.status,expiresAt:s.expiresAt,missing:missingFields(s.draft),summaryUrdu:profileSummary(s.draft),otpMode:s.otpMode||'sms',phoneConfirmed:s.verification?.phone===s.draft.phone,verificationMode:s.verification?.mode||null});
 const limit=n=>rateLimit({windowMs:60000,limit:n,standardHeaders:'draft-7',legacyHeaders:false,message:{ok:false,code:'TOO_MANY_REQUESTS',error:'تھوڑی دیر رک کر دوبارہ کوشش کریں۔'}});
-export function onboardingRouter({repository,voice,sendSms,demoEnabled=false}){
+export function onboardingRouter({repository,voice,sendSms,demoEnabled=false,auth=null}){
  const r=Router();
- r.get('/status',(_req,res)=>res.json({ok:true,voiceConfigured:voice.configured,transcriptionModel:'whisper-large-v3-turbo',extractionModel:voice.model,speechVoice:'ur-PK-AsadNeural',demoOtpEnabled:demoEnabled}));
+ r.get('/status',(_req,res)=>res.json({ok:true,voiceConfigured:voice.configured,provider:'google-gemini',transcriptionModels:voice.models?.transcribe,extractionModels:voice.models?.text,speechModels:voice.models?.tts,speechVoice:voice.voiceName,speechLanguage:'ur-PK',demoOtpEnabled:demoEnabled}));
  r.post('/session',limit(12),wrap(async(_req,res)=>{const{token,session}=await repository.createSession();res.status(201).set('Cache-Control','no-store').json({ok:true,token,...view(session)});}));
- r.post('/speak',limit(45),wrap(async(req,res)=>{const{text}=z.object({text:z.string().trim().min(1).max(1600)}).strict().parse(req.body);res.set({'Content-Type':'audio/mpeg','Cache-Control':'no-store'}).send(await voice.speak(text));}));
- r.post('/navigation',limit(15),upload.single('audio'),wrap(async(req,res)=>{if(!req.file||!looksLikeAudio(req.file.buffer))throw new ApiError(415,'INVALID_AUDIO','دوبارہ ریکارڈ کریں۔');const transcript=await voice.transcribe(req.file);const{action}=await voice.extract(transcript,{},'navigation');res.json({ok:true,transcript,action});}));
+ r.post('/speak',limit(45),wrap(async(req,res)=>{const{text}=z.object({text:z.string().trim().min(1).max(1600)}).strict().parse(req.body);res.set({'Content-Type':'audio/wav','Cache-Control':'no-store'}).send(await voice.speak(text));}));
+ r.post('/navigation',limit(15),upload.single('audio'),wrap(async(req,res)=>{if(!req.file||!looksLikeAudio(req.file.buffer))throw new ApiError(415,'INVALID_AUDIO','دوبارہ ریکارڈ کریں۔');const heard=await voice.transcribe(req.file);const{action,transcriptRoman}=await voice.extract(heard,{},'navigation');res.json({ok:true,transcript:transcriptRoman||heard,action});}));
  r.use(wrap(async(req,_res,next)=>{const token=req.headers.authorization?.match(/^Bearer ([a-f0-9]{64})$/)?.[1];if(!token)throw new ApiError(401,'SESSION_REQUIRED','دوبارہ رجسٹریشن شروع کریں۔');req.session=await repository.getSession(token);next();}));
  r.get('/me',wrap(async(req,res)=>res.set('Cache-Control','no-store').json({ok:true,...view(req.session),profile:await repository.getProfile(req.session)})));
  r.patch('/draft',limit(60),wrap(async(req,res)=>{const input=z.object({revision,patch:patchSchema}).strict().parse(req.body);res.json({ok:true,...view(await repository.saveDraft(req.session,input.patch,input.revision))});}));
@@ -24,13 +24,15 @@ export function onboardingRouter({repository,voice,sendSms,demoEnabled=false}){
   if(req.session.revision!==input.revision)throw new ApiError(409,'DRAFT_CHANGED','معلومات بدل گئی ہیں۔ دوبارہ لوڈ کریں۔');
   if(req.session.status!=='draft')throw new ApiError(409,'ALREADY_COMPLETED','پروفائل محفوظ ہے۔');
   if(!req.file||!looksLikeAudio(req.file.buffer))throw new ApiError(415,'INVALID_AUDIO','آڈیو درست نہیں۔ دوبارہ ریکارڈ کریں۔');
-  const transcript=await voice.transcribe(req.file),{patch,action}=await voice.extract(transcript,req.session.draft,input.step);
+  const heard=await voice.transcribe(req.file),{patch,action,transcriptRoman}=await voice.extract(heard,req.session.draft,input.step),transcript=transcriptRoman||heard;
   const s=Object.keys(patch).length?await repository.saveDraft(req.session,patch,input.revision):req.session;
   res.json({ok:true,transcript,action,...view(s)});
  }));
  r.post('/otp/mode',limit(15),wrap(async(req,res)=>{const{mode}=z.object({mode:z.enum(['sms','demo'])}).strict().parse(req.body);res.json({ok:true,...view(await repository.setOtpMode(req.session,mode))});}));
  r.post('/otp/request',limit(5),wrap(async(req,res)=>{res.json({ok:true,...await repository.requestOtp(req.session,sendSms)});}));
+ r.post('/otp/bypass',limit(10),wrap(async(req,res)=>{if(!demoEnabled)throw new ApiError(403,'DEMO_DISABLED','ڈیمو دستیاب نہیں۔');const s=await repository.bypassVerification(req.session);if(auth)await auth.recordBypass(s.draft.phone,'worker-onboarding',req);res.json({ok:true,...view(s)});}));
+ r.post('/use-account',wrap(async(req,res)=>{if(!auth)throw new ApiError(404,'NOT_FOUND','Not found');const account=await auth.accountFromToken(req.headers['x-account-token']);if(!account)throw new ApiError(401,'SIGN_IN_REQUIRED','Please sign in again.');res.json({ok:true,...view(await repository.adoptVerification(req.session,account.phone,account.verificationMode==='sms'?'sms':'demo'))});}));
  r.post('/otp/verify',limit(15),wrap(async(req,res)=>{const{code}=z.object({code:z.string().regex(/^\d{6}$/)}).strict().parse(req.body);res.json({ok:true,...view(await repository.verifyOtp(req.session,code))});}));
- r.post('/complete',limit(15),wrap(async(req,res)=>{const input=z.object({revision,confirmed:z.literal(true)}).strict().parse(req.body);res.json({ok:true,profile:await repository.publish(req.session,input.revision)});}));
+ r.post('/complete',limit(15),wrap(async(req,res)=>{const input=z.object({revision,confirmed:z.literal(true)}).strict().parse(req.body);const profile=await repository.publish(req.session,input.revision);const authToken=auth?await auth.linkWorker(profile,{headers:{authorization:req.headers['x-account-token']?`Bearer ${req.headers['x-account-token']}`:undefined}}):null;res.json({ok:true,profile,authToken});}));
  return r;
 }

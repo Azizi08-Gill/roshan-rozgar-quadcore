@@ -1,121 +1,87 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { WORKERS, type ServiceId } from '../data/seed';
-import type { SavedWorker } from './onboarding';
+import { api, authToken, connectLive, onLive, setAuthToken, type Account, type Role } from './api';
 
 /**
- * Client-side demo store (persisted to localStorage). It stands in for the backend during the demo
- * and keeps one source of truth for worker availability, so a booked worker shows as busy everywhere.
+ * App session: the signed-in account (loaded from the backend), the UI language, the live-events connection
+ * and the notification list fed by live events. All marketplace data (workers, bookings, reviews…) lives in
+ * MongoDB and is loaded per page through the API.
  */
-export type Role = 'customer' | 'worker';
+export type { Role } from './api';
 export type Lang = 'en' | 'ur';
+export type User = Account;
+export type Notice = { id: string; title: string; text: string; to: string; at: number; read: boolean };
 
-export type User = { phone: string; name: string; role: Role; area: string; workerId?: string; phoneVerified?: boolean };
-
-export type WorkerProfile = { id?: string; trades: ServiceId[]; skills?: string[]; years: number; areas: string[]; intro: string; available: boolean; phoneVerified?: boolean; verificationMode?: 'sms' | 'demo' };
-
-export type BookingStatus = 'requested' | 'quoted' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled';
-
-export type Booking = {
-  id: string;
-  workerId: string;
-  service: ServiceId;
-  problem: string;
-  when: string;
-  address: string;
-  price?: { labour: number; visit: number; note: string };
-  status: BookingStatus;
-  createdAt: number;
-  review?: { rating: 'good' | 'okay' | 'bad'; text: string };
-};
-
-type State = {
-  user: User | null;
+type Ctx = {
+  user: Account | null;
+  /** False until the saved session has been checked with the server. */
+  ready: boolean;
   lang: Lang;
-  bookings: Booking[];
-  saved: string[];
-  workerProfile: WorkerProfile | null;
-  /** Worker side: id of the incoming demo request the worker has handled (accepted / declined). */
-  workerInbox: { status: 'new' | 'quoted' | 'declined' | 'active' | 'done'; quote?: number };
-};
-
-const KEY = 'rr-demo-v1';
-const initial: State = {
-  user: null,
-  lang: 'en',
-  bookings: [
-    { id: 'RR-2398', workerId: 'ahmed', service: 'electrician', problem: 'Wiring fix in lounge', when: '12 Oct', address: 'House 14, Street 22, G-10/4',
-      price: { labour: 2200, visit: 300, note: '' }, status: 'completed', createdAt: Date.now() - 864e5 * 29, review: { rating: 'good', text: 'Bohat acha kaam.' } },
-    { id: 'RR-2311', workerId: 'imran', service: 'ac', problem: 'AC service', when: '28 Sep', address: 'House 14, Street 22, G-10/4',
-      status: 'cancelled', createdAt: Date.now() - 864e5 * 43 },
-  ],
-  saved: ['imran'],
-  workerProfile: null,
-  workerInbox: { status: 'new' },
-};
-
-function load(): State {
-  try {
-    const raw = localStorage.getItem(KEY);
-    return raw ? { ...initial, ...JSON.parse(raw) } : initial;
-  } catch {
-    return initial;
-  }
-}
-
-type Ctx = State & {
-  signIn: (u: User) => void;
-  signOut: () => void;
   setLang: (l: Lang) => void;
-  toggleSaved: (workerId: string) => void;
-  createBooking: (b: Omit<Booking, 'id' | 'status' | 'createdAt'>) => Booking;
-  updateBooking: (id: string, patch: Partial<Booking>) => void;
-  isBusy: (workerId: string) => boolean;
-  saveWorkerProfile: (p: WorkerProfile) => void;
-  completeWorkerOnboarding: (profile: SavedWorker) => void;
-  setAvailable: (v: boolean) => void;
-  setInbox: (i: State['workerInbox']) => void;
-  resetDemo: () => void;
+  signIn: (token: string, account: Account) => void;
+  signOut: () => Promise<void>;
+  setUser: (a: Account) => void;
+  refreshUser: () => Promise<Account | null>;
+  updateMe: (patch: Partial<Pick<Account, 'name' | 'area' | 'role' | 'location' | 'emergencyContacts'>>) => Promise<Account>;
+  toggleSaved: (workerId: string) => Promise<boolean>;
+  notices: Notice[];
+  markNoticesRead: () => void;
 };
 
+const LANG_KEY = 'rr-lang';
 const StoreCtx = createContext<Ctx | null>(null);
 
 export function StoreProvider({ children }: { children: ReactNode }) {
-  const [s, set] = useState<State>(load);
-  useEffect(() => {
-    try { localStorage.setItem(KEY, JSON.stringify(s)); } catch { /* storage unavailable: demo still works in memory */ }
-  }, [s]);
-  useEffect(() => {
-    document.documentElement.lang = s.lang;
-  }, [s.lang]);
+  const [user, setUserState] = useState<Account | null>(null);
+  const [ready, setReady] = useState(false);
+  const [lang, setLangState] = useState<Lang>(() => { try { return localStorage.getItem(LANG_KEY) === 'ur' ? 'ur' : 'en'; } catch { return 'en'; } });
+  const [notices, setNotices] = useState<Notice[]>([]);
 
-  const isBusy = useCallback(
-    (workerId: string) =>
-      // Imran is seeded as busy on another customer's job.
-      workerId === 'imran' || s.bookings.some((b) => b.workerId === workerId && (b.status === 'confirmed' || b.status === 'in_progress')),
-    [s.bookings],
-  );
+  useEffect(() => { document.documentElement.lang = lang; try { localStorage.setItem(LANG_KEY, lang); } catch { /* ignore */ } }, [lang]);
 
-  const api = useMemo<Ctx>(() => ({
-    ...s,
-    signIn: (user) => set((p) => ({ ...p, user })),
-    signOut: () => set((p) => ({ ...p, user: null })),
-    setLang: (lang) => set((p) => ({ ...p, lang })),
-    toggleSaved: (id) => set((p) => ({ ...p, saved: p.saved.includes(id) ? p.saved.filter((x) => x !== id) : [...p.saved, id] })),
-    createBooking: (b) => {
-      const booking: Booking = { ...b, id: `RR-${2417 + Math.floor(Math.random() * 500)}`, status: 'requested', createdAt: Date.now() };
-      set((p) => ({ ...p, bookings: [booking, ...p.bookings] }));
-      return booking;
+  const refreshUser = useCallback(async () => {
+    if (!authToken()) { setUserState(null); return null; }
+    try { const r = await api<{ account: Account }>('/auth/me'); setUserState(r.account); return r.account; }
+    catch (e) { if ((e as { status?: number }).status === 401) { setAuthToken(null); setUserState(null); } return null; }
+  }, []);
+  useEffect(() => { void refreshUser().finally(() => setReady(true)); }, [refreshUser]);
+  // One live connection per signed-in browser tab.
+  useEffect(() => { connectLive(user ? authToken() : null); }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Turn live events into notifications (bell menu).
+  useEffect(() => {
+    if (!user) return;
+    const base = user.role === 'worker' ? '/work/jobs' : '/app/bookings';
+    const push = (n: Omit<Notice, 'at' | 'read'>) => setNotices((l) => [{ ...n, at: Date.now(), read: false }, ...l.filter((x) => x.id !== n.id)].slice(0, 30));
+    const LABEL: Record<string, string> = { quoted: 'sent you a price', confirmed: 'Booking confirmed', in_progress: 'Work started', completed: 'Job marked as done', cancelled: 'Booking cancelled', declined: 'Request declined', expired: 'Request expired' };
+    const offs = [
+      onLive('request', (d) => push({ id: `req-${d.id}`, title: 'New job request', text: `${d.customerName} · ${d.problem}`, to: `/work/jobs/${d.id}` })),
+      onLive('booking', (d) => d.status !== 'requested' && push({ id: `bk-${d.id}-${d.status}`, title: d.code, text: LABEL[d.status] || d.status, to: `${base}/${d.id}` })),
+      onLive('message', (d) => d.message?.from !== 'system' && d.message?.from !== (user.role === 'worker' ? 'worker' : 'customer') && push({ id: `msg-${d.message.id}`, title: 'New message', text: d.message.text || d.message.transcript || 'Voice note', to: `${base}/${d.bookingId}` })),
+      onLive('bhaai-request', (d) => push({ id: `bh-${d.id}`, title: 'Bhaai-Rate', text: `${d.customerName} asked for a fair price. Record your voice note.`, to: `${base}/${d.id}` })),
+      onLive('review', (d) => push({ id: `rv-${d.id}`, title: 'New review', text: `You were rated ${d.rating}.`, to: '/work/reviews' })),
+    ];
+    return () => offs.forEach((off) => off());
+  }, [user?.id, user?.role]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const value = useMemo<Ctx>(() => ({
+    user, ready, lang, notices,
+    setLang: setLangState,
+    signIn: (token, account) => { setAuthToken(token); setUserState(account); setNotices([]); },
+    signOut: async () => { try { await api('/auth/logout', { method: 'POST' }); } catch { /* ignore */ } setAuthToken(null); setUserState(null); setNotices([]); },
+    setUser: setUserState,
+    refreshUser,
+    updateMe: async (patch) => { const r = await api<{ account: Account }>('/auth/me', { method: 'PATCH', body: patch }); setUserState(r.account); return r.account; },
+    toggleSaved: async (workerId) => {
+      if (!user) return false;
+      const isSaved = user.saved.includes(workerId);
+      await api(`/saved/${workerId}`, { method: isSaved ? 'DELETE' : 'PUT' });
+      setUserState({ ...user, saved: isSaved ? user.saved.filter((x) => x !== workerId) : [...user.saved, workerId] });
+      return !isSaved;
     },
-    updateBooking: (id, patch) => set((p) => ({ ...p, bookings: p.bookings.map((b) => (b.id === id ? { ...b, ...patch } : b)) })),
-    isBusy,
-    saveWorkerProfile: (workerProfile) => set((p) => ({ ...p, workerProfile })),
-    completeWorkerOnboarding: (profile) => set((p) => ({ ...p, workerProfile: profile, user: { name: profile.name, phone: profile.phone.slice(3), role: 'worker', area: profile.areas[0], workerId: profile.id, phoneVerified: profile.phoneVerified } })),
-    setAvailable: (available) => set((p) => (p.workerProfile ? { ...p, workerProfile: { ...p.workerProfile, available } } : p)),
-    setInbox: (workerInbox) => set((p) => ({ ...p, workerInbox })),
-    resetDemo: () => set(initial),
-  }), [s, isBusy]);
+    markNoticesRead: () => setNotices((l) => l.map((n) => ({ ...n, read: true }))),
+  }), [user, ready, lang, notices, refreshUser]);
 
-  return <StoreCtx.Provider value={api}>{children}</StoreCtx.Provider>;
+  return <StoreCtx.Provider value={value}>{children}</StoreCtx.Provider>;
 }
 
 export function useStore() {
@@ -124,4 +90,4 @@ export function useStore() {
   return c;
 }
 
-export const workerName = (id: string) => WORKERS.find((w) => w.id === id)?.name ?? 'Worker';
+export const homeFor = (role: Role | null | undefined) => (role === 'worker' ? '/work' : '/app');

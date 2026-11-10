@@ -1,7 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { serviceById, type Worker } from '../data/seed';
+import { serviceById } from '../data/seed';
+import type { Worker } from '../app/api';
 import { useStore } from '../app/store';
 import { Icon, type IconName } from './Icon';
 import { ease, staggerItem } from './motion';
@@ -72,10 +73,12 @@ export function Empty({ icon, title, text, cta, to }: { icon: IconName; title: s
 
 /** Worker summary card used on home, discovery and saved. */
 export function WorkerCard({ w, compact = false }: { w: Worker; compact?: boolean }) {
-  const { isBusy, saved, toggleSaved } = useStore();
-  const busy = isBusy(w.id);
+  const { user, toggleSaved } = useStore();
+  const toast = useToast();
+  const busy = w.busy;
   const svc = serviceById(w.service);
-  const isSaved = saved.includes(w.id);
+  const isSaved = Boolean(user?.saved.includes(w.id));
+  const where = [w.distanceKm !== null ? `${w.distanceKm} km` : null, w.areas.slice(0, 2).join(', ') || null].filter(Boolean).join(' · ');
   return (
     <motion.div variants={staggerItem} className="card lift" style={{ padding: compact ? 16 : 20 }}>
       <Link to={`/app/workers/${w.id}`} className="row g16" style={{ alignItems: 'flex-start' }}>
@@ -83,12 +86,12 @@ export function WorkerCard({ w, compact = false }: { w: Worker; compact?: boolea
         <span className="stack g4 grow">
           <span className="row g8 wrapflex">
             <span className="h3">{w.name}</span>
-            {busy ? <span className="badge warn"><span className="dot" />On a job</span> : <span className="badge ok"><span className="dot live" />Available</span>}
+            {!w.available ? <span className="badge" style={{ background: 'var(--sand)', color: 'var(--muted)' }}>Offline</span> : busy ? <span className="badge warn"><span className="dot" />On a job</span> : <span className="badge ok"><span className="dot live" />Available</span>}
           </span>
-          <span className="small muted">{svc.name} · {w.km} km · {w.area}</span>
+          <span className="small muted">{svc.name}{where ? ` · ${where}` : ''}</span>
           {!compact && (
             <span className="row g16 small" style={{ marginTop: 6 }}>
-              {w.jobs > 0 ? <Stars value={w.rating} /> : <span className="badge ok" style={{ background: 'var(--sand)', color: 'var(--muted)' }}>New</span>}
+              {w.ratingCount > 0 ? <Stars value={w.rating} /> : <span className="badge ok" style={{ background: 'var(--sand)', color: 'var(--muted)' }}>New</span>}
               <span className="muted"><b className="num" style={{ color: 'var(--ink)' }}>{w.jobs}</b> jobs</span>
               <span className="muted"><b className="num" style={{ color: 'var(--ink)' }}>{w.years}</b> yrs</span>
             </span>
@@ -99,7 +102,7 @@ export function WorkerCard({ w, compact = false }: { w: Worker; compact?: boolea
         <button
           className="icon-btn"
           aria-label={isSaved ? 'Remove from saved' : 'Save worker'}
-          onClick={() => toggleSaved(w.id)}
+          onClick={() => { toggleSaved(w.id).then((on) => toast(on ? 'Saved for later' : 'Removed from saved', 'heart')).catch((e: Error) => toast(e.message, 'alert')); }}
           style={{ position: 'absolute', top: 16, right: 16, width: 38, height: 38, color: isSaved ? '#C2412D' : 'var(--muted)' }}
         >
           <motion.span key={String(isSaved)} initial={{ scale: 0.4 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 500, damping: 15 }} style={{ display: 'grid' }}>

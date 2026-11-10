@@ -19,22 +19,34 @@ test('partial updates do not clear existing profile fields; zero experience is v
  const changed=mergeDraft(draft,patch);assert.equal(changed.name,'احمد');assert.equal(changed.years,0);assert.deepEqual(missingFields(changed),[]);
  assert.throws(()=>patchSchema.parse({phoneVerified:true}));assert.throws(()=>mergeDraft(draft,{trades:['invalid']}));assert.throws(()=>mergeDraft(draft,{years:90}));
 });
-test('Groq uses requested transcription model and exact audio, rejecting silence',async()=>{
- let form;const voice=createVoiceService({apiKey:'test',fetcher:async(_url,req)=>{form=req.body;return Response.json({text:'احمد',duration:2,segments:[{no_speech_prob:0.1}]});}});
- assert.equal(await voice.transcribe({buffer:Buffer.from('audio'),mimetype:'audio/webm'}),'احمد');assert.equal(form.get('model'),'whisper-large-v3-turbo');assert.equal(form.get('language'),'ur');
- const silent=createVoiceService({apiKey:'test',fetcher:async()=>Response.json({text:'subtitle',duration:2,segments:[{no_speech_prob:0.99}]})});
+const gemini=(parts,status=200)=>Response.json(status===200?{candidates:[{content:{parts}}]}:{error:{code:status}},{status});
+test('Gemini transcribes recorded audio with gemini-3.5-transcribe and rejects silence',async()=>{
+ let url,body;const voice=createVoiceService({apiKey:'test',fetcher:async(u,req)=>{url=u;body=JSON.parse(req.body);return gemini([{audioTranscription:{text:'Mera naam Bilal hai'}}]);}});
+ assert.equal(await voice.transcribe({buffer:Buffer.from('audio'),mimetype:'audio/webm;codecs=opus'}),'Mera naam Bilal hai');
+ assert.match(url,/gemini-3.5-transcribe:generateContent$/);assert.equal(body.contents[0].parts[0].inlineData.mimeType,'audio/webm');assert.equal(body.contents[0].parts[0].inlineData.data,Buffer.from('audio').toString('base64'));
+ const silent=createVoiceService({apiKey:'test',fetcher:async()=>gemini([{audioTranscription:{text:' . '}}])});
  await assert.rejects(()=>silent.transcribe({buffer:Buffer.from('audio'),mimetype:'audio/webm'}),e=>e.code==='NO_SPEECH');
 });
-test('extraction preserves missing fields and validates navigation actions',async()=>{
- const voice=createVoiceService({apiKey:'test',fetcher:async()=>Response.json({choices:[{message:{content:JSON.stringify({years:0,name:null,action:'next'})}}]})});
- assert.deepEqual(await voice.extract('آگے',{},'experience'),{patch:{years:0},action:'next'});
- const invalid=createVoiceService({apiKey:'test',fetcher:async()=>Response.json({choices:[{message:{content:'{"action":"https://evil.example"}'}}]})});
+test('busy or unavailable models fall back to the next model in the list',async()=>{
+ const seen=[];const voice=createVoiceService({apiKey:'test',models:{text:'a,b,c'},fetcher:async u=>{const m=u.split('models/')[1].split(':')[0];seen.push(m);return m==='c'?gemini([{text:JSON.stringify({transcriptRoman:'paanch saal',years:5,action:'none'})}]):gemini(null,m==='a'?503:429);}});
+ assert.deepEqual(await voice.extract('paanch saal',{},'experience'),{patch:{years:5},action:'none',transcriptRoman:'paanch saal'});assert.deepEqual(seen,['a','b','c']);
+});
+test('extraction keeps English + Roman Urdu fields, drops nulls and validates navigation actions',async()=>{
+ const voice=createVoiceService({apiKey:'test',fetcher:async()=>gemini([{text:JSON.stringify({transcriptRoman:'agay',years:0,name:null,skills:['Wiring'],skillsRoman:['wiring ka kaam'],action:'next'})}])});
+ assert.deepEqual(await voice.extract('آگے',{},'experience'),{patch:{years:0,skills:['Wiring'],skillsRoman:['wiring ka kaam']},action:'next',transcriptRoman:'agay'});
+ const invalid=createVoiceService({apiKey:'test',fetcher:async()=>gemini([{text:'{"action":"https://evil.example"}'}])});
  await assert.rejects(()=>invalid.extract('test',{},'review'),e=>e.code==='UNCLEAR_PROFILE');
 });
 test('provider failures never return invented transcripts',async()=>{
- const voice=createVoiceService({apiKey:'test',fetcher:async()=>Response.json({error:{code:'rate_limit'}},{status:429})});
+ const voice=createVoiceService({apiKey:'test',fetcher:async()=>gemini(null,429)});
  await assert.rejects(()=>voice.extract('test',{},'identity'),e=>e.code==='VOICE_BUSY');
+ await assert.rejects(()=>voice.transcribe({buffer:Buffer.from('a'),mimetype:'audio/webm'}),e=>e.code==='VOICE_BUSY');
  await assert.rejects(()=>createVoiceService().extract('test',{},'identity'),e=>e.code==='VOICE_NOT_CONFIGURED');
+});
+test('Gemini TTS speaks Urdu (ur-PK) with the configured voice and returns WAV',async()=>{
+ let body;const pcm=Buffer.alloc(480);const voice=createVoiceService({apiKey:'test',voiceName:'Charon',fetcher:async(_u,req)=>{body=JSON.parse(req.body);return gemini([{inlineData:{mimeType:'audio/L16;codec=pcm;rate=24000',data:pcm.toString('base64')}}]);}});
+ const wav=await voice.speak('سلام');assert.equal(wav.subarray(0,4).toString(),'RIFF');assert.equal(wav.length,44+480);
+ assert.equal(body.generationConfig.speechConfig.languageCode,'ur-PK');assert.equal(body.generationConfig.speechConfig.voiceConfig.prebuiltVoiceConfig.voiceName,'Charon');
 });
 test('Veevo request follows supplied contract and HTTP-200 provider rejection fails',async()=>{
  let payload;const send=createSmsService({hash:'test-secret',fetcher:async(_url,req)=>{payload=JSON.parse(req.body);return Response.json({STATUS:'SUCCESS'});}});

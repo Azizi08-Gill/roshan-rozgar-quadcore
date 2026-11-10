@@ -1,7 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
-import { useStore, type Booking } from '../app/store';
-import { serviceById, workerById } from '../data/seed';
+import { Link } from 'react-router-dom';
+import { api, type Booking } from '../app/api';
+import { useStore } from '../app/store';
 import { Icon } from '../ui/Icon';
 import { ease } from '../ui/motion';
 
@@ -10,10 +11,9 @@ import { ease } from '../ui/motion';
  * One tap runs the family alert and the helpline call in parallel (Promise.allSettled) and locks the
  * screen into an emergency state with a live status log and a siren.
  *
- * DEMO MODE (default on): nothing is dialled or sent; each action is simulated and logged.
- * LIVE MODE: opens tel:15 and WhatsApp/SMS deep links, and posts the alert to the backend SMS endpoint.
+ * The backend saves the alert with your location and texts every emergency contact saved on your account
+ * (Settings). The phone dialer opens for Helpline 15. TEST MODE saves the alert but sends no SMS and dials nothing.
  */
-export const EMERGENCY_CONTACTS = [{ name: 'Family contact', phone: '+923001234567' }];
 const HELPLINE = '15';
 
 type StepState = 'pending' | 'running' | 'done' | 'failed';
@@ -40,9 +40,9 @@ export function SosButton({ booking, autoOpen = false }: { booking?: Booking; au
   );
 }
 
-function getLocation(): Promise<{ lat: number; lng: number; approx: boolean }> {
-  // Falls back to the booking sector centre (G-10, Islamabad) if GPS is denied or slow.
-  const fallback = { lat: 33.6751, lng: 73.0169, approx: true };
+function getLocation(booking?: Booking): Promise<{ lat: number; lng: number; approx: boolean } | null> {
+  // Falls back to the booking's saved location if GPS is denied or slow; null if neither is known.
+  const fallback = booking?.location ? { ...booking.location, approx: true } : null;
   return new Promise((resolve) => {
     if (!('geolocation' in navigator)) return resolve(fallback);
     const t = setTimeout(() => resolve(fallback), 4000);
@@ -78,12 +78,13 @@ function startSiren() {
 
 function SosOverlay({ booking, onClose }: { booking?: Booking; onClose: () => void }) {
   const { user } = useStore();
-  const [demo, setDemo] = useState(true);
+  const [demo, setDemo] = useState(false);
+  const contacts = user?.emergencyContacts ?? [];
   const [phase, setPhase] = useState<'arming' | 'active'>('arming');
   const [count, setCount] = useState(3);
   const [logs, setLogs] = useState<Log[]>([
     { id: 'gps', label: 'Getting your location', detail: '', state: 'pending' },
-    { id: 'family', label: 'Alerting family (SMS + WhatsApp)', detail: '', state: 'pending' },
+    { id: 'family', label: 'Alerting your emergency contacts by SMS', detail: '', state: 'pending' },
     { id: 'police', label: `Calling Helpline ${HELPLINE} / Virtual Women Police Station`, detail: '', state: 'pending' },
     { id: 'siren', label: 'Siren on', detail: '', state: 'pending' },
   ]);
@@ -102,30 +103,25 @@ function SosOverlay({ booking, onClose }: { booking?: Booking; onClose: () => vo
   useEffect(() => {
     if (phase !== 'active' || started.current) return;
     started.current = true;
-    const w = booking ? workerById(booking.workerId) : undefined;
-
     const familyAlert = async () => {
       set('gps', 'running');
-      const loc = await getLocation();
-      const maps = `https://maps.google.com/?q=${loc.lat.toFixed(5)},${loc.lng.toFixed(5)}`;
-      set('gps', 'done', `${loc.lat.toFixed(4)}, ${loc.lng.toFixed(4)}${loc.approx ? ' (approx.)' : ''}`);
+      const loc = await getLocation(booking);
+      set('gps', loc ? 'done' : 'failed', loc ? `${loc.lat.toFixed(4)}, ${loc.lng.toFixed(4)}${loc.approx ? ' (booking location)' : ''}` : 'Location unavailable');
       set('family', 'running');
-      const msg = `EMERGENCY from ${user?.name ?? 'Roshan Rozgar user'}. Location: ${maps}. Booking ${booking?.id ?? '—'}` +
-        (w ? ` with ${w.name} (${serviceById(w.service).name}, worker ID ${w.id}).` : '.');
-      if (demo) {
-        await new Promise((r) => setTimeout(r, 900));
-      } else {
-        await fetch('/api/sos', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ to: EMERGENCY_CONTACTS.map((c) => c.phone), message: msg, bookingId: booking?.id, location: loc }) }).catch(() => null);
-        window.open(`https://wa.me/${EMERGENCY_CONTACTS[0].phone.replace('+', '')}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
-      }
-      set('family', 'done', `${EMERGENCY_CONTACTS.length} contact${EMERGENCY_CONTACTS.length > 1 ? 's' : ''} · ${demo ? 'simulated' : 'sent'}`);
+      try {
+        const r = await api<{ alert: { results: { to: string | null; status: string }[] } }>('/sos', { method: 'POST', body: { bookingId: booking?.id, location: loc, test: demo } });
+        const sent = r.alert.results.filter((x) => x.status === 'sent').length, failed = r.alert.results.filter((x) => x.status === 'failed').length;
+        if (!contacts.length) set('family', 'failed', 'No emergency contacts saved · alert recorded');
+        else if (demo) set('family', 'done', `Test mode · ${contacts.length} contact${contacts.length > 1 ? 's' : ''} not texted · alert recorded`);
+        else set('family', failed && !sent ? 'failed' : 'done', `${sent} sent${failed ? ` · ${failed} failed` : ''}`);
+      } catch (e) { set('family', 'failed', (e as Error).message); }
     };
 
     const policeCall = async () => {
       set('police', 'running');
       if (!demo) window.location.href = `tel:${HELPLINE}`;
       await new Promise((r) => setTimeout(r, 1200));
-      set('police', 'done', demo ? 'Simulated (demo mode)' : 'Dialer opened');
+      set('police', 'done', demo ? 'Test mode · not dialled' : 'Dialer opened');
     };
 
     const siren = async () => {
@@ -148,9 +144,10 @@ function SosOverlay({ booking, onClose }: { booking?: Booking; onClose: () => vo
           <div className="stack g20" style={{ alignItems: 'center', textAlign: 'center' }}>
             <span className="sos-count num">{count}</span>
             <h2 className="h1" style={{ color: '#fff' }}>Sending SOS…</h2>
-            <p style={{ margin: 0, opacity: 0.8 }}>Your family will get your location and Helpline {HELPLINE} will be called.</p>
+            <p style={{ margin: 0, opacity: 0.8 }}>{contacts.length ? `${contacts.map((c) => c.name).join(', ')} will get your location by SMS and Helpline ${HELPLINE} will be called.` : `Helpline ${HELPLINE} will be called. You have no emergency contacts saved yet.`}</p>
+            {!contacts.length && <Link to="/app/settings" className="small" style={{ color: '#fff', textDecoration: 'underline' }} onClick={close}>Add emergency contacts</Link>}
             <label className="row g8 small" style={{ cursor: 'pointer' }}>
-              <input type="checkbox" checked={demo} onChange={(e) => setDemo(e.target.checked)} /> Demo mode (don't really call or send)
+              <input type="checkbox" checked={demo} onChange={(e) => setDemo(e.target.checked)} /> Test mode (record only, no SMS or call)
             </label>
             <button className="btn btn-lg" style={{ background: '#fff', color: '#8B1A12' }} onClick={close}>Cancel</button>
           </div>
@@ -158,7 +155,7 @@ function SosOverlay({ booking, onClose }: { booking?: Booking; onClose: () => vo
           <div className="stack g16">
             <div className="row g12">
               <span className="sos-badge"><Icon name="shield" size={22} stroke={2.4} /></span>
-              <div className="stack"><b style={{ fontSize: 20 }}>Emergency mode</b><span className="small" style={{ opacity: 0.8 }}>{demo ? 'Demo: actions are simulated' : 'Help is on the way'}</span></div>
+              <div className="stack"><b style={{ fontSize: 20 }}>Emergency mode</b><span className="small" style={{ opacity: 0.8 }}>{demo ? 'Test mode: alert recorded only' : 'Alert sent'}</span></div>
             </div>
             <div className="stack g8">
               {logs.map((l, i) => (

@@ -15,6 +15,7 @@ import DesignGallery from './design/DesignGallery';
 import Onboarding from './pages/worker/Onboarding';
 import VoiceNavigation from './ui/VoiceNavigation';
 import { Translator } from './i18n';
+import { DemoBhaai, DemoSos } from './pages/customer/Demo';
 
 function Routed() {
   const location = useLocation();
@@ -44,6 +45,8 @@ function Routed() {
           <Route path="bookings/:id/review" element={<Review />} />
           <Route path="saved" element={<Saved />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="demo/sos" element={<DemoSos />} />
+          <Route path="demo/bhaai-rate" element={<DemoBhaai />} />
           <Route path="help" element={<Help />} />
         </Route>
         <Route path="/work" element={<WorkerLayout />}>

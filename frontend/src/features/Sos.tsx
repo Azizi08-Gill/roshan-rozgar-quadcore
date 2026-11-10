@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { api, type Booking } from '../app/api';
 import { useStore } from '../app/store';
@@ -19,7 +20,7 @@ const HELPLINE = '15';
 type StepState = 'pending' | 'running' | 'done' | 'failed';
 type Log = { id: string; label: string; detail: string; state: StepState };
 
-export function SosButton({ booking, autoOpen = false }: { booking?: Booking; autoOpen?: boolean }) {
+export function SosButton({ booking, autoOpen = false, defaultTest = false }: { booking?: Booking; autoOpen?: boolean; defaultTest?: boolean }) {
   const [open, setOpen] = useState(autoOpen);
   return (
     <>
@@ -35,7 +36,7 @@ export function SosButton({ booking, autoOpen = false }: { booking?: Booking; au
         <Icon name="shield" size={20} stroke={2.4} />
         <span>SOS</span>
       </motion.button>
-      <AnimatePresence>{open && <SosOverlay booking={booking} onClose={() => setOpen(false)} />}</AnimatePresence>
+      <AnimatePresence>{open && <SosOverlay booking={booking} defaultTest={defaultTest} onClose={() => setOpen(false)} />}</AnimatePresence>
     </>
   );
 }
@@ -76,9 +77,9 @@ function startSiren() {
   }
 }
 
-function SosOverlay({ booking, onClose }: { booking?: Booking; onClose: () => void }) {
+function SosOverlay({ booking, defaultTest = false, onClose }: { booking?: Booking; defaultTest?: boolean; onClose: () => void }) {
   const { user } = useStore();
-  const [demo, setDemo] = useState(false);
+  const [demo, setDemo] = useState(defaultTest);
   const contacts = user?.emergencyContacts ?? [];
   const [phase, setPhase] = useState<'arming' | 'active'>('arming');
   const [count, setCount] = useState(3);
@@ -136,7 +137,7 @@ function SosOverlay({ booking, onClose }: { booking?: Booking; onClose: () => vo
 
   const close = () => { stopSiren.current(); onClose(); };
 
-  return (
+  return createPortal(
     <motion.div className="sos-overlay" role="alertdialog" aria-modal="true" aria-label="Emergency" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
       <div className="sos-pulse" />
       <motion.div className="sos-panel" initial={{ y: 30, scale: 0.96 }} animate={{ y: 0, scale: 1 }} transition={{ ease, duration: 0.4 }}>
@@ -174,6 +175,7 @@ function SosOverlay({ booking, onClose }: { booking?: Booking; onClose: () => vo
           </div>
         )}
       </motion.div>
-    </motion.div>
+    </motion.div>,
+    document.body,
   );
 }

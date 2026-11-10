@@ -4,7 +4,7 @@ import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { useStore, type Role } from '../../app/store';
 import { AREAS } from '../../data/seed';
 import { Icon } from '../../ui/Icon';
-import LanguageToggle from '../../ui/LanguageToggle';
+import { LangMenu } from '../../i18n';
 import { Logo, Orb, useToast } from '../../ui/kit';
 import { ease } from '../../ui/motion';
 
@@ -57,7 +57,7 @@ export default function SignIn() {
   return (
     <div className="auth">
       <aside className="auth-art">
-        <div className="row g16"><Logo /><LanguageToggle /></div>
+        <div className="row g16"><Logo /><LangMenu compact /></div>
         <div className="stack g24" style={{ alignItems: 'center', textAlign: 'center' }}>
           <Orb size={260} />
           <div className="stack g8" style={{ marginTop: 20 }}>
@@ -70,7 +70,7 @@ export default function SignIn() {
 
       <main className="auth-main">
         <div className="auth-box">
-          <div className="auth-mobile-brand only-md"><Logo /><LanguageToggle /></div>
+          <div className="auth-mobile-brand only-md"><Logo /><LangMenu compact /></div>
           <div className="row between" style={{ marginBottom: 28 }}>
             {idx > 0 ? (
               <button className="icon-btn" aria-label="Back" onClick={() => setStep(steps[idx - 1])}><Icon name="chevL" size={20} /></button>

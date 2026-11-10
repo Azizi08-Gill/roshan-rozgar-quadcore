@@ -13,6 +13,7 @@ import { Dashboard, Jobs, Profile, Reviews, Setup } from './pages/worker';
 import DesignGallery from './design/DesignGallery';
 import Onboarding from './pages/worker/Onboarding';
 import VoiceNavigation from './ui/VoiceNavigation';
+import { Translator } from './i18n';
 
 function Routed() {
   const location = useLocation();
@@ -64,6 +65,7 @@ export default function App() {
     <StoreProvider>
       <ToastProvider>
         <div className="ambient" />
+        <Translator />
         <Routed />
         <VoiceNavigation />
       </ToastProvider>

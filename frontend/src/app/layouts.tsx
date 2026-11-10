@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Icon, type IconName } from '../ui/Icon';
 import { Logo } from '../ui/kit';
-import LanguageToggle from '../ui/LanguageToggle';
+import { LangMenu } from '../i18n';
 import { ease } from '../ui/motion';
 import { useStore, type Role } from './store';
 
@@ -33,7 +33,7 @@ export function PublicLayout() {
             ))}
           </nav>
           <div className="row g8">
-            <LanguageToggle />
+            <LangMenu />
             {home ? (
               <Link to={home} className="btn btn-dark btn-sm">Open app</Link>
             ) : (
@@ -133,7 +133,7 @@ function AppChrome({ tabs, sub, mic }: { tabs: Tab[]; sub: string; mic?: boolean
             ))}
           </nav>
           <div className="row g8" style={{ position: 'relative' }}>
-            <LanguageToggle />
+            <LangMenu compact />
             <button className="icon-btn" aria-label="Notifications" style={{ position: 'relative' }}>
               <Icon name="bell" size={19} />
               <span style={{ position: 'absolute', top: 10, right: 11, width: 8, height: 8, borderRadius: 4, background: '#E0593F', border: '2px solid var(--paper)' }} />

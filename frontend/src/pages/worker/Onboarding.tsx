@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useStore } from '../../app/store';
 import { onboardingApi, ensureOnboarding, forgetOnboarding, voiceForm, RequestError, type Draft, type SavedWorker, type Session } from '../../app/onboarding';
 import { AREAS, SERVICES, serviceById } from '../../data/seed';
-import LanguageToggle from '../../ui/LanguageToggle';
+import { LangMenu } from '../../i18n';
 import { Logo, Orb, Wave } from '../../ui/kit';
 import { Icon } from '../../ui/Icon';
 import { useUrduSpeaker, useVoiceRecorder } from '../../ui/voice';
@@ -101,7 +101,7 @@ export default function Onboarding() {
   function next() { if (!session) return; if (validStep(step, session)) { const index = Math.min(4, step + 1); setStep(index); void read(index); } else void read(step); }
   const draft = session?.draft;
   return <>
-    <header className="topbar"><div className="wrap row between" style={{ height: 80 }}><Logo /><div className="row g12"><span className="badge ok hide-sm">{tx("آواز سے رجسٹریشن", "Voice registration")}</span><LanguageToggle /></div></div></header>
+    <header className="topbar"><div className="wrap row between" style={{ height: 80 }}><Logo /><div className="row g12"><span className="badge ok hide-sm">{tx("آواز سے رجسٹریشن", "Voice registration")}</span><LangMenu compact /></div></div></header>
     <main className="wrap page wrap-narrow onboarding" lang={lang}>
       <div className="row between g12" style={{ marginBottom: 20 }}><button className="icon-btn" aria-label="Go back" disabled={busy || recorder.recording} onClick={() => step ? (setStep(step - 1), void read(step - 1)) : nav('/')}><Icon name="chevL" /></button><span className="small muted">{step + 1} / 5</span><button className="icon-btn" aria-label="Listen to instructions" onClick={() => void read()} disabled={recorder.recording}><Icon name={speaker.speaking ? 'pause' : 'vol'} /></button></div>
       <div className="progress" style={{ marginBottom: 24 }}><i style={{ width: `${(step + 1) * 20}%` }} /></div>

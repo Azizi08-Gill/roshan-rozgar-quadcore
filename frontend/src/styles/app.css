@@ -548,3 +548,39 @@ footer .brand-logo-image { width: 192px; }
 .onboarding[lang=ur] .small, .onboarding[lang=ur] .tiny { font-size: 19px; line-height: 2; }
 .onboarding[lang=ur] .btn { font-family: var(--urdu); font-size: 23px; line-height: 1.8; min-height: 54px; }
 .onboarding[lang=ur] .onboarding-keypad .btn { font-family: var(--display); }
+
+/* ---------- Language dropdown ---------- */
+.lang { position: relative; }
+.lang-btn { height: 44px; padding: 0 14px; border-radius: 999px; display: inline-flex; align-items: center; gap: 8px; background: var(--paper); box-shadow: var(--shadow-sm); font: 700 14px var(--body); transition: box-shadow .25s, transform .2s var(--ease); }
+.lang-btn:hover { box-shadow: var(--shadow-md); }
+.lang-btn:active { transform: scale(.96); }
+.lang-btn.compact { height: 40px; padding: 0 12px; }
+.lang-btn.compact span.ur, .lang-btn span.ur { font-size: 15px; }
+@media (max-width: 480px) { .lang-btn { padding: 0 10px; gap: 6px; } .lang-btn > span:nth-of-type(1) { display: none; } .lang-btn.compact > span:nth-of-type(1) { display: none; } }
+.lang-menu { position: absolute; top: calc(100% + 10px); inset-inline-end: 0; min-width: 220px; margin: 0; padding: 8px; list-style: none; z-index: 70; border-radius: 22px; background: rgba(255, 254, 250, .96); backdrop-filter: blur(20px); box-shadow: var(--shadow-lg); transform-origin: top right; }
+.lang-opt { width: 100%; display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 16px; text-align: start; transition: background .2s; }
+.lang-opt:hover { background: var(--sand); }
+.lang-opt.on { background: var(--mint); }
+.lang-flag { width: 38px; height: 38px; border-radius: 13px; display: grid; place-items: center; background: linear-gradient(150deg, var(--mint), var(--mint-2)); color: var(--green-deep); font: 700 13px var(--display); flex: none; }
+.lang-flag.ur { font-size: 18px; }
+
+/* ---------- Urdu / right-to-left ---------- */
+html[lang="ur"] body { line-height: 1.95; }
+html[lang="ur"] * { letter-spacing: 0 !important; }
+html[lang="ur"] .display { line-height: 1.35; }
+html[lang="ur"] .h1, html[lang="ur"] .h2, html[lang="ur"] .h3 { line-height: 1.4; }
+html[lang="ur"] .eyebrow { letter-spacing: 0 !important; text-transform: none; }
+html[lang="ur"] .btn, html[lang="ur"] .chip, html[lang="ur"] .badge { line-height: 1.4; }
+html[dir="rtl"] .dir-icon { transform: scaleX(-1); }
+html[dir="rtl"] .otp, html[dir="rtl"] .phone-field, html[dir="rtl"] .map, html[dir="rtl"] .wave, html[dir="rtl"] .progress { direction: ltr; }
+html[dir="rtl"] .phone-field input { text-align: left; }
+html[dir="rtl"] .timeline::before { left: auto; right: 25px; }
+html[dir="rtl"] .tl-row:not(:last-of-type)::after { left: auto; right: 11px; }
+html[dir="rtl"] .bhaai-quote { border-left: 0; border-right: 4px solid var(--green-2); }
+html[dir="rtl"] .bubble { border-radius: 20px 20px 20px 6px; align-self: flex-end; }
+html[dir="rtl"] .bubble.me { border-radius: 20px 20px 6px 20px; align-self: flex-start; }
+html[dir="rtl"] .lang-menu { transform-origin: top left; }
+html[dir="rtl"] .fc-1 { right: auto; left: -2%; } html[dir="rtl"] .fc-2 { left: auto; right: -4%; } html[dir="rtl"] .fc-3 { right: auto; left: 6%; }
+html[dir="rtl"] .marquee > div { animation-direction: reverse; }
+html[dir="rtl"] .sos-fab { right: auto; left: 20px; }
+@media (min-width: 900px) { html[dir="rtl"] .sos-fab { left: 28px; right: auto; } }

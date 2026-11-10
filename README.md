@@ -35,6 +35,10 @@ All five outcomes must work together as one flow, for both the worker and the cu
 
 > **Status:** these AI components are **planned and not implemented yet**. See *Current status* below.
 
+## Languages
+
+English and Urdu (اردو). A language dropdown sits in every header (public site, customer app, worker app, sign-in, voice and worker setup). Urdu switches the whole app to right-to-left with the Noto Sans Arabic font. Translations live in `frontend/src/i18n/ur.ts` and are applied live by `frontend/src/i18n/index.tsx`, so every page, placeholder and toast is covered. The sample Roman Urdu text (voice transcripts, reviews) is shown in Urdu script. Urdu strings were written by an AI assistant and have not been reviewed by a native speaker.
+
 ## What the demo app does now
 
 A complete, clickable flow for both roles with seeded data, persisted in the browser (`localStorage`):

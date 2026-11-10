@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { detectService, SAMPLE_PROMPTS, SERVICES, serviceById, type ServiceId } from '../../data/seed';
 import { Icon } from '../../ui/Icon';
 import { Orb, Thinking, Wave } from '../../ui/kit';
+import { LangMenu } from '../../i18n';
 import { ease, Page, Typewriter } from '../../ui/motion';
 
 type Phase = 'ready' | 'listening' | 'thinking' | 'confirm' | 'typing';
@@ -87,7 +88,7 @@ export default function Voice() {
     <Page className="voice">
       <div className="wrap row between" style={{ paddingTop: 20 }}>
         <Link to="/app" className="icon-btn" aria-label="Back"><Icon name="chevL" size={20} /></Link>
-        <span className="badge ok"><Icon name="lang" size={14} />Urdu · Roman Urdu · English</span>
+        <span className="row g12"><span className="badge ok hide-sm"><Icon name="lang" size={14} />Urdu · Roman Urdu · English</span><LangMenu compact /></span>
       </div>
 
       <div className="wrap voice-stage">

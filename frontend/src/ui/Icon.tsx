@@ -45,10 +45,12 @@ export const PATHS = {
 
 export type IconName = keyof typeof PATHS;
 
+const DIRECTIONAL = new Set<string>(['chevL', 'chevR', 'arrowR', 'send', 'redo']);
+
 export function Icon({ name, size = 20, stroke = 2, className, style }: { name: IconName; size?: number; stroke?: number; className?: string; style?: React.CSSProperties }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={stroke}
-      strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={className} style={style}>
+      strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={`${DIRECTIONAL.has(name) ? 'dir-icon ' : ''}${className ?? ''}`} style={style}>
       {(PATHS[name] as readonly string[]).map((d, i) => <path key={i} d={d} />)}
     </svg>
   );

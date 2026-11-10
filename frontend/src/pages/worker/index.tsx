@@ -5,6 +5,7 @@ import { useStore } from '../../app/store';
 import { AREAS, SERVICES, serviceById, type ServiceId } from '../../data/seed';
 import { Icon } from '../../ui/Icon';
 import { Orb, Wave, useToast } from '../../ui/kit';
+import { LangMenu } from '../../i18n';
 import { CountUp, ease, Page, Stagger, staggerItem, Typewriter, Words } from '../../ui/motion';
 
 /** Reads a label aloud in Urdu, for workers who prefer listening to reading. */
@@ -54,7 +55,7 @@ export function Setup() {
       <div className="row between" style={{ marginBottom: 20 }}>
         <button className="icon-btn" aria-label="Back" onClick={() => (step ? setStep(step - 1) : nav('/'))}><Icon name="chevL" size={20} /></button>
         <span className="small muted">Step {step + 1} of 4</span>
-        <button className="icon-btn" aria-label="Read aloud" onClick={() => say(titles[step])}><Icon name="vol" size={19} /></button>
+        <span className="row g8"><LangMenu compact /><button className="icon-btn" aria-label="Read aloud" onClick={() => say(titles[step])}><Icon name="vol" size={19} /></button></span>
       </div>
       <div className="progress" style={{ marginBottom: 28 }}><i style={{ width: `${((step + 1) / 4) * 100}%` }} /></div>
 

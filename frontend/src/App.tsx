@@ -11,6 +11,7 @@ import Workers, { WorkerProfile } from './pages/customer/Workers';
 import { Booking, JobRequest, Review } from './pages/customer/Booking';
 import { Dashboard, Jobs, Profile, Reviews, Setup } from './pages/worker';
 import DesignGallery from './design/DesignGallery';
+import { Translator } from './i18n';
 
 function Routed() {
   const location = useLocation();
@@ -59,6 +60,7 @@ export default function App() {
     <StoreProvider>
       <ToastProvider>
         <div className="ambient" />
+        <Translator />
         <Routed />
       </ToastProvider>
     </StoreProvider>

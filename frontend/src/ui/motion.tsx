@@ -1,5 +1,7 @@
 import { animate, motion, useInView, useMotionValue, useTransform, type Variants } from 'framer-motion';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useStore } from '../app/store';
+import { tr } from '../i18n';
 
 export const ease = [0.2, 0.8, 0.2, 1] as const;
 
@@ -49,7 +51,9 @@ export function Stagger({ children, className, style }: { children: ReactNode; c
 }
 
 /** Headline that rises in word by word. */
-export function Words({ text, className, delay = 0 }: { text: string; className?: string; delay?: number }) {
+export function Words({ text: source, className, delay = 0 }: { text: string; className?: string; delay?: number }) {
+  const { lang } = useStore();
+  const text = lang === 'ur' ? tr(source) : source;
   return (
     <span className={className} aria-label={text}>
       {text.split(' ').map((w, i) => (
@@ -83,7 +87,9 @@ export function CountUp({ to, decimals = 0, prefix = '', suffix = '' }: { to: nu
 }
 
 /** Types text out character by character (used for live voice transcripts). */
-export function Typewriter({ text, speed = 28, onDone }: { text: string; speed?: number; onDone?: () => void }) {
+export function Typewriter({ text: source, speed = 28, onDone }: { text: string; speed?: number; onDone?: () => void }) {
+  const { lang } = useStore();
+  const text = lang === 'ur' ? tr(source) : source;
   const [n, setN] = useState(0);
   useEffect(() => {
     setN(0);

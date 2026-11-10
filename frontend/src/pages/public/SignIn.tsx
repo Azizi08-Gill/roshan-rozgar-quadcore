@@ -5,6 +5,7 @@ import { useStore, type Role } from '../../app/store';
 import { AREAS } from '../../data/seed';
 import { Icon } from '../../ui/Icon';
 import { Logo, Orb, useToast } from '../../ui/kit';
+import { LangMenu } from '../../i18n';
 import { ease } from '../../ui/motion';
 
 /** Demo OTP. A real build would send this by SMS through the backend. */
@@ -76,6 +77,7 @@ export default function SignIn() {
               <button className="icon-btn" aria-label="Back to home" onClick={() => nav('/')}><Icon name="chevL" size={20} /></button>
             )}
             <span className="small muted">Step {idx + 1} of {steps.length}</span>
+            <LangMenu compact />
           </div>
           <div className="progress" style={{ marginBottom: 32 }}><i style={{ width: `${((idx + 1) / steps.length) * 100}%` }} /></div>
 

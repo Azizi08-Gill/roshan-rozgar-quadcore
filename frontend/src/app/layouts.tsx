@@ -3,10 +3,12 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Icon, type IconName } from '../ui/Icon';
 import { Logo } from '../ui/kit';
+import LanguageToggle from '../ui/LanguageToggle';
 import { ease } from '../ui/motion';
 import { useStore, type Role } from './store';
 
 /* ---------------- Public site ---------------- */
+const urLabels: Record<string, string> = { 'How it works': 'یہ کیسے کام کرتا ہے', Services: 'خدمات', 'For workers': 'کاریگروں کے لیے', Help: 'مدد', Home: 'ہوم', 'Find workers': 'کاریگر تلاش کریں', Bookings: 'بکنگز', Saved: 'محفوظ', Jobs: 'کام', Reviews: 'ریویوز', Profile: 'پروفائل' };
 const PUBLIC_LINKS = [
   { to: '/how-it-works', label: 'How it works' },
   { to: '/services', label: 'Services' },
@@ -17,7 +19,7 @@ const PUBLIC_LINKS = [
 export function PublicLayout() {
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
-  const { user } = useStore();
+  const { user, lang } = useStore();
   useEffect(() => setOpen(false), [pathname]);
   const home = user ? (user.role === 'worker' ? '/work' : '/app') : null;
   return (
@@ -27,16 +29,17 @@ export function PublicLayout() {
           <Logo />
           <nav className="row g4 hide-md">
             {PUBLIC_LINKS.map((l) => (
-              <NavLink key={l.to} to={l.to} className={({ isActive }) => `navlink ${isActive ? 'on' : ''}`}>{l.label}</NavLink>
+              <NavLink key={l.to} to={l.to} className={({ isActive }) => `navlink ${isActive ? 'on' : ''}`}>{lang === 'ur' ? urLabels[l.label] : l.label}</NavLink>
             ))}
           </nav>
           <div className="row g8">
+            <LanguageToggle />
             {home ? (
               <Link to={home} className="btn btn-dark btn-sm">Open app</Link>
             ) : (
               <>
                 <Link to="/sign-in" className="btn btn-ghost btn-sm hide-sm">Sign in</Link>
-                <Link to="/sign-in?role=customer" className="btn btn-dark btn-sm">Get started</Link>
+                <Link to="/sign-in?role=customer" className="btn btn-dark btn-sm hide-sm">Get started</Link>
               </>
             )}
             <button className="icon-btn only-md" aria-label="Menu" onClick={() => setOpen(true)}><Icon name="list" size={20} /></button>
@@ -53,7 +56,7 @@ export function PublicLayout() {
               </div>
               {PUBLIC_LINKS.map((l, i) => (
                 <motion.div key={l.to} initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.08 + i * 0.05, ease }}>
-                  <Link to={l.to} className="sheet-link">{l.label}<Icon name="arrowR" size={18} /></Link>
+                  <Link to={l.to} className="sheet-link">{lang === 'ur' ? urLabels[l.label] : l.label}<Icon name="arrowR" size={18} /></Link>
                 </motion.div>
               ))}
               <Link to="/sign-in" className="btn btn-ghost btn-block" style={{ marginTop: 16 }}>Sign in</Link>
@@ -108,7 +111,7 @@ function RequireRole({ role }: { role: Role }) {
 }
 
 function AppChrome({ tabs, sub, mic }: { tabs: Tab[]; sub: string; mic?: boolean }) {
-  const { user, signOut } = useStore();
+  const { user, signOut, lang } = useStore();
   const nav = useNavigate();
   const initials = (user?.name || 'You').split(' ').map((p) => p[0]).join('').slice(0, 2).toUpperCase();
   const [menu, setMenu] = useState(false);
@@ -123,13 +126,14 @@ function AppChrome({ tabs, sub, mic }: { tabs: Tab[]; sub: string; mic?: boolean
                 {({ isActive }) => (
                   <>
                     {isActive && <motion.span layoutId={`pill-${sub}`} className="navpill" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
-                    <span style={{ position: 'relative' }}>{t.label}</span>
+                    <span style={{ position: 'relative' }}>{lang === 'ur' ? urLabels[t.label] || t.label : t.label}</span>
                   </>
                 )}
               </NavLink>
             ))}
           </nav>
           <div className="row g8" style={{ position: 'relative' }}>
+            <LanguageToggle />
             <button className="icon-btn" aria-label="Notifications" style={{ position: 'relative' }}>
               <Icon name="bell" size={19} />
               <span style={{ position: 'absolute', top: 10, right: 11, width: 8, height: 8, borderRadius: 4, background: '#E0593F', border: '2px solid var(--paper)' }} />
@@ -163,6 +167,7 @@ function AppChrome({ tabs, sub, mic }: { tabs: Tab[]; sub: string; mic?: boolean
 }
 
 function NavFragment({ t, mic }: { t: Tab; mic?: boolean }) {
+  const { lang } = useStore();
   return (
     <>
       {mic && (
@@ -172,7 +177,7 @@ function NavFragment({ t, mic }: { t: Tab; mic?: boolean }) {
       )}
       <NavLink to={t.to} end={t.end} className={({ isActive }) => `tab ${isActive ? 'on' : ''}`}>
         <Icon name={t.icon} size={21} />
-        <span>{t.label === 'Find workers' ? 'Find' : t.label}</span>
+        <span>{lang === 'ur' ? urLabels[t.label] || t.label : t.label === 'Find workers' ? 'Find' : t.label}</span>
       </NavLink>
     </>
   );

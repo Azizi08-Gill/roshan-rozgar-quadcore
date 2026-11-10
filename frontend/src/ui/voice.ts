@@ -1,3 +1,4 @@
+import { API_BASE } from '../app/apiBase';
 import { useEffect, useRef, useState } from 'react';
 
 export function useUrduSpeaker() {
@@ -18,7 +19,7 @@ export function useUrduSpeaker() {
     try {
       if (last.current !== text || !audio.current) {
         const abort = new AbortController(); controller.current = abort;
-        const response = await fetch('/api/onboarding/speak', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }), signal: abort.signal });
+        const response = await fetch(`${API_BASE}/onboarding/speak`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }), signal: abort.signal });
         if (!response.ok) throw new Error('اردو آواز نہیں چل سکی۔ دوبارہ سننے کا بٹن دبائیں۔');
         const blob = await response.blob(); if (abort.signal.aborted || !mounted.current) return;
         if (url.current) URL.revokeObjectURL(url.current);

@@ -2,8 +2,10 @@ import { z } from 'zod';
 export const trades = ['electrician','plumber','ac','carpenter','mechanic','painter','mason','other'];
 export const tradeNames = { electrician:'الیکٹریشن', plumber:'پلمبر', ac:'اے سی ٹیکنیشن', carpenter:'بڑھئی', mechanic:'مکینک', painter:'پینٹر', mason:'مستری', other:'ہنرمند' };
 const text = (max) => z.string().trim().max(max);
-export const draftSchema = z.object({ name:text(80).default(''), phone:text(25).default(''), trades:z.array(z.enum(trades)).max(8).default([]), skills:z.array(text(100).min(2)).max(12).default([]), years:z.number().min(0).max(70).nullable().default(null), areas:z.array(text(100).min(2)).max(8).default([]), intro:text(1000).default('') }).strict();
-export const patchSchema = draftSchema.partial();
+const fields = { name:text(80), phone:text(25), trades:z.array(z.enum(trades)).max(8), skills:z.array(text(100).min(2)).max(12), years:z.number().min(0).max(70).nullable(), areas:z.array(text(100).min(2)).max(8), intro:text(1000) };
+const defaults = { name:'', phone:'', trades:[], skills:[], years:null, areas:[], intro:'' };
+export const draftSchema = z.object(Object.fromEntries(Object.entries(fields).map(([key,schema]) => [key,schema.default(defaults[key])]))).strict();
+export const patchSchema = z.object(fields).partial().strict();
 export const emptyDraft = () => draftSchema.parse({});
 export class ApiError extends Error { constructor(status,code,message,details) { super(message); Object.assign(this,{status,code,details}); } }
 export function normalizePhone(value='') {

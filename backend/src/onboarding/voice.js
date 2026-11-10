@@ -41,7 +41,7 @@ export function createVoiceService({apiKey,model='openai/gpt-oss-120b',python=pr
    if(speaking>=3)throw new ApiError(429,'SPEECH_BUSY','دوبارہ سننے کا بٹن دبائیں۔');speaking++;
    try {const audio=await new Promise((resolve,reject)=>{
     const child=spawn(python,[fileURLToPath(new URL('./tts.py',import.meta.url))],{stdio:['pipe','pipe','pipe']}),chunks=[];let bytes=0;
-    const timer=setTimeout(()=>{child.kill();reject(new ApiError(504,'SPEECH_TIMEOUT','آواز نہیں چل سکی۔ دوبارہ سنیں۔'));},25000);
+    const timer=setTimeout(()=>{child.kill();reject(new ApiError(504,'SPEECH_TIMEOUT','آواز نہیں چل سکی۔ دوبارہ سنیں۔'));},45000);
     child.stdout.on('data',chunk=>{bytes+=chunk.length;if(bytes>4*1024*1024)child.kill();else chunks.push(chunk);});child.stderr.resume();child.stdin.on('error',()=>{});
     child.on('error',()=>{clearTimeout(timer);reject(new ApiError(503,'SPEECH_UNAVAILABLE','اردو آواز دستیاب نہیں۔'));});
     child.on('close',code=>{clearTimeout(timer);if(code===0&&bytes>0&&bytes<=4*1024*1024)resolve(Buffer.concat(chunks));else reject(new ApiError(502,'SPEECH_UNAVAILABLE','اردو آواز نہیں چل سکی۔ دوبارہ سنیں۔'));});child.stdin.end(JSON.stringify({text}));

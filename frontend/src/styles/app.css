@@ -528,3 +528,23 @@ footer .brand-logo-image { width: 192px; }
 .voice-nav-panel { width: min(340px, calc(100vw - 32px)); position: absolute; right: 0; bottom: 72px; box-shadow: var(--shadow-lg); }
 @media (max-width: 899px) { .voice-nav { right: 16px; bottom: 96px; } }
 @media (max-width: 420px) { .onboarding .badge { white-space: normal; height: auto; min-height: 26px; } }
+
+@font-face { font-family: 'Jameel Noori Nastaleeq'; src: local('Jameel Noori Nastaleeq'), url('/fonts/jameel-noori-nastaleeq.ttf') format('truetype'); font-style: normal; font-weight: 100 900; font-display: swap; unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF; }
+:root { --urdu: 'Jameel Noori Nastaleeq', 'Noto Sans Arabic', sans-serif; --body: Montserrat, 'Jameel Noori Nastaleeq', sans-serif; --display: 'Plus Jakarta Sans', 'Jameel Noori Nastaleeq', sans-serif; }
+.ur, [lang=ur] { font-family: var(--urdu); }
+.onboarding[lang=ur] { line-height: 2; }
+.onboarding[lang=en] .ur { font-family: var(--body); }
+.language-toggle { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 40px; min-width: 62px; padding: 4px 10px; border-radius: 999px; background: var(--paper); box-shadow: var(--shadow-sm); font-size: 13px; flex: none; }
+.language-toggle [lang=ur] { font-size: 20px; line-height: 1.4; }
+.auth-mobile-brand { align-items: center; gap: 14px; }
+.auth-art > .row > .brand-logo { padding: 10px 16px; border-radius: 16px; background: var(--cream); }
+.auth-art .language-toggle { color: var(--ink); }
+.auth-art .language-toggle span { color: inherit; }
+.onboarding button { white-space: normal; }
+
+/* Nastaleeq has a smaller visual x-height; keep worker controls comfortably legible. */
+.onboarding[lang=ur] { font-size: 22px; }
+.onboarding[lang=ur] .lead { font-size: 24px; line-height: 2; }
+.onboarding[lang=ur] .small, .onboarding[lang=ur] .tiny { font-size: 19px; line-height: 2; }
+.onboarding[lang=ur] .btn { font-family: var(--urdu); font-size: 23px; line-height: 1.8; min-height: 54px; }
+.onboarding[lang=ur] .onboarding-keypad .btn { font-family: var(--display); }

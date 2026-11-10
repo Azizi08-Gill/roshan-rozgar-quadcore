@@ -1,3 +1,4 @@
+import { API_BASE } from './apiBase';
 import type { ServiceId } from '../data/seed';
 export type Draft = { name: string; phone: string; trades: ServiceId[]; skills: string[]; years: number | null; areas: string[]; intro: string };
 export type SavedWorker = Omit<Draft, 'years'> & { id: string; years: number; available: boolean; phoneVerified: boolean; verificationMode: 'sms' | 'demo' };
@@ -10,7 +11,7 @@ export async function onboardingApi<T = Session>(path: string, options: RequestI
   if (!(options.body instanceof FormData) && options.body) headers.set('Content-Type', 'application/json');
   const current = token(); if (current) headers.set('Authorization', `Bearer ${current}`);
   let response: Response;
-  try { response = await fetch(`/api/onboarding${path}`, { ...options, headers, signal: options.signal || AbortSignal.timeout(65000) }); }
+  try { response = await fetch(`${API_BASE}/onboarding${path}`, { ...options, headers, signal: options.signal || AbortSignal.timeout(65000) }); }
   catch { throw new RequestError('رابطہ نہیں ہو سکا۔ انٹرنیٹ چیک کر کے دوبارہ کوشش کریں۔', 'NETWORK_ERROR', 0); }
   const result = await response.json().catch(() => ({}));
   if (!response.ok) throw new RequestError(result.error || 'دوبارہ کوشش کریں۔', result.code || 'REQUEST_FAILED', response.status);

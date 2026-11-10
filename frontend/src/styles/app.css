@@ -605,3 +605,17 @@ html[dir="rtl"] .fc-1 { right: auto; left: -2%; } html[dir="rtl"] .fc-2 { left: 
 html[dir="rtl"] .marquee > div { animation-direction: reverse; }
 html[dir="rtl"] .sos-fab { right: auto; left: 20px; }
 @media (min-width: 900px) { html[dir="rtl"] .sos-fab { left: 28px; right: auto; } }
+
+/* ---------- Pop-ups: full screen on every device; bottom sheet on phones ---------- */
+.modal-backdrop { overflow-y: auto; }
+.bhaai { background: linear-gradient(170deg, #FFFEFA 0%, #F1F7EF 100%); border-radius: 28px; }
+.bhaai .btn-primary { margin-top: 4px; }
+@media (max-width: 640px) {
+  .modal-backdrop { place-items: end center; padding: 0; }
+  .bhaai { max-width: none; border-radius: 28px 28px 0 0; max-height: 92vh; padding: 22px 18px calc(22px + env(safe-area-inset-bottom)); }
+  .sos-overlay { padding: 12px; }
+  .sos-panel { padding: 22px 18px; }
+  .sos-count { font-size: 96px; }
+}
+.demo-card { text-align: center; align-items: center; padding: 36px 28px; background: linear-gradient(160deg, #FFFEFA, #F1F7EF); box-shadow: var(--shadow-md); border-radius: var(--r-xl); }
+.bhaai .stack > .ur { align-self: flex-start; font-size: 15px; line-height: 1.5; }

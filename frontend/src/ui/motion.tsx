@@ -10,8 +10,8 @@ export function Page({ children, className = '' }: { children: ReactNode; classN
   return (
     <motion.main
       className={className}
-      initial={{ opacity: 0, y: 18, filter: 'blur(6px)' }}
-      animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+      initial={{ opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.55, ease }}
     >
       {children}

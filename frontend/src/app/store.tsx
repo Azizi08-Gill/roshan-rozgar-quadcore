@@ -28,22 +28,47 @@ type Ctx = {
 };
 
 const LANG_KEY = 'rr-lang';
+const ACCOUNT_KEY = 'rr-account';
+/** Last known account, so a reload keeps you signed in even while the server is busy or restarting. */
+const cachedAccount = (): Account | null => {
+  try { return authToken() ? (JSON.parse(localStorage.getItem(ACCOUNT_KEY) || 'null') as Account | null) : null; } catch { return null; }
+};
 const StoreCtx = createContext<Ctx | null>(null);
 
 export function StoreProvider({ children }: { children: ReactNode }) {
-  const [user, setUserState] = useState<Account | null>(null);
-  const [ready, setReady] = useState(false);
+  const [user, setUserState] = useState<Account | null>(cachedAccount);
+  // With a saved account the app renders at once; the session is verified in the background.
+  const [ready, setReady] = useState(() => cachedAccount() !== null);
   const [lang, setLangState] = useState<Lang>(() => { try { return localStorage.getItem(LANG_KEY) === 'ur' ? 'ur' : 'en'; } catch { return 'en'; } });
   const [notices, setNotices] = useState<Notice[]>([]);
 
   useEffect(() => { document.documentElement.lang = lang; try { localStorage.setItem(LANG_KEY, lang); } catch { /* ignore */ } }, [lang]);
 
+  useEffect(() => {
+    try { if (user) localStorage.setItem(ACCOUNT_KEY, JSON.stringify(user)); else localStorage.removeItem(ACCOUNT_KEY); } catch { /* storage blocked */ }
+  }, [user]);
+
   const refreshUser = useCallback(async () => {
     if (!authToken()) { setUserState(null); return null; }
     try { const r = await api<{ account: Account }>('/auth/me'); setUserState(r.account); return r.account; }
-    catch (e) { if ((e as { status?: number }).status === 401) { setAuthToken(null); setUserState(null); } return null; }
+    catch (e) {
+      // Only an expired / invalid session signs you out. A busy or restarting server keeps the saved session.
+      if ((e as { status?: number }).status === 401) { setAuthToken(null); setUserState(null); }
+      return null;
+    }
   }, []);
-  useEffect(() => { void refreshUser().finally(() => setReady(true)); }, [refreshUser]);
+  useEffect(() => {
+    let stop = false;
+    (async () => {
+      for (let attempt = 0; attempt < 6 && !stop; attempt++) {
+        const account = await refreshUser();
+        if (account || !authToken()) break; // verified, or signed out for real
+        await new Promise((r) => setTimeout(r, 1500 * (attempt + 1)));
+      }
+      if (!stop) setReady(true);
+    })();
+    return () => { stop = true; };
+  }, [refreshUser]);
   // One live connection per signed-in browser tab.
   useEffect(() => { connectLive(user ? authToken() : null); }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 

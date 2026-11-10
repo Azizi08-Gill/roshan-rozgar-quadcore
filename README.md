@@ -122,7 +122,10 @@ React, React DOM, React Router, Vite, @vitejs/plugin-react, TypeScript, Express,
 
 ## Known limitations
 
-- Pages keep the exact design layout and scale to the window width (web designed at 1440 px, mobile at 390 px). Under 768 px wide, visitors get the mobile app instead of the website.
+- Responsive behaviour keeps the design exact:
+  - **Website:** laid out natively from 1440 to 1680 px wide (the layout stretches). Below 1440 it scales down slightly (1366 → 95%, 1280 → 89%); above 1680 it scales up.
+  - **Mobile app:** laid out natively from 390 to 480 px wide. Smaller phones scale down slightly (360 → 92%). The page fills the phone's height.
+  - Under 768 px wide, visitors get the mobile app instead of the website. Tablets (768–1279 px) see the website scaled down.
 - Buttons only navigate between screens. Inputs, toggles and recordings do nothing yet.
 - The mobile designs end at the voice-confirm step (there is no mobile worker list yet). Some Urdu screens link to the closest available screen because the Urdu set is partial.
 - The backend has no database and no API beyond `/api/health`.

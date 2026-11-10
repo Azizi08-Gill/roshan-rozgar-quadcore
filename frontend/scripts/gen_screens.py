@@ -114,7 +114,9 @@ class Conv(HTMLParser):
         if not data.strip():
             self.out.append(' ' if ' ' in data else '')
             return
-        self.out.append('{' + json.dumps(data) + '}' if re.search(r'[{}<>]', data) else data)
+        # JSX drops whitespace next to line breaks, while HTML collapses it to one space.
+        # Emit text as a string literal with HTML-style collapsing so spacing survives.
+        self.out.append('{' + json.dumps(re.sub(r'\s+', ' ', data), ensure_ascii=False) + '}')
 
 
 def comp_name(label):

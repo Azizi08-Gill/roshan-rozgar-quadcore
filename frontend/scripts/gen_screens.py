@@ -16,7 +16,8 @@ TAG_CASE = {'lineargradient': 'linearGradient', 'radialgradient': 'radialGradien
 ATTR_CASE = {'class': 'className', 'for': 'htmlFor', 'tabindex': 'tabIndex',
              'viewbox': 'viewBox', 'preserveaspectratio': 'preserveAspectRatio',
              'gradientunits': 'gradientUnits', 'gradienttransform': 'gradientTransform'}
-DROP_ATTRS = {'data-dc-tpl'}
+DROP_ATTRS = set()
+RENAME_ATTRS = {'data-dc-tpl': 'data-k'}  # stable design-template id, used as a hook by responsive.css
 DROP_CLASSES = {'sc-interp'}
 
 
@@ -79,6 +80,7 @@ class Conv(HTMLParser):
         for k, v in attrs:
             if k in DROP_ATTRS:
                 continue
+            k = RENAME_ATTRS.get(k, k)
             v = '' if v is None else v
             if k == 'class':
                 v = ' '.join(c for c in v.split() if c not in DROP_CLASSES)

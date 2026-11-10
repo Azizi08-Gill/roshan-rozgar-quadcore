@@ -1,4 +1,5 @@
 @import './fonts.css';
+@import './responsive.css';
 
 * { box-sizing: border-box; }
 html, body, #root { margin: 0; min-height: 100%; }

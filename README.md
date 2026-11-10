@@ -122,10 +122,10 @@ React, React DOM, React Router, Vite, @vitejs/plugin-react, TypeScript, Express,
 
 ## Known limitations
 
-- Responsive behaviour keeps the design exact:
-  - **Website:** laid out natively from 1440 to 1680 px wide (the layout stretches). Below 1440 it scales down slightly (1366 → 95%, 1280 → 89%); above 1680 it scales up.
-  - **Mobile app:** laid out natively from 390 to 480 px wide. Smaller phones scale down slightly (360 → 92%). The page fills the phone's height.
-  - Under 768 px wide, visitors get the mobile app instead of the website. Tablets (768–1279 px) see the website scaled down.
+- Responsive behaviour:
+  - **Website (all 20 web screens, English and Urdu):** truly responsive, with breakpoints at 1279, 1023 and 767 px. Side-by-side layouts stack, card grids reduce their columns, headers drop their link row, and sidebars (worker dashboard, admin) become a top tab bar on phones. The 1440 px desktop layout is unchanged. The rules live in `frontend/src/styles/responsive.css`, keyed on the design's template ids (`data-k`) and its recurring inline layouts, so the generated screens stay untouched.
+  - **Mobile app (`/m`):** laid out natively from 390 to 480 px; smaller phones scale down slightly (360 → 92%).
+  - On phones, `/` opens the mobile app's onboarding. "Yes, Find Plumbers" continues into the responsive web discovery page.
 - Buttons only navigate between screens. Inputs, toggles and recordings do nothing yet.
 - The mobile designs end at the voice-confirm step (there is no mobile worker list yet). Some Urdu screens link to the closest available screen because the Urdu set is partial.
 - The backend has no database and no API beyond `/api/health`.

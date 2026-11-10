@@ -108,6 +108,7 @@ export const mobileFlows: Record<string, ScreenFlow> = {
   's26-voice-listening': { links: [[['Stop'], 's27-voice-processing'], [['Back', 'Type instead'], 's24-customer-home']] },
   's27-voice-processing': { auto: { to: 's28-voice-confirm', ms: 2200 }, links: [[['Back', 'Type instead'], 's24-customer-home']] },
   's28-voice-confirm': { links: [
+    [[/^Yes, Find/], 'w05-discovery'],
     [['Try Again'], 's25-voice-ready'],
     [['Edit Manually', 'Back'], 's24-customer-home'],
   ] },

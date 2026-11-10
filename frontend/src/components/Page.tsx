@@ -2,13 +2,12 @@ import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { DESIGN } from '../routes';
 
 /**
- * Layout widths. Between MIN and MAX the screen is laid out natively at the real viewport
- * width (flex/grid reflow, text stays the designed size). Outside that range it is scaled.
+ * Mobile-app layout widths. Between MIN and MAX the phone screen is laid out natively at the
+ * real viewport width; outside that range it is scaled. (Web pages are fluid; see responsive.css.)
  */
-const RANGE = {
-  web: { min: 1440, max: 1680 },
+const RANGE: Record<'mobile', { min: number; max: number }> = {
   mobile: { min: 390, max: 480 },
-} as const;
+};
 
 function useViewport() {
   const [vp, setVp] = useState({ w: window.innerWidth, h: window.innerHeight });
@@ -58,12 +57,20 @@ export default function Page({ platform, children }: { platform: 'web' | 'mobile
     );
   }
 
-  const { min, max } = RANGE[platform];
+  // Web pages are fully fluid: they reflow with responsive.css at every width.
+  if (platform === 'web') {
+    return (
+      <div ref={ref} className="rr-web">
+        {children}
+      </div>
+    );
+  }
+
+  const { min, max } = RANGE.mobile;
   const layoutW = Math.min(Math.max(vp.w, min), max);
   const scale = vp.w / layoutW;
-  // Fill the window; never shorter than the design content (minus stripped chrome) so nothing is clipped.
-  const minH = platform === 'web' ? d.h - 44 : d.h - 50;
-  const layoutH = Math.max(vp.h / scale, platform === 'web' ? minH : Math.min(minH, 760));
+  // Fill the phone's height; never shorter than ~760 px of design so content isn't clipped.
+  const layoutH = Math.max(vp.h / scale, Math.min(d.h - 50, 760));
   return (
     <div style={{ width: vp.w, height: layoutH * scale, overflow: 'hidden', background: '#FCFAF3' }}>
       <div ref={ref} style={{ width: layoutW, height: layoutH, transform: scale === 1 ? undefined : `scale(${scale})`, transformOrigin: 'top left' }}>

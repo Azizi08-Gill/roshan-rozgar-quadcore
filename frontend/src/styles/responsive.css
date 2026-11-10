@@ -1,0 +1,187 @@
+/*
+ * Responsive layer for the web screens.
+ *
+ * The screens are generated from the design with inline styles at the 1440 px desktop size.
+ * These rules reflow them for laptops, tablets and phones. Two kinds of selectors:
+ *   1. Pattern rules: match the design's recurring inline layouts (e.g. a grid with a fixed
+ *      side column) so every screen, including the Urdu ones, adapts the same way.
+ *   2. Screen rules: [data-screen-label] + [data-k] (the design's template id) for one-off fixes.
+ * Inline styles win over normal CSS, so overrides use !important.
+ */
+
+/* ---------- Base: a real page instead of a fixed 1440 × 900 artboard ---------- */
+.rr-web > div > [data-screen-label] {
+  width: 100% !important;
+  height: auto !important;
+  min-height: 100vh;
+  overflow-x: clip !important;
+}
+
+/* ---------- Laptop: ≤ 1279 px ---------- */
+@media (max-width: 1279px) {
+  .rr-web [style*="padding: 0px 100px"],
+  .rr-web [style*="px 100px"],
+  .rr-web [style*="padding: 0px 80px"] {
+    padding-left: 40px !important;
+    padding-right: 40px !important;
+  }
+  .rr-web [style*="grid-template-columns: minmax(0px, 1fr) 560px"] { grid-template-columns: minmax(0, 1fr) 420px !important; }
+  .rr-web [style*="grid-template-columns: 640px minmax"],
+  .rr-web [style*="grid-template-columns: 620px minmax"],
+  .rr-web [style*="grid-template-columns: 600px minmax"] { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; }
+}
+
+@media (max-width: 1279px) {
+  /* Landing (EN + UR): trade chips wrap instead of overflowing */
+  .rr-web [style*="padding: 0px 80px 40px; display: flex"] { flex-wrap: wrap !important; }
+  .rr-web [style*="padding: 0px 80px 40px; display: flex"] > [style*="flex: 1 1 0%"] { flex: 1 1 150px !important; }
+}
+
+/* ---------- Tablet: ≤ 1023 px ---------- */
+@media (max-width: 1023px) {
+  /* Main + fixed side column → stacked */
+  .rr-web [style*="grid-template-columns: minmax(0px, 1fr) 3"],
+  .rr-web [style*="grid-template-columns: minmax(0px, 1fr) 4"],
+  .rr-web [style*="grid-template-columns: minmax(0px, 1fr) 5"],
+  .rr-web [style*="grid-template-columns: minmax(0px, 1.25fr) minmax(0px, 1fr)"],
+  .rr-web [style*="grid-template-columns: 640px minmax"],
+  .rr-web [style*="grid-template-columns: 620px minmax"],
+  .rr-web [style*="grid-template-columns: 600px minmax"] {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  .rr-web [style*="grid-template-columns: repeat(6, 1fr)"] { grid-template-columns: repeat(3, 1fr) !important; }
+  .rr-web [style*="grid-template-columns: repeat(5, 1fr)"] { grid-template-columns: repeat(3, 1fr) !important; }
+  .rr-web [style*="grid-template-columns: repeat(4, 1fr)"] { grid-template-columns: repeat(2, 1fr) !important; }
+
+  /* Wide data tables keep their columns and scroll sideways inside their card */
+  .rr-web [style*="grid-template-columns: 160px 160px minmax(0px, 1fr) 120px 220px"] { min-width: 820px; }
+  .rr-web div:has(> [style*="grid-template-columns: 160px 160px minmax(0px, 1fr) 120px 220px"]) { overflow-x: auto !important; }
+
+  /* Fixed-width content columns may not exceed the screen */
+  .rr-web [data-screen-label] [style*="width: 4"],
+  .rr-web [data-screen-label] [style*="width: 6"] { max-width: 100% !important; }
+
+  /* Large display type */
+  .rr-web [style*="font: 700 64px"], .rr-web [style*="font: 700 66px"],
+  .rr-web [style*="font: 700 56px"], .rr-web [style*="font: 700 54px"] { font-size: 48px !important; }
+}
+
+/* ---------- Phone: ≤ 767 px ---------- */
+@media (max-width: 767px) {
+  .rr-web [style*="padding: 0px 100px"],
+  .rr-web [style*="px 100px"],
+  .rr-web [style*="padding: 0px 80px"],
+  .rr-web [style*="px 40px"],
+  .rr-web [style*="padding: 0px 32px"],
+  .rr-web [style*="px 32px"] {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  .rr-web [style*="padding: 40px 44px"], .rr-web [style*="padding: 40px;"] { padding: 24px 20px !important; }
+
+  .rr-web [style*="grid-template-columns: repeat(6, 1fr)"],
+  .rr-web [style*="grid-template-columns: repeat(5, 1fr)"] { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
+  .rr-web [style*="grid-template-columns: repeat(3, 1fr)"],
+  .rr-web [style*="grid-template-columns: minmax(0px, 1fr) 560px"],
+  .rr-web [style*="grid-template-columns: minmax(0px, 1fr) minmax"] { grid-template-columns: minmax(0, 1fr) !important; }
+
+  .rr-web [style^="height: 72px; flex: 0 0 auto"], .rr-web [style^="height: 80px; flex: 0 0 auto"] { gap: 12px !important; }
+
+  /* Display type */
+  .rr-web [style*="font: 700 64px"], .rr-web [style*="font: 700 66px"],
+  .rr-web [style*="font: 700 56px"], .rr-web [style*="font: 700 54px"] { font-size: 36px !important; }
+  .rr-web [style*="font: 700 44px"], .rr-web [style*="font: 700 38px"] { font-size: 30px !important; }
+  .rr-web [style*="font: 700 34px"], .rr-web [style*="font: 700 32px"] { font-size: 26px !important; }
+
+  .rr-web [data-screen-label] [style*="width: 3"],
+  .rr-web [data-screen-label] [style*="width: 4"],
+  .rr-web [data-screen-label] [style*="width: 5"],
+  .rr-web [data-screen-label] [style*="width: 6"] { max-width: 100% !important; }
+}
+
+/* =====================================================================
+ * Shared structural fixes
+ * ===================================================================== */
+@media (max-width: 1023px) {
+  /* Stacked grids should hug their content instead of stretching rows to fill the window */
+  .rr-web [data-screen-label] [style*="grid-template-columns"] { align-content: start !important; align-items: start !important; }
+  .rr-web [style*="padding: 28px 48px"], .rr-web [style*="padding: 16px 48px 24px"] { padding-left: 24px !important; padding-right: 24px !important; }
+
+  /* Top navigation: keep logo + actions, drop the link row (EN pills, landing links, Urdu home) */
+  .rr-web div:has(> span[style*="height: 40px; padding: 0px 16px"]),
+  .rr-web div:has(> span[style*="height: 42px; padding: 0px 16px"]),
+  .rr-web [data-k="45"], .rr-web [data-k="1078"], .rr-web [data-k="1130"], .rr-web [data-k="1135"] { display: none !important; }
+  .rr-web [data-k="155"] { display: none !important; }   /* home: location pill */
+
+  /* Landing (EN + UR): hero art smaller */
+  .rr-web [data-k="74"], .rr-web [data-k="1107"] { height: 320px !important; overflow: hidden; }
+  .rr-web [data-k="74"] > *, .rr-web [data-k="1107"] > * { transform: scale(.62); }
+
+  /* Worker onboarding: fixed 220 px tiles → fluid */
+  .rr-web [style*="grid-template-columns: repeat(4, 220px)"] { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+
+  /* Discovery map gets real height once it sits under the list */
+  .rr-web [data-k="399"], .rr-web [data-k="1343"] { min-height: 420px; }
+}
+
+@media (max-width: 767px) {
+  /* Sidebar apps (worker dashboard EN/UR, admin): sidebar becomes a scrollable top tab bar */
+  .rr-web [data-screen-label]:has(> :is([data-k="794"], [data-k="983"], [data-k="1457"])) { flex-direction: column !important; }
+  .rr-web :is([data-k="794"], [data-k="983"], [data-k="1457"]) {
+    width: 100% !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    overflow-x: auto !important;
+    padding: 10px 12px !important;
+    gap: 4px !important;
+    position: sticky; top: 0; z-index: 5;
+  }
+  .rr-web :is([data-k="794"], [data-k="983"], [data-k="1457"]) > * { flex: 0 0 auto !important; white-space: nowrap; }
+  .rr-web :is([data-k="794"], [data-k="983"], [data-k="1457"]) > [style*="flex: 1 1 0%"]:empty { display: none !important; }
+  .rr-web :is([data-k="794"], [data-k="983"], [data-k="1457"]) > :first-child { padding: 0 8px 0 0 !important; }
+  .rr-web [style*="min-width: 0px; display: flex; flex-direction: column; padding: 32px 40px"],
+  .rr-web [style*="min-width: 0px; display: flex; flex-direction: column; padding: 28px 40px"],
+  .rr-web [style*="min-width: 0px; padding: 32px 40px"] { padding: 20px 16px !important; }
+
+  /* Logos and short labels never break mid-word */
+  .rr-web [style^="height: 72px; flex: 0 0 auto"] span, .rr-web [style^="height: 80px; flex: 0 0 auto"] span, .rr-web [style^="height: 84px; flex: 0 0 auto"] span { white-space: nowrap; }
+
+  /* Headers that hold many items wrap onto a second line */
+  .rr-web [style^="height: 72px; flex: 0 0 auto"], .rr-web [style^="height: 80px; flex: 0 0 auto"], .rr-web [style^="height: 84px; flex: 0 0 auto"] {
+    height: auto !important; min-height: 64px; flex-wrap: wrap !important; padding-top: 10px !important; padding-bottom: 10px !important;
+  }
+
+  /* Decorative orbs off on phones */
+  .rr-web [data-k="74"], .rr-web [data-k="1107"], .rr-web [data-k="98"], .rr-web [data-k="165"] { display: none !important; }
+
+
+  /* Customer home */
+  .rr-web [data-k="170"] { flex-direction: column !important; align-items: stretch !important; }
+  .rr-web [data-k="170"] > * { justify-content: center !important; }
+  .rr-web [data-k="189"], .rr-web [data-k="179"] { flex-wrap: wrap !important; gap: 8px !important; }
+
+  /* Discovery: worker cards wrap their stats/actions under the name */
+  .rr-web [data-k="378"], .rr-web [data-k="1322"] { flex-wrap: wrap !important; }
+  .rr-web [data-k="378"] > :last-child, .rr-web [data-k="1322"] > :last-child { flex: 1 1 100% !important; }
+
+  /* Job request: hide the step trail, stack When/Where, let the voice row wrap */
+  .rr-web :has(> [data-k="565"]) { flex-wrap: wrap !important; }
+  .rr-web [data-k="537"] { display: none !important; }
+  .rr-web [data-k="566"] { grid-template-columns: minmax(0, 1fr) !important; }
+
+  /* Price agreement header */
+  .rr-web [data-k="625"] { order: 10; }
+
+  /* Booking confirmed card */
+  .rr-web [data-k="713"] { flex-wrap: wrap !important; }
+
+  /* Worker onboarding tiles */
+  .rr-web [style*="grid-template-columns: repeat(4, 220px)"] { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px !important; }
+  .rr-web [data-k="907"] { flex: 1 1 100% !important; order: 3; }
+  .rr-web [data-k="938"] { flex-direction: column-reverse !important; align-items: stretch !important; }
+
+  /* Review: keep the three rating choices side by side */
+  .rr-web [data-k="961"] { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
+  .rr-web [data-k="954"] { padding: 24px 16px !important; }
+  .rr-web [data-screen-label="W12 Review"] { align-items: flex-start !important; }
+}

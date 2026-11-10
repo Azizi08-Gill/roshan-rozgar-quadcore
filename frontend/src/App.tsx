@@ -11,8 +11,8 @@ function ScreenRoute({ r }: { r: RouteEntry }) {
     document.title = `Roshan Rozgar · ${r.label.replace(/^\w+\s/, '')}`;
     window.scrollTo(0, 0);
   }, [r]);
-  // Phones get the mobile app; web pages are designed for desktop/tablet widths.
-  if (r.platform === 'web' && window.innerWidth < MOBILE_BREAKPOINT) return <Navigate to="/m" replace />;
+  // On phones the landing page is the mobile app's onboarding; every other web page is responsive.
+  if (r.path === '/' && window.innerWidth < MOBILE_BREAKPOINT) return <Navigate to="/m" replace />;
   const flow = (r.platform === 'web' ? webFlows : mobileFlows)[r.slug];
   return (
     <Page platform={r.platform}>

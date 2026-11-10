@@ -4,9 +4,9 @@ import { mobileScreens, webScreens, type Screen } from './screens/registry';
 function pathFor(platform: 'web' | 'mobile', s: Screen): string {
   const [code, ...rest] = s.label.split(' ');
   const name = rest.join(' ').replace(/\bUrdu\b/, '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  if (platform === 'mobile') return code === 'S01' ? '/m' : `/m/${name}`;
-  if (code.startsWith('U')) return code === 'U01' ? '/ur' : `/ur/${name}`;
-  return code === 'W01' ? '/' : `/${name}`;
+  if (platform === 'mobile') return code === 'S01' ? '/design/m' : `/design/m/${name}`;
+  if (code.startsWith('U')) return code === 'U01' ? '/design/ur' : `/design/ur/${name}`;
+  return code === 'W01' ? '/design/web' : `/design/${name}`;
 }
 
 export type RouteEntry = Screen & { platform: 'web' | 'mobile'; path: string };

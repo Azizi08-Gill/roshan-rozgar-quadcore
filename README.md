@@ -35,11 +35,23 @@ All five outcomes must work together as one flow, for both the worker and the cu
 
 > **Status:** these AI components are **planned and not implemented yet**. See *Current status* below.
 
+## What the demo app does now
+
+A complete, clickable flow for both roles with seeded data, persisted in the browser (`localStorage`):
+
+- **Public site:** Landing, How it works, Services, For workers, Help.
+- **Sign-in:** phone → OTP (demo code shown on screen) → role → name and area.
+- **Customer:** Home → speak or type the problem (browser speech recognition where available, keyword matching for Urdu/Roman Urdu) → workers list with filters and map → worker profile → job request → quote → accept → in progress → completed → review. Also Bookings, Saved, Help.
+- **Worker:** tap-only onboarding (trade, experience, areas, voice intro) → dashboard with a live incoming request → quote → booking → finished. Also Jobs, Reviews, Profile.
+- **Booking consistency:** a worker on a confirmed or in-progress job shows as busy everywhere.
+- **Bhaai-Rate (موزوں نرخ):** when a quote is too high, both sides leave a 5-second voice note and a fair price is suggested against seeded local market rates, with a one-tap lock.
+- **SOS:** a floating button on active bookings. One tap runs the family alert, the Helpline 15 call and a siren in parallel and shows a live status log. Demo mode (default) simulates everything. Live mode opens `tel:15`, WhatsApp and calls `POST /api/sos`, which is not implemented in the backend yet.
+
 ## Current status (be explicit for judges)
 
 **Built so far:**
 - The full **UI design**, as a React app: **20 web screens** (1440×900, including 7 Urdu RTL screens) and **15 mobile screens** (390×844, including 5 voice-assistant states).
-- **Click-through flows** between screens for both roles: customer and worker, in English and Urdu.
+- **Click-through flows** between screens for both roles: customer and worker, in English and Urdu (the original static design boards are kept at `/design`).
 - A **Node.js backend** skeleton with a health endpoint.
 
 **Not built yet (all data on the screens is static sample data from the design):**

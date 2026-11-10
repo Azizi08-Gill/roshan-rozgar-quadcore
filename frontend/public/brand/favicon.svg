@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>Roshan Rozgar</title>
+  <rect width="64" height="64" rx="15" fill="#123B31"/>
+  <path d="M32 8c2.2 9.8 6.2 13.8 16 16-9.8 2.2-13.8 6.2-16 16-2.2-9.8-6.2-13.8-16-16 9.8-2.2 13.8-6.2 16-16Z" fill="#B4945B"/>
+  <circle cx="22" cy="47" r="5" fill="#FAF8F2"/>
+  <circle cx="42" cy="47" r="5" fill="#FAF8F2"/>
+</svg>

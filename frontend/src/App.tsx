@@ -1,58 +1,66 @@
-import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
-import FlowLayer from './components/FlowLayer';
-import Page from './components/Page';
-import { mobileFlows, webFlows } from './flows';
-import { MOBILE_BREAKPOINT, routes, type RouteEntry } from './routes';
+import { Route, Routes, useLocation } from 'react-router-dom';
+import { CustomerLayout, PublicLayout, WorkerLayout } from './app/layouts';
+import { StoreProvider } from './app/store';
+import { ToastProvider } from './ui/kit';
+import { ForWorkers, Help, HowItWorks, Landing, NotFound, Services } from './pages/public';
+import SignIn from './pages/public/SignIn';
+import Home, { Bookings, Saved } from './pages/customer/Home';
+import Voice from './pages/customer/Voice';
+import Workers, { WorkerProfile } from './pages/customer/Workers';
+import { Booking, JobRequest, Review } from './pages/customer/Booking';
+import { Dashboard, Jobs, Profile, Reviews, Setup } from './pages/worker';
+import DesignGallery from './design/DesignGallery';
 
-function ScreenRoute({ r }: { r: RouteEntry }) {
-  const { pathname } = useLocation();
-  useEffect(() => {
-    document.title = `Roshan Rozgar · ${r.label.replace(/^\w+\s/, '')}`;
-    window.scrollTo(0, 0);
-  }, [r]);
-  // On phones the landing page is the mobile app's onboarding; every other web page is responsive.
-  if (r.path === '/' && window.innerWidth < MOBILE_BREAKPOINT) return <Navigate to="/m" replace />;
-  const flow = (r.platform === 'web' ? webFlows : mobileFlows)[r.slug];
+function Routed() {
+  const location = useLocation();
+  useEffect(() => { window.scrollTo({ top: 0 }); }, [location.pathname]);
   return (
-    <Page platform={r.platform}>
-      <FlowLayer key={pathname} flow={flow}>
-        <r.Component />
-      </FlowLayer>
-    </Page>
-  );
-}
-
-/** Index of every screen, for the team and for judges during the demo. */
-function AllScreens() {
-  const group = (p: 'web' | 'mobile') => routes.filter((r) => r.platform === p);
-  return (
-    <div style={{ padding: '40px 24px', maxWidth: 1100, margin: '0 auto' }}>
-      <h1 style={{ font: "700 26px 'Plus Jakarta Sans',sans-serif" }}>All screens</h1>
-      {(['web', 'mobile'] as const).map((p) => (
-        <section key={p}>
-          <h2 style={{ font: "700 18px 'Plus Jakarta Sans',sans-serif" }}>{p === 'web' ? 'Website' : 'Mobile app'}</h2>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {group(p).map((r) => (
-              <Link key={r.slug} to={r.path} style={{ padding: '8px 14px', borderRadius: 999, background: '#FFFEFA', border: '1px solid #DCE6DB', color: '#17201B', font: '600 13px Montserrat', textDecoration: 'none' }}>
-                {r.label} <span style={{ color: '#536158', fontWeight: 500 }}>{r.path}</span>
-              </Link>
-            ))}
-          </div>
-        </section>
-      ))}
-    </div>
+    <>
+    {/* Pages animate in on mount. Navigation never waits on exit animations, so it can't get stuck
+    // when the browser throttles animation frames (background tabs, low-power mode). */}
+      <Routes location={location}>
+        <Route element={<PublicLayout />}>
+          <Route path="/" element={<Landing />} />
+          <Route path="/how-it-works" element={<HowItWorks />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/for-workers" element={<ForWorkers />} />
+          <Route path="/help" element={<Help />} />
+        </Route>
+        <Route path="/sign-in" element={<SignIn />} />
+        <Route path="/app" element={<CustomerLayout />}>
+          <Route index element={<Home />} />
+          <Route path="voice" element={<Voice />} />
+          <Route path="workers" element={<Workers />} />
+          <Route path="workers/:id" element={<WorkerProfile />} />
+          <Route path="request/:workerId" element={<JobRequest />} />
+          <Route path="bookings" element={<Bookings />} />
+          <Route path="bookings/:id" element={<Booking />} />
+          <Route path="bookings/:id/review" element={<Review />} />
+          <Route path="saved" element={<Saved />} />
+          <Route path="help" element={<Help />} />
+        </Route>
+        <Route path="/work" element={<WorkerLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="setup" element={<Setup />} />
+          <Route path="jobs" element={<Jobs />} />
+          <Route path="reviews" element={<Reviews />} />
+          <Route path="profile" element={<Profile />} />
+        </Route>
+        <Route path="/design/*" element={<DesignGallery />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </>
   );
 }
 
 export default function App() {
   return (
-    <Routes>
-      {routes.map((r) => (
-        <Route key={r.slug} path={r.path} element={<ScreenRoute r={r} />} />
-      ))}
-      <Route path="/screens" element={<AllScreens />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <StoreProvider>
+      <ToastProvider>
+        <div className="ambient" />
+        <Routed />
+      </ToastProvider>
+    </StoreProvider>
   );
 }

@@ -119,6 +119,15 @@ export function createVoiceService({ apiKey, models = {}, voiceName = 'Charon', 
       if (!Object.keys(patch).length && action === 'none') throw new ApiError(422, 'NO_PROFILE_DETAILS', 'اپنا نام، موبائل نمبر، کام، تجربہ یا علاقہ بتائیں۔ یا کہیں آگے، پیچھے، دوبارہ سنائیں۔');
       return { patch, action, transcriptRoman };
     },
+    /** One fast call: listen to the recording and answer in JSON (no separate transcription step). */
+    async listenJson(file, system, schema) {
+      const audio = { inlineData: { mimeType: file.mimetype.split(';')[0], data: file.buffer.toString('base64') } };
+      const out = await generate(m.text,
+        () => ({ systemInstruction: { parts: [{ text: system }] }, contents: [{ role: 'user', parts: [audio] }], generationConfig: { temperature: 0, maxOutputTokens: 1024, responseMimeType: 'application/json', responseJsonSchema: schema } }),
+        json => { try { const v = JSON.parse(text(json) || 'null'); return v && typeof v === 'object' ? v : null; } catch { return null; } }, 20000);
+      if (!out) throw new ApiError(502, 'UNCLEAR_RESPONSE', 'Could not understand that. Please try again.');
+      return out;
+    },
     /** Generic structured call on the text models: returns the parsed JSON object, or throws UNCLEAR_RESPONSE. */
     async json(system, payload, schema) {
       const out = await generate(m.text,

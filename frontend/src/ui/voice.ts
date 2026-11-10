@@ -37,7 +37,9 @@ export function useUrduSpeaker() {
   return { speak, stop, speaking, error };
 }
 
-export function useVoiceRecorder(onRecorded: (audio: Blob) => void) {
+/** autoStop: stop by itself once the person has spoken and then been quiet for silenceMs (or after maxMs). */
+export function useVoiceRecorder(onRecorded: (audio: Blob) => void, opts: { autoStop?: { silenceMs: number; maxMs: number } } = {}) {
+  const autoStop = useRef(opts.autoStop); autoStop.current = opts.autoStop;
   const [recording, setRecording] = useState(false), [seconds, setSeconds] = useState(0), [error, setError] = useState('');
   const callback = useRef(onRecorded); callback.current = onRecorded;
   const recorder = useRef<MediaRecorder | null>(null), stream = useRef<MediaStream | null>(null);
@@ -70,6 +72,22 @@ export function useVoiceRecorder(onRecorded: (audio: Blob) => void) {
         callback.current(new Blob(chunks, { type: r.mimeType || mimeType || 'audio/webm' }));
       };
       r.start(250); started.current = Date.now(); setRecording(true); setSeconds(0);
+      if (autoStop.current) {
+        const { silenceMs, maxMs } = autoStop.current;
+        try {
+          const ctx = new AudioContext(), an = ctx.createAnalyser(); an.fftSize = 1024; ctx.createMediaStreamSource(media).connect(an);
+          const buf = new Uint8Array(an.fftSize); let heardAt = 0, spoke = false;
+          const check = () => {
+            if (r.state !== 'recording') { void ctx.close(); return; }
+            an.getByteTimeDomainData(buf); let peak = 0; for (const v of buf) peak = Math.max(peak, Math.abs(v - 128));
+            const now = Date.now();
+            if (peak > 14) { spoke = true; heardAt = now; }
+            if ((spoke && now - heardAt > silenceMs && now - started.current > 900) || now - started.current > maxMs) { stop(); void ctx.close(); return; }
+            requestAnimationFrame(check);
+          };
+          requestAnimationFrame(check);
+        } catch { /* no auto-stop; manual stop still works */ }
+      }
       timer.current = setInterval(() => { const elapsed = Math.floor((Date.now() - started.current) / 1000); setSeconds(elapsed); if (elapsed >= 60) stop(); }, 250);
     } catch (err) {
       stream.current?.getTracks().forEach(t => t.stop());

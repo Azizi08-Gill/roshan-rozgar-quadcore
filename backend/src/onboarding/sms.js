@@ -10,7 +10,7 @@ export function createSmsService({hash,sender='Default',fetcher=fetch}={}) {
   const result=await response.json().catch(()=>null);
   // Fail closed on known rejection signals; providers may return HTTP 200 for failures.
   const status=String(result?.STATUS??result?.status??'').toLowerCase();
-  if(!response.ok||!result||result.success===false||result.error||['failed','failure','error','rejected','invalid','false'].includes(status)||/^error|invalid|fail|reject/i.test(String(result.message||'')))throw new ApiError(502,'SMS_REJECTED','ایس ایم ایس نہیں بھیجا جا سکا۔ ڈیمو کوڈ استعمال کر سکتے ہیں۔');
+  if(!response.ok||!result||result.success===false||result.error||['failed','failure','error','rejected','invalid','false'].includes(status)||/^error|invalid|fail|reject/i.test(String(result.message||'')))throw new ApiError(502,'SMS_REJECTED','ایس ایم ایس نہیں بھیجا جا سکا۔ ڈیمو کوڈ استعمال کر سکتے ہیں۔',{providerReply:JSON.stringify(result??{http:response.status}).slice(0,300)});
   return{accepted:true};
  }
  const sendSms=(phone,code)=>send(phone,`Roshan Rozgar verification code: ${code}. Valid for 5 minutes. Do not share this code.`);

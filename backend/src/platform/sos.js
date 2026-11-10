@@ -22,16 +22,18 @@ export function createSos({ db, auth, hub, sendSms }) {
       if (!mine) throw new ApiError(404, 'BOOKING_NOT_FOUND', 'Booking not found.');
     }
     const contacts = account.emergencyContacts || [];
-    const map = input.location ? `https://maps.google.com/?q=${input.location.lat.toFixed(5)},${input.location.lng.toFixed(5)}` : 'location unavailable';
-    const who = account.name || account.phone;
-    const job = booking ? ` during booking ${booking.code} (${booking.service}, worker ${booking.workerName}, customer ${booking.customerName})` : '';
-    const message = `SOS from ${who} (${account.phone}) on Roshan Rozgar${job}. Location: ${map}. Please call them now. Helpline: 15.`;
+    // Plain text, no links, one SMS (<= 160 chars): gateways often reject links from unregistered sender IDs.
+    const local = (p) => (p?.startsWith('+92') ? `0${p.slice(3)}` : p || '');
+    const who = (account.name || 'A Roshan Rozgar user').split(' ').slice(0, 2).join(' ').slice(0, 24);
+    const loc = input.location ? `Location: ${input.location.lat.toFixed(5)},${input.location.lng.toFixed(5)}.` : 'Location unavailable.';
+    const job = booking ? ` Booking ${booking.code}.` : '';
+    const message = `SOS! ${who} (${local(account.phone)}) needs help.${job} ${loc} Call them now. Helpline 15.`.slice(0, 160);
     const alert = { _id: new ObjectId(), accountId: account._id, phone: account.phone, name: account.name || '', bookingId: booking?._id || null, location: input.location, test: input.test, message, createdAt: new Date(), results: [] };
     if (!contacts.length) alert.results.push({ to: null, status: 'no_contacts' });
     for (const c of contacts) {
       if (input.test) { alert.results.push({ to: c.phone, name: c.name, status: 'test_not_sent' }); continue; }
       try { await sendSms.text(c.phone, message); alert.results.push({ to: c.phone, name: c.name, status: 'sent' }); }
-      catch (e) { alert.results.push({ to: c.phone, name: c.name, status: 'failed', error: e.code || 'SMS_FAILED' }); }
+      catch (e) { alert.results.push({ to: c.phone, name: c.name, status: 'failed', error: e.code || 'SMS_FAILED', providerReply: e.details?.providerReply || null }); console.error('SOS SMS failed', c.phone, e.code, e.details?.providerReply); }
     }
     await (await col('sos_alerts')).insertOne(alert);
     if (booking && !input.test) await (await col('bookings')).updateOne({ _id: booking._id }, { $set: { sosAt: alert.createdAt } });

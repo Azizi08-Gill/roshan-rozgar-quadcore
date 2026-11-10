@@ -542,6 +542,9 @@ footer .brand-logo-image { width: 192px; }
 .voice-nav-trigger { display: flex; align-items: center; gap: 8px; border-radius: 999px; padding: 14px 18px; background: var(--green-deep); color: white; box-shadow: var(--shadow-lg); min-height: 52px; }
 .voice-nav-panel { width: min(340px, calc(100vw - 32px)); position: absolute; right: 0; bottom: 72px; box-shadow: var(--shadow-lg); }
 @media (max-width: 899px) { .voice-nav { right: 16px; bottom: 96px; } }
+/* When the SOS button is on screen, stack Speak above it instead of on top of it. */
+body:has(.sos-fab) .voice-nav { bottom: 100px; }
+@media (max-width: 899px) { body:has(.sos-fab) .voice-nav { bottom: 168px; } }
 @media (max-width: 420px) { .onboarding .badge { white-space: normal; height: auto; min-height: 26px; } }
 
 @font-face { font-family: 'Jameel Noori Nastaleeq'; src: local('Jameel Noori Nastaleeq'), url('/fonts/jameel-noori-nastaleeq.ttf') format('truetype'); font-style: normal; font-weight: 100 900; font-display: swap; unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF; }
@@ -619,3 +622,23 @@ html[dir="rtl"] .sos-fab { right: auto; left: 20px; }
 }
 .demo-card { text-align: center; align-items: center; padding: 36px 28px; background: linear-gradient(160deg, #FFFEFA, #F1F7EF); box-shadow: var(--shadow-md); border-radius: var(--r-xl); }
 .bhaai .stack > .ur { align-self: flex-start; font-size: 15px; line-height: 1.5; }
+
+/* ---------- Mobile safety net (phones and small tablets) ---------- */
+html, body { max-width: 100%; overflow-x: hidden; }
+img, svg, video, canvas { max-width: 100%; }
+@media (max-width: 899px) {
+  .split, .discover, .grid.cols-2:not(.keep), .grid.cols-3:not(.keep), .grid.cols-4 { grid-template-columns: 1fr !important; }
+  .side-sticky, .map-wrap { position: static !important; top: auto !important; }
+  .wrap { padding-left: 16px; padding-right: 16px; }
+  .card { min-width: 0; }
+  .row.wrapflex, .row.between { flex-wrap: wrap; }
+  .map, .map.track-map { height: 300px; min-height: 0; }
+  .h1 { font-size: clamp(26px, 7vw, 34px); }
+  .modal-backdrop .bhaai, .voice-nav-panel { max-width: calc(100vw - 24px); }
+  input, textarea, select { font-size: 16px; } /* stops iOS zooming into fields */
+}
+@media (max-width: 480px) {
+  .grid.cols-3.keep { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 6px !important; }
+  .btn-lg { height: 52px; font-size: 15px; }
+  .voice-nav-trigger span { display: none; }
+}

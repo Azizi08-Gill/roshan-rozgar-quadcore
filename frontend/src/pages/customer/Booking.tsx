@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useStore, type Booking as B } from '../../app/store';
 import { serviceById, workerById } from '../../data/seed';
@@ -103,7 +103,8 @@ export function Booking() {
   const b = bookings.find((x) => x.id === id);
   const w = b ? workerById(b.workerId) : undefined;
   const [typing, setTyping] = useState(false);
-  const [bhaai, setBhaai] = useState(false);
+  const [params] = useSearchParams();
+  const [bhaai, setBhaai] = useState(params.get('bhaai') === '1');
   const { user } = useStore();
 
   // Simulated worker behaviour for the demo: the worker replies with a quote, then starts the job.
@@ -247,7 +248,7 @@ export function Booking() {
           {b.status === 'completed' && <button className="btn btn-ghost btn-block" onClick={() => nav('/app')}>Back to home</button>}
         </aside>
       </div>
-      {['requested', 'quoted', 'confirmed', 'in_progress'].includes(b.status) && <SosButton booking={b} />}
+      {['requested', 'quoted', 'confirmed', 'in_progress'].includes(b.status) && <SosButton booking={b} autoOpen={params.get('sos') === '1'} />}
       <AnimatePresence>
         {bhaai && b.price && (
           <BhaaiRateModal
@@ -344,4 +345,19 @@ function Burst() {
       </motion.span>
     </div>
   );
+}
+
+/** Demo shortcuts: /app/demo/bhaai-rate and /app/demo/sos create a sample booking and open the feature. */
+export function DemoShortcut({ feature }: { feature: 'bhaai-rate' | 'sos' }) {
+  const { createBooking, updateBooking, user } = useStore();
+  const nav = useNavigate();
+  const done = useRef(false);
+  useEffect(() => {
+    if (done.current) return;
+    done.current = true;
+    const b = createBooking({ workerId: 'ahmed', service: 'electrician', problem: 'Lights baar baar trip ho rahi hain', when: 'Now', address: `House 14, Street 22, ${user?.area ?? 'G-10'}/4` });
+    updateBooking(b.id, { status: feature === 'sos' ? 'confirmed' : 'quoted', price: { labour: 1300, visit: 300, note: 'Taar ki zaroorat hui to pehle bataunga.' } });
+    nav(`/app/bookings/${b.id}?${feature === 'sos' ? 'sos' : 'bhaai'}=1`, { replace: true });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  return null;
 }

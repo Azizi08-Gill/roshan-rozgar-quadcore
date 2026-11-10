@@ -8,10 +8,11 @@ import SignIn from './pages/public/SignIn';
 import Home, { Bookings, Saved } from './pages/customer/Home';
 import Voice from './pages/customer/Voice';
 import Workers, { WorkerProfile } from './pages/customer/Workers';
-import { Booking, JobRequest, Review } from './pages/customer/Booking';
+import { Booking, DemoShortcut, JobRequest, Review } from './pages/customer/Booking';
 import { Dashboard, Jobs, Profile, Reviews, Setup } from './pages/worker';
 import DesignGallery from './design/DesignGallery';
-import { Translator } from './i18n';
+import Onboarding from './pages/worker/Onboarding';
+import VoiceNavigation from './ui/VoiceNavigation';
 
 function Routed() {
   const location = useLocation();
@@ -29,6 +30,7 @@ function Routed() {
           <Route path="/help" element={<Help />} />
         </Route>
         <Route path="/sign-in" element={<SignIn />} />
+        <Route path="/join" element={<Onboarding />} />
         <Route path="/app" element={<CustomerLayout />}>
           <Route index element={<Home />} />
           <Route path="voice" element={<Voice />} />
@@ -39,6 +41,8 @@ function Routed() {
           <Route path="bookings/:id" element={<Booking />} />
           <Route path="bookings/:id/review" element={<Review />} />
           <Route path="saved" element={<Saved />} />
+          <Route path="demo/bhaai-rate" element={<DemoShortcut feature="bhaai-rate" />} />
+          <Route path="demo/sos" element={<DemoShortcut feature="sos" />} />
           <Route path="help" element={<Help />} />
         </Route>
         <Route path="/work" element={<WorkerLayout />}>
@@ -60,8 +64,8 @@ export default function App() {
     <StoreProvider>
       <ToastProvider>
         <div className="ambient" />
-        <Translator />
         <Routed />
+        <VoiceNavigation />
       </ToastProvider>
     </StoreProvider>
   );

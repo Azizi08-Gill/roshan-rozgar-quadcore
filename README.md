@@ -1,3 +1,37 @@
+## Integrated feature: worker onboarding
+
+Open `/join` (or choose **I'm a worker**) to register without a conventional sign-up form. The worker hears Urdu instructions, speaks their name, Pakistani mobile number, trade, specific skills, experience and work areas, hears the profile read back, confirms an OTP and explicitly publishes it. There are large icon selections and number keypads as alternatives. New-worker registration bypasses the existing customer/demo sign-in form.
+
+- Real transcription: Groq `whisper-large-v3-turbo` (`ur`), followed by Groq `openai/gpt-oss-120b` for validated field extraction and allowlisted voice commands. The requested Llama 3.3 model was replaced with the user's approval because Groq lists it as retired for standard accounts. Override using `GROQ_CHAT_MODEL`.
+- Real voice output: Python `edge-tts` 7.3.1, fixed voice `ur-PK-AsadNeural`. Microsoft Edge TTS requires internet. No synthetic/sample transcripts are substituted when a provider fails.
+- Real persistence: MongoDB `onboarding_sessions`, `workers`, and `otp_limits`; server validation, expiring hashed session tokens, optimistic revisions and transactional, idempotent profile publication. Raw microphone audio is forwarded for transcription and is not stored. Profile data is sent to Groq; spoken output is sent to Microsoft's TTS service.
+- SMS: Veevo `https://api.veevotech.com/v3/sendsms`. OTPs expire in five minutes, have five attempts, and are stored hashed. Changing the phone invalidates verification. No SMS codes appear in API responses or logs.
+- **Disclosed demo fallback:** with `DEMO_OTP_ENABLED=true`, the small **SMS failed? Use demo OTP** button switches this session to code **482719**. Demo profiles explicitly retain `phoneVerified: false` and `verificationMode: demo`; they never claim SMS verification. Disable the flag outside the hackathon.
+- Voice navigation: **آگے / پیچھے / دوبارہ سنائیں / پروفائل محفوظ کریں** within onboarding; the floating **بولیں** button opens home, signup, worker dashboard, worker profile or help using validated fixed actions. Navigation does not implement booking/discovery backends.
+- Sessions are browser-tab scoped, expire after seven days, and are capability tokens for this feature, not a complete returning-user login system. Existing booking, reviews, discovery and SOS behaviour outside onboarding remains demo/local/mocked. Customer OTP remains a disclosed demo.
+
+### Run the integrated backend
+
+```sh
+cd backend
+npm install
+python3 -m venv .venv
+.venv/bin/python3 -m pip install -r requirements.txt
+cp .env.example .env
+# Configure MONGODB_URI, GROQ_API_KEY and VEEVO_API_HASH in .env.
+npm run dev
+```
+
+Run `cd frontend && npm install && npm run dev` in a second terminal. Vite proxies `/api` to port 4000. MongoDB Atlas must allow the backend's network address. Use HTTPS when opening on a remote phone; browsers allow microphone access on localhost and HTTPS.
+
+### Onboarding API
+
+`POST /api/onboarding/session` issues a session token. Use it as `Authorization: Bearer <token>` for `GET /me`, `PATCH /draft` (`revision`, `patch`), `POST /voice` (multipart `audio`, `step`, `revision`), `POST /otp/mode`, `POST /otp/request`, `POST /otp/verify`, and `POST /complete` (`revision`, `confirmed: true`). `POST /speak`, `POST /navigation` and `GET /status` are bounded, rate-limited public helpers. Secrets exist only in ignored `backend/.env`.
+
+---
+
+## Original design-stage documentation (historical)
+
 # Roshan Rozgar (روشن روزگار)
 
 **A hyper-local marketplace for skilled trade workers.**
@@ -34,10 +68,6 @@ All five outcomes must work together as one flow, for both the worker and the cu
 | Trust | Review summaries and moderation of voice reviews | The next customer would have to listen to every voice note |
 
 > **Status:** these AI components are **planned and not implemented yet**. See *Current status* below.
-
-## Languages
-
-English and Urdu (اردو). A language dropdown sits in every header (public site, customer app, worker app, sign-in, voice and worker setup). Urdu switches the whole app to right-to-left with the Noto Sans Arabic font. Translations live in `frontend/src/i18n/ur.ts` and are applied live by `frontend/src/i18n/index.tsx`, so every page, placeholder and toast is covered. The sample Roman Urdu text (voice transcripts, reviews) is shown in Urdu script. Urdu strings were written by an AI assistant and have not been reviewed by a native speaker.
 
 ## What the demo app does now
 

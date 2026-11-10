@@ -1,11 +1,10 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { useStore, type Role } from '../../app/store';
 import { AREAS } from '../../data/seed';
 import { Icon } from '../../ui/Icon';
 import { Logo, Orb, useToast } from '../../ui/kit';
-import { LangMenu } from '../../i18n';
 import { ease } from '../../ui/motion';
 
 /** Demo OTP. A real build would send this by SMS through the backend. */
@@ -53,6 +52,7 @@ export default function SignIn() {
     }, 1300);
   };
 
+  if (presetRole === 'worker') return <Navigate to="/join" replace />;
   return (
     <div className="auth">
       <aside className="auth-art">
@@ -77,7 +77,6 @@ export default function SignIn() {
               <button className="icon-btn" aria-label="Back to home" onClick={() => nav('/')}><Icon name="chevL" size={20} /></button>
             )}
             <span className="small muted">Step {idx + 1} of {steps.length}</span>
-            <LangMenu compact />
           </div>
           <div className="progress" style={{ marginBottom: 32 }}><i style={{ width: `${((idx + 1) / steps.length) * 100}%` }} /></div>
 
@@ -123,7 +122,7 @@ export default function SignIn() {
                       {role === o.r && <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} className="check"><Icon name="check" size={14} stroke={3} /></motion.span>}
                     </button>
                   ))}
-                  <button className="btn btn-primary btn-lg btn-block" disabled={!role} onClick={() => setStep('profile')}>Continue<Icon name="arrowR" size={18} /></button>
+                  <button className="btn btn-primary btn-lg btn-block" disabled={!role} onClick={() => role === 'worker' ? nav('/join') : setStep('profile')}>Continue<Icon name="arrowR" size={18} /></button>
                 </>
               )}
 

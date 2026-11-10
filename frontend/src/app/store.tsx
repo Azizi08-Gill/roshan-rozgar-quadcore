@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { WORKERS, type ServiceId } from '../data/seed';
+import type { SavedWorker } from './onboarding';
 
 /**
  * Client-side demo store (persisted to localStorage). It stands in for the backend during the demo
@@ -8,9 +9,9 @@ import { WORKERS, type ServiceId } from '../data/seed';
 export type Role = 'customer' | 'worker';
 export type Lang = 'en' | 'ur';
 
-export type User = { phone: string; name: string; role: Role; area: string };
+export type User = { phone: string; name: string; role: Role; area: string; workerId?: string; phoneVerified?: boolean };
 
-export type WorkerProfile = { trades: ServiceId[]; years: number; areas: string[]; intro: string; available: boolean };
+export type WorkerProfile = { id?: string; trades: ServiceId[]; skills?: string[]; years: number; areas: string[]; intro: string; available: boolean; phoneVerified?: boolean; verificationMode?: 'sms' | 'demo' };
 
 export type BookingStatus = 'requested' | 'quoted' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled';
 
@@ -70,6 +71,7 @@ type Ctx = State & {
   updateBooking: (id: string, patch: Partial<Booking>) => void;
   isBusy: (workerId: string) => boolean;
   saveWorkerProfile: (p: WorkerProfile) => void;
+  completeWorkerOnboarding: (profile: SavedWorker) => void;
   setAvailable: (v: boolean) => void;
   setInbox: (i: State['workerInbox']) => void;
   resetDemo: () => void;
@@ -107,6 +109,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     updateBooking: (id, patch) => set((p) => ({ ...p, bookings: p.bookings.map((b) => (b.id === id ? { ...b, ...patch } : b)) })),
     isBusy,
     saveWorkerProfile: (workerProfile) => set((p) => ({ ...p, workerProfile })),
+    completeWorkerOnboarding: (profile) => set((p) => ({ ...p, workerProfile: profile, user: { name: profile.name, phone: profile.phone.slice(3), role: 'worker', area: profile.areas[0], workerId: profile.id, phoneVerified: profile.phoneVerified } })),
     setAvailable: (available) => set((p) => (p.workerProfile ? { ...p, workerProfile: { ...p.workerProfile, available } } : p)),
     setInbox: (workerInbox) => set((p) => ({ ...p, workerInbox })),
     resetDemo: () => set(initial),

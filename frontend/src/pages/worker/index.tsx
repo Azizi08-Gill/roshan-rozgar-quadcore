@@ -5,7 +5,6 @@ import { useStore } from '../../app/store';
 import { AREAS, SERVICES, serviceById, type ServiceId } from '../../data/seed';
 import { Icon } from '../../ui/Icon';
 import { Orb, Wave, useToast } from '../../ui/kit';
-import { LangMenu } from '../../i18n';
 import { CountUp, ease, Page, Stagger, staggerItem, Typewriter, Words } from '../../ui/motion';
 
 /** Reads a label aloud in Urdu, for workers who prefer listening to reading. */
@@ -18,110 +17,9 @@ function say(text: string) {
 }
 
 const YEARS = [{ v: 1, l: 'Under 2 years' }, { v: 4, l: '2 – 5 years' }, { v: 8, l: '6 – 10 years' }, { v: 12, l: 'Over 10 years' }];
-const INTRO_SAMPLE = 'Main kaafi saal se yeh kaam kar raha hoon. Time pe aata hoon aur kaam saaf karta hoon.';
 
 /* ======================= Onboarding (no typing) ======================= */
-export function Setup() {
-  const { saveWorkerProfile, user } = useStore();
-  const nav = useNavigate();
-  const toast = useToast();
-  const [step, setStep] = useState(0);
-  const [trades, setTrades] = useState<ServiceId[]>([]);
-  const [years, setYears] = useState<number | null>(null);
-  const [areas, setAreas] = useState<string[]>(user ? [user.area] : []);
-  const [rec, setRec] = useState<'idle' | 'rec' | 'done'>('idle');
-  const [saving, setSaving] = useState(false);
-
-  const titles = ['What work do you do?', 'How long have you worked?', 'Where can you work?', 'Introduce yourself'];
-  const canNext = [trades.length > 0, years !== null, areas.length > 0, rec === 'done'][step];
-
-  useEffect(() => {
-    if (rec !== 'rec') return;
-    const t = setTimeout(() => setRec('done'), 3500);
-    return () => clearTimeout(t);
-  }, [rec]);
-
-  const finish = () => {
-    setSaving(true);
-    setTimeout(() => {
-      saveWorkerProfile({ trades, years: years!, areas, intro: INTRO_SAMPLE, available: true });
-      toast('Your profile is live', 'check');
-      nav('/work', { replace: true });
-    }, 1500);
-  };
-
-  return (
-    <Page className="wrap page wrap-narrow" >
-      <div className="row between" style={{ marginBottom: 20 }}>
-        <button className="icon-btn" aria-label="Back" onClick={() => (step ? setStep(step - 1) : nav('/'))}><Icon name="chevL" size={20} /></button>
-        <span className="small muted">Step {step + 1} of 4</span>
-        <span className="row g8"><LangMenu compact /><button className="icon-btn" aria-label="Read aloud" onClick={() => say(titles[step])}><Icon name="vol" size={19} /></button></span>
-      </div>
-      <div className="progress" style={{ marginBottom: 28 }}><i style={{ width: `${((step + 1) / 4) * 100}%` }} /></div>
-
-      <AnimatePresence mode="wait">
-        <motion.div key={step} className="stack g20" initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ ease, duration: 0.4 }}>
-          <h1 className="h1">{titles[step]}</h1>
-
-          {step === 0 && (
-            <div className="grid cols-2 keep">
-              {SERVICES.map((s) => {
-                const on = trades.includes(s.id);
-                return (
-                  <motion.button key={s.id} whileTap={{ scale: 0.95 }} className={`select-card trade ${on ? 'on' : ''}`}
-                    onClick={() => { say(s.ur); setTrades((t) => (on ? t.filter((x) => x !== s.id) : [...t, s.id])); }}>
-                    <span className="tile-icon" style={{ width: 52, height: 52, borderRadius: 16, background: on ? 'var(--green)' : undefined, color: on ? '#fff' : undefined }}><Icon name={s.icon} size={24} /></span>
-                    <span className="stack"><b>{s.name}</b><span className="ur tiny muted">{s.ur}</span></span>
-                    {on && <motion.span className="check" style={{ position: 'absolute', top: 10, right: 10 }} initial={{ scale: 0 }} animate={{ scale: 1 }}><Icon name="check" size={13} stroke={3} /></motion.span>}
-                  </motion.button>
-                );
-              })}
-            </div>
-          )}
-
-          {step === 1 && (
-            <div className="stack g12">
-              {YEARS.map((y) => (
-                <button key={y.v} className={`select-card ${years === y.v ? 'on' : ''}`} onClick={() => { setYears(y.v); say(y.l); }}>
-                  <span className="tile-icon"><Icon name="clock" size={22} /></span><b className="grow" style={{ fontSize: 17 }}>{y.l}</b>
-                  {years === y.v && <span className="check"><Icon name="check" size={13} stroke={3} /></span>}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {step === 2 && (
-            <div className="row g8 wrapflex">
-              {AREAS.map((a) => {
-                const on = areas.includes(a);
-                return <button key={a} className={`chip ${on ? 'on' : ''}`} style={{ height: 46, padding: '0 18px', fontSize: 15 }} onClick={() => setAreas((v) => (on ? v.filter((x) => x !== a) : [...v, a]))}>{on && <Icon name="check" size={15} />}{a}</button>;
-              })}
-            </div>
-          )}
-
-          {step === 3 && (
-            <div className="card stack g16" style={{ alignItems: 'center', textAlign: 'center', padding: 28 }}>
-              <button onClick={() => rec === 'idle' && setRec('rec')} aria-label="Record intro" style={{ borderRadius: '50%' }}><Orb size={150} listening={rec === 'rec'} rings={rec === 'rec'} /></button>
-              {rec === 'idle' && <p className="muted" style={{ margin: 0 }}>Tap and talk for 10 seconds: your name, your work, why customers can trust you.</p>}
-              {rec === 'rec' && <><span className="badge bad"><span className="dot live" />Recording</span><Wave bars={30} /></>}
-              {rec === 'done' && (
-                <>
-                  <span className="badge ok"><Icon name="check" size={13} />Recorded · 0:10</span>
-                  <p style={{ margin: 0, fontSize: 17 }}>“<Typewriter text={INTRO_SAMPLE} speed={22} />”</p>
-                  <button className="btn btn-ghost btn-sm" onClick={() => setRec('rec')}><Icon name="redo" size={16} />Record again</button>
-                </>
-              )}
-            </div>
-          )}
-
-          <button className="btn btn-primary btn-lg btn-block" disabled={!canNext || saving} onClick={() => (step < 3 ? setStep(step + 1) : finish())}>
-            {saving ? <><span className="spinner" />Creating your profile…</> : step < 3 ? <>Continue{step === 0 && trades.length ? ` · ${trades.length} selected` : ''}<Icon name="arrowR" size={18} /></> : <>Finish<Icon name="check" size={18} /></>}
-          </button>
-        </motion.div>
-      </AnimatePresence>
-    </Page>
-  );
-}
+export { default as Setup } from './Onboarding';
 
 /* ======================= Dashboard with live request ======================= */
 export function Dashboard() {
@@ -309,12 +207,12 @@ export function Profile() {
       <div className="card stack g16" style={{ alignItems: 'center', textAlign: 'center', padding: 32 }}>
         <span className="avatar lg">{user?.name.split(' ').map((p) => p[0]).join('').slice(0, 2).toUpperCase()}</span>
         <h1 className="h2">{user?.name}</h1>
-        <span className="row g8 small" style={{ color: 'var(--green)', fontWeight: 600 }}><Icon name="shield" size={16} />+92 {user?.phone} · verified</span>
+        <span className="row g8 small" style={{ color: 'var(--green)', fontWeight: 600 }}><Icon name="shield" size={16} />+92 {user?.phone} · {workerProfile.phoneVerified ? 'SMS verified' : 'Demo · not SMS-verified'}</span>
         <div className="row g8 wrapflex" style={{ justifyContent: 'center' }}>{workerProfile.trades.map((t) => <span key={t} className="chip"><Icon name={serviceById(t).icon} size={15} />{serviceById(t).name}</span>)}</div>
         <p style={{ margin: 0 }}>“{workerProfile.intro}”</p>
-        <span className="small muted">{YEARS.find((y) => y.v === workerProfile.years)?.l} · {workerProfile.areas.join(', ')}</span>
+        <span className="small muted">{workerProfile.years} years · {workerProfile.areas.join(', ')}</span>
         <div className="row g12">
-          <button className="btn btn-ghost" onClick={() => nav('/work/setup')}><Icon name="edit" size={16} />Edit profile</button>
+          <button className="btn btn-ghost" onClick={() => nav('/work/setup')}><Icon name="edit" size={16} />Review profile</button>
           <button className="btn btn-ghost" onClick={() => { resetDemo(); nav('/'); }}><Icon name="redo" size={16} />Reset demo</button>
         </div>
       </div>

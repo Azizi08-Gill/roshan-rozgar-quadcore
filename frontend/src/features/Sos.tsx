@@ -19,8 +19,8 @@ const HELPLINE = '15';
 type StepState = 'pending' | 'running' | 'done' | 'failed';
 type Log = { id: string; label: string; detail: string; state: StepState };
 
-export function SosButton({ booking }: { booking?: Booking }) {
-  const [open, setOpen] = useState(false);
+export function SosButton({ booking, autoOpen = false }: { booking?: Booking; autoOpen?: boolean }) {
+  const [open, setOpen] = useState(autoOpen);
   return (
     <>
       <motion.button
